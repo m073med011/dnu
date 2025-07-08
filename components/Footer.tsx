@@ -28,67 +28,70 @@ const UniversityFooter = () => {
       <div className="absolute inset-0 bg-gradient-to-br from-[#677AE4] to-[#754FA8]" />
       
       {/* Main content */}
-      <div className="relative px-20 py-0">
+      <div className="relative px-4 md:px-20 py-0">
         {/* Header section with social media icons and profile */}
-        <div className="flex justify-between items-center py-4 border-b border-gray-300 border-opacity-70">
-          <div className="flex items-end gap-5">
-            {/* Facebook Icon */}
-            <div className="p-2 bg-white/30 bg-opacity-20 rounded-full flex items-center justify-center w-14 h-14">
-              <FacebookIcon size={28} />
+        <div className="flex flex-col md:flex-row justify-between items-center py-4 border-b border-gray-300 border-opacity-70 gap-4">
+          <div className="flex flex-row md:flex-row items-center justify-around md:justify-between gap-4 md:gap-0 w-full">
+            {/* Social media icons */}
+            <div className="flex items-end gap-3 md:gap-5 md:order-1">
+              {/* Facebook Icon */}
+              <div className="p-2 bg-white/30 bg-opacity-20 rounded-full flex items-center justify-center w-12 h-12 md:w-14 md:h-14">
+                <FacebookIcon size={24} />
+              </div>
+              
+              {/* Instagram Icon */}
+              <div className="p-2 bg-white/30 bg-opacity-20 rounded-full flex items-center justify-center w-12 h-12 md:w-14 md:h-14">
+                <InstagramIcon size={24} />
+              </div>
+              
+              {/* Twitter Icon */}
+              <div className="p-2 bg-white/30 bg-opacity-20 rounded-full flex items-center justify-center w-12 h-12 md:w-14 md:h-14">
+                <TwitterIcon size={24} />
+              </div>
             </div>
             
-            {/* Instagram Icon */}
-            <div className="p-2 bg-white/30 bg-opacity-20 rounded-full flex items-center justify-center w-14 h-14">
-              <InstagramIcon size={28} />
-            </div>
-            
-            {/* Twitter Icon */}
-            <div className="p-2 bg-white/30 bg-opacity-20 rounded-full flex items-center justify-center w-14 h-14">
-              <TwitterIcon size={28} />
-            </div>
+            {/* Profile image */}
+            <Image
+              className="w-24 h-24 md:w-30 md:h-30 rounded-full md:order-2" 
+              src={logo}
+              alt="Profile"
+            />
           </div>
-          
-          {/* Profile image */}
-          <Image
-            className="w-30 h-30 rounded-full" 
-            src={logo}
-            alt="Profile"
-          />
         </div>
         
         {/* Footer content */}
-        <div className="flex justify-end items-start gap-30 px-20 py-8">
+        <div className="flex flex-col md:flex-row justify-end items-start gap-8 md:gap-30 px-4 md:px-20 py-8">
           {/* University Colleges Section */}
-          <div className="flex flex-col items-end gap-4">
-            <h3 className="text-white text-3xl font-bold text-center">كليات الجامعة</h3>
+          <div className="flex flex-col items-end gap-4 w-full md:w-auto">
+            <h3 className="text-white text-2xl md:text-3xl font-bold text-center">كليات الجامعة</h3>
             <div className="flex flex-col items-end gap-2">
-              <div className="text-white text-opacity-80 text-xl font-medium text-right">كلية الأثار و السياحة</div>
-              <div className="text-white text-opacity-80 text-xl font-medium text-right">كلية الأعمال</div>
-              <div className="text-white text-opacity-80 text-xl font-medium text-right">كلية الألسن</div>
-              <div className="text-white text-opacity-80 text-xl font-medium">كلية الحاسبات و المعلومات و الذكاء الاصطناعي</div>
-              <div className="text-white text-opacity-80 text-xl font-medium text-right">كلية التمريض</div>
-              <div className="text-white text-opacity-80 text-xl font-medium text-right">كلية الفنون و التصميم</div>
+              <div className="text-white text-opacity-80 text-lg md:text-xl font-medium text-right">كلية الأثار و السياحة</div>
+              <div className="text-white text-opacity-80 text-lg md:text-xl font-medium text-right">كلية الأعمال</div>
+              <div className="text-white text-opacity-80 text-lg md:text-xl font-medium text-right">كلية الألسن</div>
+              <div className="text-white text-opacity-80 text-lg md:text-xl font-medium text-right">كلية الحاسبات و المعلومات و الذكاء الاصطناعي</div>
+              <div className="text-white text-opacity-80 text-lg md:text-xl font-medium text-right">كلية التمريض</div>
+              <div className="text-white text-opacity-80 text-lg md:text-xl font-medium text-right">كلية الفنون و التصميم</div>
             </div>
           </div>
           
           {/* About University Section */}
-          <div className="flex flex-col items-end gap-4">
-            <h3 className="text-white text-3xl font-bold text-center">عن الجامعة</h3>
+          <div className="flex flex-col items-end gap-4 w-full md:w-auto">
+            <h3 className="text-white text-2xl md:text-3xl font-bold text-center">عن الجامعة</h3>
             <div className="flex flex-col items-end gap-4">
-              <div className="text-white text-opacity-80 text-xl font-medium">نظرة عامه</div>
-              <div className="text-white text-opacity-80 text-xl font-medium text-center">تواصل معنا</div>
-              <div className="text-white text-opacity-80 text-xl font-medium text-center">الخصوصية و الاستخدام</div>
+              <div className="text-white text-opacity-80 text-lg md:text-xl font-medium">نظرة عامه</div>
+              <div className="text-white text-opacity-80 text-lg md:text-xl font-medium text-center">تواصل معنا</div>
+              <div className="text-white text-opacity-80 text-lg md:text-xl font-medium text-center">الخصوصية و الاستخدام</div>
             </div>
           </div>
           
           {/* University Guide Section */}
-          <div className="flex flex-col items-end gap-4">
-            <h3 className="text-white text-3xl font-bold text-center">دليل الجامعة</h3>
+          <div className="flex flex-col items-end gap-4 w-full md:w-auto">
+            <h3 className="text-white text-2xl md:text-3xl font-bold text-center">دليل الجامعة</h3>
             <div className="flex flex-col items-end gap-4">
-              <div className="text-white text-opacity-80 text-xl font-medium">مجلس الأمناء</div>
-              <div className="text-white text-opacity-80 text-xl font-medium text-center">كلمة رئيس الجامعة</div>
-              <div className="text-white text-opacity-80 text-xl font-medium text-center">رؤية  و رسالة الجامعة</div>
-              <div className="text-white text-opacity-80 text-xl font-medium text-center">ملفات هامة</div>
+              <div className="text-white text-opacity-80 text-lg md:text-xl font-medium">مجلس الأمناء</div>
+              <div className="text-white text-opacity-80 text-lg md:text-xl font-medium text-center">كلمة رئيس الجامعة</div>
+              <div className="text-white text-opacity-80 text-lg md:text-xl font-medium text-center">رؤية  و رسالة الجامعة</div>
+              <div className="text-white text-opacity-80 text-lg md:text-xl font-medium text-center">ملفات هامة</div>
             </div>
           </div>
         </div>

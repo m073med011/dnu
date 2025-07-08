@@ -101,7 +101,7 @@ const NewsCard: React.FC<{ news: NewsItem }> = ({ news }) => {
 
 const UniversityNews: React.FC = () => {
   return (
-    <div className="w-full h-full flex flex-col items-center gap-4 p-6">
+    <div className="w-full h-full flex flex-col items-center gap-4 p-[clamp(24.00px,6.25vw,90.00px)]">
       {/* Header */}
       <div className="w-full h-auto py-2 border-b border-black flex justify-center items-center">
         <h1 className="text-center text-black text-[clamp(24px,5vw,40px)] font-medium font-['Inter']">

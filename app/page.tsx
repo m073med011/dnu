@@ -6,12 +6,12 @@ import UniversityNews from "@/components/home/UniversityNews";
 import ArabicFAQ from "@/components/home/ArabicFAQ";
 export default function Home() {
   return (
-    <div className="max-w-[1440px] w-full mx-auto">
+    <div className="max-w-[1440px] w-full mx-auto px-4 lg:px-0 md::px-0">
       <UniversityPage />
       <UniversityFaculties />
-      <ImageSction/> 
-      <UniversityNews/>
-      <ArabicFAQ/>
+      <ImageSction />
+      <UniversityNews />
+      <ArabicFAQ />
     </div>
   );
 }
