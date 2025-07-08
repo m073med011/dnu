@@ -1,16 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+// import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Header from "@/components/Header";
+import { Cairo } from 'next/font/google'
+import UniversityFooter from "@/components/Footer";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const cairo = Cairo({
+  subsets: ['arabic', 'latin'], // Include both for better compatibility
+  weight: ['300', '400', '500', '600', '700'], // More weight options
+  variable: '--font-cairo',
+  display: 'swap', // Improves font loading performance
+})
+
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -23,11 +25,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+    // <html lang="en" className={cairo.className}>
+    //   <body className={cairo.className}>
+
+         <html lang="ar" className={`${cairo.variable} ${cairo.className}`} >
+      <body className={`${cairo.variable} font-sans antialiased`}>
+        <Header />
+        <main className="mt-[clamp(46.80px,12.19vw,175.50px)]">
+          {children}
+        </main>
+        <UniversityFooter/>
       </body>
     </html>
   );
