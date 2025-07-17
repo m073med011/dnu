@@ -9,7 +9,7 @@ const FeesPage = () => {
   ];
 
   return (
-    <section className="w-full max-w-[1440px] mx-auto bg-white px-[clamp(16px,4vw,80px)] py-6 flex flex-col items-center gap-[clamp(9.60px,2vw,36.00px)]">
+    <section className="w-full max-w-[1440px] mx-auto bg-white px-[clamp(16px,4vw,80px)] lg:py-6 py-15 flex flex-col items-center gap-[clamp(9.60px,2vw,36.00px)]">
       <h1 className="text-right w-full max-w-[1440px] text-gradient-primary scale-x-100 origin-right text-[clamp(24px,4vw,48px)] px-[clamp(24.00px,2.25vw,80.00px)] font-bold font-inter transition-all duration-300 hover:scale-105 hover:opacity-90">
         المصروفات الدراسية
       </h1>

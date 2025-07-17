@@ -111,7 +111,7 @@ const FeaturedProfileCard: React.FC<{
   profile: (typeof featuredProfiles)[0];
 }> = ({ profile }) => (
   <div className="p-4 sm:p-5 md:p-6 bg-gray-50 rounded-2xl flex flex-col justify-center items-center gap-3 sm:gap-4 md:gap-5 transition-all duration-300 hover:scale-105 hover:bg-white group w-full max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-xl">
-    <div className="w-full h-48 sm:h-60 md:h-72 lg:h-80 xl:h-96 relative overflow-hidden rounded-2xl">
+    {/* <div className="w-full h-48 sm:h-60 md:h-72 lg:h-80 xl:h-96 relative overflow-hidden rounded-2xl">
       <Image
         src={profile.image}
         alt={profile.name}
@@ -119,7 +119,18 @@ const FeaturedProfileCard: React.FC<{
         className="object-cover transition-transform duration-300 group-hover:scale-110"
         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
       />
-    </div>
+    </div> */}
+    <div className="w-full overflow-hidden rounded-2xl">
+  <Image
+    src={profile.image}
+    alt={profile.name}
+    width={0}
+    height={0}
+    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+    className="w-full h-auto transition-transform duration-300 group-hover:scale-110"
+    style={{ width: '100%', height: 'auto' }}
+  />
+</div>
     <div className="w-full flex flex-col justify-center items-center gap-2 sm:gap-3 md:gap-4">
       <div className="w-full text-center text-black text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-inter font-bold break-words transition-colors duration-300 group-hover:text-[#677AE4] leading-tight">
         {profile.name}

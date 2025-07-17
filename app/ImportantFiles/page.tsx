@@ -9,7 +9,7 @@ const ImportantFilesPage: React.FC = () => {
       {/* Hero Background Section */}
       <section
         className="relative w-full flex items-center justify-center text-black font-bold group overflow-hidden"
-        style={{ height: "clamp(97.80px, 25.47vw, 366.75px)" }}
+        style={{ height: "clamp(200.80px, 25.47vw, 366.75px)" }}
       >
         {/* Gradient Overlay at the bottom */}
         <div className="absolute bottom-0 left-0 right-0 h-1/2 z-10 bg-gradient-to-t from-white to-white/0 transition-all duration-500 group-hover:h-2/3" />

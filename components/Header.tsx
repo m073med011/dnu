@@ -103,8 +103,6 @@ const Header: FC = () => {
       <div className="w-full sm:max-w-[1440px] mx-0 px-0 sm:mx-auto sm:px-8 lg:px-12">
         <div
           className={`flex items-center lg:justify-around justify-between px-12 lg:px-0  transition-all duration-300 ${
-
-
             scrolled ? "h-16 sm:h-20" : "h-20 sm:h-24 lg:h-28"
           }`}
         >
@@ -183,11 +181,11 @@ const Header: FC = () => {
             className="lg:hidden absolute top-full left-0 right-0 bg-white shadow-lg border-t border-gray-200 max-h-[calc(100vh-80px)] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <nav className="px-0 py-6 space-y-4 sm:px-6">
+            <nav className="px-6 py-4 space-y-2">
               {navItems.map((item, index) => (
-                <div key={index} className="border-b border-gray-100 pb-4 last:border-b-0">
+                <div key={index} className="border-b border-gray-100 pb-3 last:border-b-0">
                   <div
-                    className="flex items-center justify-between cursor-pointer py-3"
+                    className="flex items-center justify-between cursor-pointer py-3 px-4 hover:bg-gray-50 rounded-md"
                     onClick={() =>
                       item.hasDropdown && handleDropdownToggle(item.label)
                     }
@@ -207,7 +205,7 @@ const Header: FC = () => {
                   </div>
 
                   {item.hasDropdown && openDropdown === item.label && (
-                    <div className="mt-3 pr-6 border-r-2 border-gray-200">
+                    <div className="mt-2 mr-8 pr-4 border-r-2 border-gray-200">
                       {item.label === "الحياة الجامعية" ? (
                         <LifeUniversityDropdown
                           dropdown={item.dropdown as NavItem[]}

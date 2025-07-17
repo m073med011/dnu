@@ -6,7 +6,7 @@ import  Link  from "next/link";
 
 export default function JobsPage() {
   return (
-    <div className="w-full h-full mx-auto  bg-white overflow-hidden">
+    <div className="w-full h-full mx-auto py-15 lg:py-0  bg-white overflow-hidden">
       <div
         className="mx-auto text-center text-[#677AE4] font-bold"
         style={{ fontSize: "clamp(20px, 3.75vw, 48px)" ,
