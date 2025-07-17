@@ -10,11 +10,11 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        cairo: ["var(--font-cairo)", "sans-serif"],
-        sans: ["var(--font-cairo)", "ui-sans-serif", "system-ui"], // Set as default sans
+        inter: ["var(--font-inter)", "sans-serif"],
+        // sans: ["var(--font-inter)", "ui-sans-serif", "system-ui"], // Set as default sans
       },
     },
-  }
+  },
 };
 
 export default config;

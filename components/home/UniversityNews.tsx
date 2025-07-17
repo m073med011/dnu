@@ -18,6 +18,7 @@ import image1 from "@/public/home/newsData/Rectangle1.png";
 import image2 from "@/public/home/newsData/Rectangle2.png";
 import image3 from "@/public/home/newsData/Rectangle3.png";
 import image4 from "@/public/home/newsData/Rectangle4.png";
+import { Bold } from "lucide-react";
 
 const newsData: NewsItem[] = [
   {
@@ -103,10 +104,9 @@ const UniversityNews: React.FC = () => {
   return (
     <div className="w-full h-full flex flex-col items-center gap-4 p-[clamp(24.00px,6.25vw,90.00px)]">
       {/* Header */}
-      <div className="w-full h-auto py-2 border-b border-black flex justify-center items-center">
-        <h1 className="text-center text-black text-[clamp(24px,5vw,40px)] font-medium font-['Inter']">
-          أخبار الجامعة
-        </h1>
+      <div className="w-full h-auto py-2  flex justify-center font-bold items-center">
+        <div className="font-bold" style={{textAlign: 'center', color: '#677AE4', fontSize: 32, fontFamily: 'Inter', fontWeight: '700', wordWrap: 'break-word'}}>أخبار الجامعة</div>
+
       </div>
 
       {/* News Grid */}
@@ -132,7 +132,7 @@ const UniversityNews: React.FC = () => {
         </div>
 
         {/* View All Button */}
-        <button className="w-auto h-9 px-8 py-2 bg-gradient-to-br from-[#677AE4] to-[#754FA8] rounded-xl flex justify-center items-center gap-2 hover:opacity-90 transition-opacity">
+        <button className="w-[clamp(50.25px,13.09vw,188.44px)] h-9 px-8 py-2 bg-gradient-to-br from-[#677AE4] to-[#754FA8] rounded-xl flex justify-center items-center gap-2 hover:opacity-90 transition-opacity">
           <span className="text-white text-base font-bold font-['Inter']">
             جميع الأخبار
           </span>

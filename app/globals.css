@@ -1,17 +1,23 @@
 @import "tailwindcss";
 /* @config "../../tailwind.config.js"; */
 @config "../tailwind.config.ts";
-
-@media (prefers-color-scheme: dark) {
-  /* :root {
-  } */
-}
-
-body {
-  font-family: font-cairo;
-  /* font-family: var(--font-cairo); */
-}
-
-
 /* global.css */
 @import "swiper/css";
+
+
+:root {
+  --color-primary-start: #677AE4;
+  --color-primary-end: #754FA8;
+  --gradient-primary: linear-gradient(135deg, var(--color-primary-start), var(--color-primary-end));
+}
+.gradient-bg {
+  background: var(--gradient-primary);
+}
+
+.text-gradient-primary {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}

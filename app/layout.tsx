@@ -2,17 +2,15 @@ import type { Metadata } from "next";
 // import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
-import { Cairo } from 'next/font/google'
+// import { Cairo } from 'next/font/google'
+import { Inter } from "next/font/google";
+
 import UniversityFooter from "@/components/Footer";
 
-
-const cairo = Cairo({
-  subsets: ['arabic', 'latin'], // Include both for better compatibility
-  weight: ['300', '400', '500', '600', '700'], // More weight options
-  variable: '--font-cairo',
-  display: 'swap', // Improves font loading performance
-})
-
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -28,13 +26,13 @@ export default function RootLayout({
     // <html lang="en" className={cairo.className}>
     //   <body className={cairo.className}>
 
-         <html lang="ar" className={`${cairo.variable} ${cairo.className}`} >
-      <body className={`${cairo.variable} font-sans antialiased`}>
+    <html lang="ar" className={`${inter.variable} ${inter.className}`}>
+       <body className={inter.variable}>
         <Header />
-        <main className="mt-[clamp(46.80px,12.19vw,175.50px)]">
+        <main className="pt-[clamp(44.40px,11.56vw,116px)]">
           {children}
         </main>
-        <UniversityFooter/>
+        <UniversityFooter />
       </body>
     </html>
   );

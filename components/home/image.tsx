@@ -4,7 +4,7 @@ import bgImage from "@/public/home/Frame.png";
 
 const HeroSection = () => {
   return (
-    <section className="relative  w-full h-[clamp(380.70px,21.02vw,302.63px)] overflow-hidden ">
+    <section className="relative  w-full h-[clamp(180.70px,21.02vw,290.63px)] overflow-hidden ">
       {/* Full image shown completely */}
       <Image
         src={bgImage}
