@@ -18,7 +18,7 @@ import image1 from "@/public/home/newsData/Rectangle1.png";
 import image2 from "@/public/home/newsData/Rectangle2.png";
 import image3 from "@/public/home/newsData/Rectangle3.png";
 import image4 from "@/public/home/newsData/Rectangle4.png";
-import { Bold } from "lucide-react";
+// import { Bold } from "lucide-react";
 
 const newsData: NewsItem[] = [
   {
