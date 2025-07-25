@@ -1,18 +1,21 @@
 "use client";
 import { ChevronDown, ChevronUp, Menu, X } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import logo from "@/public/logo.svg";
 import { FC, useState, useEffect } from "react";
 
 interface NavItem {
   label: string;
   hasDropdown: boolean;
+  href?: string;
   dropdown?: DropdownItem[];
 }
 
 interface DropdownItem {
   label: string;
   href?: string;
+  external?: boolean; // Add this to identify external links
 }
 
 const navItems: NavItem[] = [
@@ -20,39 +23,41 @@ const navItems: NavItem[] = [
     label: "المراكز والوحدات",
     hasDropdown: true,
     dropdown: [
-      { label: "مركز البحوث", href: "#" },
-      { label: "مركز التطوير", href: "#" },
-      { label: "وحدة الجودة", href: "#" },
-      { label: "مركز الحاسوب", href: "#" },
+      { label: "مركز التميز والتدريب", href: "#" },
+      // { label: "مركز التطوير", href: "#" },
+      // { label: "وحدة الجودة", href: "#" },
+      // { label: "مركز الحاسوب", href: "#" },
     ],
   },
-  { label: "مكتب التنسيق والقبول", hasDropdown: false },
+  { label: "مكتب التنسيق والقبول", hasDropdown: false, href: "/CoordinationOffice" },
   {
     label: "الحياة الجامعية",
     hasDropdown: true,
     dropdown: [
-      { label: "الأنشطة الطلابية", href: "#" },
-      { label: "السكن الجامعي", href: "#" },
-      { label: "المرافق", href: "#" },
-      { label: "النوادي الطلابية", href: "#" },
+      { label: "بوابه الخدمات الطلابيه", href: "#" },
+      { label: "دليل الطالب", href: "#" },
+      { label: "الميثاق الاخلاقي لطالب", href: "#" },
+      { label: "بنك المعرفه المصري", href: "https://www.ekb.eg/", external: true },
+      { label: "الاسكان الجامعي", href: "#" },
+      
     ],
   },
-  { label: "الكليات والبرامج", hasDropdown: false },
+  { label: "الكليات والبرامج", hasDropdown: false, href: "/collages" },
   {
     label: "عن الجامعة",
     hasDropdown: true,
     dropdown: [
-      { label: "مجلس الأمناء", href: "#" },
-      { label: "كلمة رئيس الجامعة", href: "#" },
-      { label: "رؤية ورسالة الجامعة", href: "#" },
-      { label: "ملفات هامة", href: "#" },
-      { label: "الأسئلة الشائعة", href: "#" },
-      { label: "الوظائف الشاغرة", href: "#" },
-      { label: "الخدمات الإلكترونية", href: "#" },
-      { label: "اتصل بنا", href: "#" },
+      { label: "مجلس الأمناء", href: "UniversityBoardOfTrustees" },
+      { label: "كلمة رئيس الجامعة", href: "UniversityPresidentSpeech" },
+      { label: "رؤية ورسالة الجامعة", href: "UniversityVision" },
+      { label: "ملفات هامة", href: "ImportantFiles" },
+      { label: "الأسئلة الشائعة", href: "Q&A" },
+      { label: "الوظائف الشاغرة", href: "jobs" },
+      { label: "الخدمات الإلكترونية", href: "UniversitySystems" },
+      { label: "اتصل بنا", href: "contact-us" },
     ],
   },
-  { label: "الرئيسية", hasDropdown: false },
+  { label: "الرئيسية", hasDropdown: false, href: "/" },
 ];
 
 // Dropdown Component for Desktop
@@ -64,13 +69,25 @@ const Dropdown: FC<{ items: DropdownItem[] }> = ({ items }) => {
 
       <div className="space-y-1 relative z-20">
         {items.map((item, index) => (
-          <a
-            key={index}
-            href={item.href || "#"}
-            className="block px-6 py-3 text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors duration-200 text-right"
-          >
-            {item.label}
-          </a>
+          item.external ? (
+            <a
+              key={index}
+              href={item.href || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block px-6 py-3 text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors duration-200 text-right"
+            >
+              {item.label}
+            </a>
+          ) : (
+            <Link
+              key={index}
+              href={item.href || "#"}
+              className="block px-6 py-3 text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors duration-200 text-right"
+            >
+              {item.label}
+            </Link>
+          )
         ))}
       </div>
     </div>
@@ -129,6 +146,10 @@ const MobileSidebar: FC<{
                   onClick={() => {
                     if (item.hasDropdown) {
                       onDropdownToggle(item.label);
+                    } else if (item.href) {
+                      // Navigate to the href
+                      window.location.href = item.href;
+                      onClose(); // Close sidebar after navigation
                     } else {
                       // Handle navigation for non-dropdown items
                       console.log(`Navigating to: ${item.label}`);
@@ -157,16 +178,30 @@ const MobileSidebar: FC<{
                     <div className="mt-2 mb-4 bg-gray-50 rounded-lg overflow-hidden">
                       <div className="space-y-0">
                         {item.dropdown.map((dropdownItem, dropdownIndex) => (
-                          <a
-                            key={dropdownIndex}
-                            href={dropdownItem.href || "#"}
-                            onClick={onClose} // Close sidebar after navigation
-                            className="block py-3 px-6 pr-12 text-gray-600 hover:text-blue-600 hover:bg-white border-b border-gray-200 last:border-b-0 transition-colors duration-200 text-right relative"
-                          >
-                            <span className="text-sm">
-                              • {dropdownItem.label}
-                            </span>
-                          </a>
+                          dropdownItem.external ? (
+                            <a
+                              key={dropdownIndex}
+                              href={dropdownItem.href || "#"}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="block py-3 px-6 pr-12 text-gray-600 hover:text-blue-600 hover:bg-white border-b border-gray-200 last:border-b-0 transition-colors duration-200 text-right relative"
+                            >
+                              <span className="text-sm">
+                                • {dropdownItem.label}
+                              </span>
+                            </a>
+                          ) : (
+                            <Link
+                              key={dropdownIndex}
+                              href={dropdownItem.href || "#"}
+                              onClick={onClose}
+                              className="block py-3 px-6 pr-12 text-gray-600 hover:text-blue-600 hover:bg-white border-b border-gray-200 last:border-b-0 transition-colors duration-200 text-right relative"
+                            >
+                              <span className="text-sm">
+                                • {dropdownItem.label}
+                              </span>
+                            </Link>
+                          )
                         ))}
                       </div>
                     </div>
@@ -255,11 +290,11 @@ const Header: FC = () => {
                     item.hasDropdown && setHoveredDropdown(null)
                   }
                 >
-                  <div className="flex items-center cursor-pointer relative after:absolute after:bottom-[-2px] after:right-0 after:h-[2px] after:w-0 after:bg-black after:transition-all after:duration-300 group-hover:after:w-full">
-                    <span className="text-black font-bold text-sm xl:text-base whitespace-nowrap">
-                      {item.label}
-                    </span>
-                    {item.hasDropdown && (
+                  {item.hasDropdown ? (
+                    <div className="flex items-center cursor-pointer relative after:absolute after:bottom-[-2px] after:right-0 after:h-[2px] after:w-0 after:bg-black after:transition-all after:duration-300 group-hover:after:w-full">
+                      <span className="text-black font-bold text-sm xl:text-base whitespace-nowrap">
+                        {item.label}
+                      </span>
                       <div className="ml-2">
                         {hoveredDropdown === item.label ? (
                           <ChevronUp size={16} className="text-gray-400" />
@@ -267,8 +302,17 @@ const Header: FC = () => {
                           <ChevronDown size={16} className="text-gray-400" />
                         )}
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  ) : (
+                    <Link
+                      href={item.href || "#"}
+                      className="flex items-center cursor-pointer relative after:absolute after:bottom-[-2px] after:right-0 after:h-[2px] after:w-0 after:bg-black after:transition-all after:duration-300 group-hover:after:w-full"
+                    >
+                      <span className="text-black font-bold text-sm xl:text-base whitespace-nowrap">
+                        {item.label}
+                      </span>
+                    </Link>
+                  )}
 
                   {item.hasDropdown &&
                     hoveredDropdown === item.label &&
@@ -293,15 +337,17 @@ const Header: FC = () => {
 
             {/* Logo */}
             <div className="flex-shrink-0">
-              <Image
-                src={logo}
-                alt="Logo"
-                className={`object-contain rounded-full transition-all duration-300 ${
-                  scrolled
-                    ? "h-10 w-10 sm:h-12 sm:w-12"
-                    : "h-12 w-12 sm:h-16 sm:w-16 lg:h-20 lg:w-20"
-                }`}
-              />
+              <Link href="/">
+                <Image
+                  src={logo}
+                  alt="Logo"
+                  className={`object-contain rounded-full transition-all duration-300 cursor-pointer ${
+                    scrolled
+                      ? "h-10 w-10 sm:h-12 sm:w-12"
+                      : "h-12 w-12 sm:h-16 sm:w-16 lg:h-20 lg:w-20"
+                  }`}
+                />
+              </Link>
             </div>
           </div>
         </div>
