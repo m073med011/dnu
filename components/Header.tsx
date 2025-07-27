@@ -341,7 +341,7 @@ const Header: FC = () => {
                 <Image
                   src={logo}
                   alt="Logo"
-                  className={`object-contain rounded-full transition-all duration-300 cursor-pointer ${
+                  className={`object-contain w-[clamp(70.00px,5vw,112.50px)]  rounded-full transition-all duration-300 cursor-pointer ${
                     scrolled
                       ? "translate-y-6"
                       : ""

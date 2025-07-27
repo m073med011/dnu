@@ -2,24 +2,17 @@
 
 import React from "react";
 import { ChevronRight } from "lucide-react";
-import  Link  from "next/link";
+import Link from "next/link";
+import Page from "@/components/Hero-section"; // Import your reusable Page component
 
-export default function JobsPage() {
+const JobsContent = () => {
   return (
-    <div className="w-full h-full mx-auto py-15 lg:py-0  bg-white overflow-hidden">
-      <div
-        className="mx-auto text-center text-[#677AE4] font-bold"
-        style={{ fontSize: "clamp(20px, 3.75vw, 48px)" ,
-                      marginTop: "clamp(20px, 2vw, 80px)",
-
-        }}
-      >
-        الوظائف الشاغرة
-      </div>
+    <div className="w-full h-full mx-auto py-15 lg:py-0 bg-white overflow-hidden">
       <div
         className="mx-auto flex flex-col items-center gap-4"
         style={{
           width: "clamp(300px, 87.5vw, 1120px)",
+          marginTop: "clamp(20px, 2vw, 80px)",
         }}
       >
         <div className="w-full flex flex-col items-start gap-4">
@@ -43,7 +36,7 @@ export default function JobsPage() {
                 style={{ width: "clamp(150px, 30.86vw, 395px)" }}
               >
                 <div
-                  className="text-[#754FA8] font-medium"
+                  className="text-[#433E78] font-medium"
                   style={{
                     width: "clamp(60px, 8.05vw, 103px)",
                     fontSize: "clamp(14px, 1.88vw, 24px)",
@@ -53,11 +46,11 @@ export default function JobsPage() {
                 </div>
               </div>
               <div
-                className=" flex lg:justify-end justify-center items-end "
+                className="flex lg:justify-end justify-center items-end"
                 style={{ width: "clamp(150px, 30.86vw, 395px)" }}
               >
                 <div
-                  className="text-[#754FA8] font-medium text-right sm:text-center"
+                  className="text-[#433E78] font-medium text-right sm:text-center"
                   style={{
                     width: "clamp(40px, 5.23vw, 67px)",
                     fontSize: "clamp(14px, 1.88vw, 24px)",
@@ -69,9 +62,8 @@ export default function JobsPage() {
             </div>
 
             {[1, 2, 3, 4, 5].map((item, index) => (
-                
-                // <>
-              <Link href={`/jobs/${index}`}
+              <Link 
+                href={`/jobs/${index}`}
                 key={index}
                 className={`w-full px-4 ${
                   index % 2 === 0 ? "bg-[#F9F9F9]" : "bg-white"
@@ -82,7 +74,7 @@ export default function JobsPage() {
                 }}
               >
                 <div
-                  className="p-3 bg-[#EBCBFF] rounded-full flex justify-center items-center hover:shadow-lg hover:scale-102 transition-all duration-300"
+                  className="p-3 bg-[#EFF3FF] rounded-full flex justify-center items-center hover:shadow-lg hover:scale-102 transition-all duration-300"
                   style={{ width: "clamp(20px, 11.88vw, 152px)" }}
                 >
                   <div
@@ -93,7 +85,7 @@ export default function JobsPage() {
                   </div>
                 </div>
                 <div
-                  className="p-3 bg-[#EBCBFF] rounded-full flex justify-center items-center hover:shadow-lg hover:scale-102 transition-all duration-300"
+                  className="p-3 bg-[#EFF3FF] rounded-full flex justify-center items-center hover:shadow-lg hover:scale-102 transition-all duration-300"
                   style={{ width: "clamp(100px, 16.02vw, 205px)" }}
                 >
                   <div
@@ -114,7 +106,6 @@ export default function JobsPage() {
                   </div>
                 </div>
               </Link>
-              
             ))}
           </div>
         </div>
@@ -158,5 +149,14 @@ export default function JobsPage() {
         </div>
       </div>
     </div>
+  );
+};
+
+export default function JobsPage() {
+  return (
+    <Page 
+      title="الوظائف الشاغرة" 
+      content={<JobsContent />} 
+    />
   );
 }

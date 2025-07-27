@@ -1,7 +1,8 @@
-import BgPage from "@/public/collages/BgPage.png";
+// import BgPage from "@/public/collages/BgPage.png";
 import image from "@/public/Trustees/image.png";
 import Image from "next/image";
 import React from "react";
+import Page from "@/components/Hero-section"; // Import your reusable Page component
 
 // Profile data array
 const profileData = [
@@ -111,26 +112,17 @@ const FeaturedProfileCard: React.FC<{
   profile: (typeof featuredProfiles)[0];
 }> = ({ profile }) => (
   <div className="p-4 sm:p-5 md:p-6 bg-gray-50 rounded-2xl flex flex-col justify-center items-center gap-3 sm:gap-4 md:gap-5 transition-all duration-300 hover:scale-105 hover:bg-white group w-full max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-xl">
-    {/* <div className="w-full h-48 sm:h-60 md:h-72 lg:h-80 xl:h-96 relative overflow-hidden rounded-2xl">
+    <div className="w-full overflow-hidden rounded-2xl">
       <Image
         src={profile.image}
         alt={profile.name}
-        fill
-        className="object-cover transition-transform duration-300 group-hover:scale-110"
+        width={0}
+        height={0}
         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+        className="w-full h-auto transition-transform duration-300 group-hover:scale-110"
+        style={{ width: '100%', height: 'auto' }}
       />
-    </div> */}
-    <div className="w-full overflow-hidden rounded-2xl">
-  <Image
-    src={profile.image}
-    alt={profile.name}
-    width={0}
-    height={0}
-    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-    className="w-full h-auto transition-transform duration-300 group-hover:scale-110"
-    style={{ width: '100%', height: 'auto' }}
-  />
-</div>
+    </div>
     <div className="w-full flex flex-col justify-center items-center gap-2 sm:gap-3 md:gap-4">
       <div className="w-full text-center text-black text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-inter font-bold break-words transition-colors duration-300 group-hover:text-[#677AE4] leading-tight">
         {profile.name}
@@ -155,7 +147,7 @@ const ProfileCardsDiv: React.FC = () => {
   );
 };
 
-const ProfiletowCardsDiv: React.FC = () => {
+const ProfileTwoCardsDiv: React.FC = () => {
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 sm:mb-10 md:mb-12">
       <div className="flex flex-col lg:flex-row justify-center items-center gap-6 sm:gap-8 md:gap-10 lg:gap-12 xl:gap-16">
@@ -167,34 +159,16 @@ const ProfiletowCardsDiv: React.FC = () => {
   );
 };
 
-const page = () => {
-  return (
-    <main className="w-full min-h-screen">
-      {/* Hero Section */}
-      <section className="relative w-full flex items-center justify-center text-black font-bold px-4 sm:px-6 lg:px-8 h-48 sm:h-60 md:h-72 lg:h-80 xl:h-96">
-        {/* Gradient Overlay at the bottom */}
-        <div className="absolute bottom-0 left-0 right-0 h-1/2 z-10 bg-gradient-to-t from-white to-white/0" />
-
-        <Image
-          src={BgPage}
-          alt="Background"
-          fill
-          className="z-0 object-cover"
-          priority
-          sizes="100vw"
-        />
-
-        <div className="w-full z-20 text-center text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl text-gradient-primary font-inter font-bold break-words">
-          مجلس أمناء الجامعة
-        </div>
-      </section>
-
+const TrusteesPage = () => {
+  // Define the content that will be passed to the Page component
+  const pageContent = (
+    <>
       {/* Featured Profiles Section */}
-      <ProfiletowCardsDiv />
+      <ProfileTwoCardsDiv />
 
       {/* Section Divider */}
       <section className="w-full py-4 sm:py-6 md:py-8 mb-8 sm:mb-10 md:mb-12">
-        <div className="w-full h-full py-4 sm:py-6 md:py-8 lg:py-10 bg-gradient-to-r from-white via-[#677AE4] via-[#754FA8] to-white flex justify-center items-center">
+        <div className="w-full h-full py-4 sm:py-6 md:py-8 lg:py-10 bg-gradient-to-r from-[#899FCF] to-[#433E78] flex justify-center items-center">
           <div className="text-center text-white text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-inter font-bold break-words px-4">
             مجلس أمناء الجامعة
           </div>
@@ -203,8 +177,15 @@ const page = () => {
 
       {/* Profile Cards Section */}
       <ProfileCardsDiv />
-    </main>
+    </>
+  );
+
+  return (
+    <Page 
+      title="مجلس الأمناء" 
+      content={pageContent} 
+    />
   );
 };
 
-export default page;
+export default TrusteesPage;

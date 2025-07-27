@@ -1,18 +1,15 @@
 import { ChevronUp, ChevronLeft, ChevronRight } from "lucide-react";
+import Page from "@/components/Hero-section"; // Import your reusable Page component
 
-export default function AdmissionOfficePage() {
+const AdmissionOfficeContent = () => {
   return (
-    <div className="w-full min-h-screen bg-white overflow-hidden max-w-[1440px] mx-auto px-[clamp(8px,2vw,80px)] mb-5">
-      <h1 className="text-center text-[clamp(20px,6vw,58px)] text-gradient-primary font-bold mb-2">
-        مكتب التنسيق والقبول
-      </h1>
-
+    <div className="w-full bg-white overflow-hidden max-w-[1440px] mx-auto px-[clamp(8px,2vw,80px)] mb-5">
       {/* Navigation Tabs (Bottom bar without header) */}
       <div className="flex flex-col gap-[clamp(8px,2vw,16px)] px-[clamp(8px,4vw,80px)]">
         <div>
           <div className="inline-flex px-3 py-1 rounded-full border border-[#677AE4] w-max mx-auto gap-2">
             <ChevronUp size={30} />
-            <span className="text-[clamp(14px,3vw,20px)] text-[#754FA8] font-medium">
+            <span className="text-[clamp(14px,3vw,20px)] text-[#433E78] font-medium">
               10
             </span>
           </div>
@@ -21,21 +18,21 @@ export default function AdmissionOfficePage() {
         {/* Table Header - Mobile Responsive */}
         <div className="hidden md:flex justify-between items-center border-y border-black py-4 px-2">
           <div className="flex gap-26 px-14">
-            <span className="text-[#754FA8] text-[clamp(16px,2vw,24px)] font-medium">
+            <span className="text-[#433E78] text-[clamp(16px,2vw,24px)] font-medium">
               الزيارات
             </span>
-            <span className="text-[#754FA8] text-[clamp(16px,2vw,24px)] font-medium">
+            <span className="text-[#433E78] text-[clamp(16px,2vw,24px)] font-medium">
               تاريخ النشر
             </span>
           </div>
-          <span className="text-[#754FA8] text-[clamp(16px,2vw,24px)] font-medium">
+          <span className="text-[#433E78] text-[clamp(16px,2vw,24px)] font-medium">
             العنوان
           </span>
         </div>
 
         {/* Mobile Header */}
         <div className="md:hidden border-y border-black py-3 px-2">
-          <span className="text-[#754FA8] text-[clamp(16px,4vw,20px)] font-medium block text-center">
+          <span className="text-[#433E78] text-[clamp(16px,4vw,20px)] font-medium block text-center">
             المنشورات
           </span>
         </div>
@@ -61,10 +58,10 @@ export default function AdmissionOfficePage() {
               
               {/* Date and Views */}
               <div className="flex justify-between items-center gap-2">
-                <div className="bg-[#EBCBFF] rounded-full py-2 px-4 text-black text-[clamp(12px,3vw,16px)] font-medium">
+                <div className="bg-[#F9F9F9] rounded-full py-2 px-4 text-black text-[clamp(12px,3vw,16px)] font-medium">
                   3401 زيارة
                 </div>
-                <div className="bg-[#EBCBFF] rounded-full py-2 px-4 text-black text-[clamp(12px,3vw,16px)] font-medium flex gap-1">
+                <div className="bg-[#F9F9F9] rounded-full py-2 px-4 text-black text-[clamp(12px,3vw,16px)] font-medium flex gap-1">
                   <span>04</span>
                   <span>يوليو</span>
                   <span>2025</span>
@@ -74,10 +71,10 @@ export default function AdmissionOfficePage() {
 
             {/* Desktop Layout */}
             <div className="hidden md:flex md:items-center md:gap-8 md:w-full">
-              <div className="w-[152px] bg-[#EBCBFF] rounded-full py-3 px-6 text-center text-black text-[clamp(14px,2vw,20px)] font-medium">
+              <div className="w-[152px] bg-[#F9F9F9] rounded-full py-3 px-6 text-center text-black text-[clamp(14px,2vw,20px)] font-medium">
                 3401
               </div>
-              <div className="w-[205px] bg-[#EBCBFF] rounded-full py-3 px-6 text-black text-[clamp(14px,2vw,20px)] font-medium flex justify-center gap-2">
+              <div className="w-[205px] bg-[#F9F9F9] rounded-full py-3 px-6 text-black text-[clamp(14px,2vw,20px)] font-medium flex justify-center gap-2">
                 <span>2025</span>
                 <span>يوليو</span>
                 <span>04</span>
@@ -96,8 +93,8 @@ export default function AdmissionOfficePage() {
 
         {/* Pagination */}
         <div className="flex justify-center items-center gap-3 md:gap-4 mt-[clamp(16px,4vw,32px)]">
-          <ChevronLeft size={15} className="text-[#754FA8]" />
-          <span className="text-[#754FA8] underline text-[clamp(12px,3vw,20px)] font-medium">
+          <ChevronLeft size={15} className="text-[#433E78]" />
+          <span className="text-[#433E78] underline text-[clamp(12px,3vw,20px)] font-medium">
             1
           </span>
           <span className="text-[#E2E2E2] text-[clamp(12px,3vw,20px)] font-medium">
@@ -109,9 +106,18 @@ export default function AdmissionOfficePage() {
           <span className="text-[#E2E2E2] text-[clamp(12px,3vw,20px)] font-medium">
             4
           </span>
-          <ChevronRight size={15} className="text-[#754FA8]" />
+          <ChevronRight size={15} className="text-[#433E78]" />
         </div>
       </div>
     </div>
+  );
+};
+
+export default function AdmissionOfficePage() {
+  return (
+    <Page 
+      title="مكتب التنسيق والقبول" 
+      content={<AdmissionOfficeContent />} 
+    />
   );
 }

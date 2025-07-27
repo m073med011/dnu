@@ -1,8 +1,12 @@
-import BgPage from "@/public/home/Background.jpg";
 import Image from "next/image";
-import FeesContent from "./content";
+import BgPage from "@/public/home/Background.jpg";
 
-const page = () => {
+interface PageProps {
+  title: string;
+  content: React.ReactNode;
+}
+
+const Page: React.FC<PageProps> = ({ title, content }) => {
   return (
     <main className="w-full h-full">
       {/* Hero Section */}
@@ -21,15 +25,24 @@ const page = () => {
           priority
         />
 
-        <div className="w-full text-[#433E78] bottom-[clamp(100px,10vw,200px)] absolute z-20 text-center text-2xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl  font-bold  transition-all duration-500 group-hover:translate-y-[-4px] ">
-          المصروفات الدراسية
+        <div
+          className="w-full text-center text-[#433E78] font-bold transition-all duration-500 absolute z-20"
+          style={{
+            fontSize: "clamp(1.5rem, 3.8vw,3.8vw)", // This will set the font size using clamp for responsive scaling
+            fontFamily: "Cairo",
+            bottom: "clamp(70px, 10vw, 200px)", // Responsive clamp for bottom position
+            wordWrap: "break-word",
+          }}
+        >
+          {title}
         </div>
       </section>
+
       <div className="w-full relative lg:-top-[7vw] -top-[12vw] ">
-        <FeesContent />
+        {content}
       </div>
     </main>
   );
 };
 
-export default page;
+export default Page;

@@ -21,11 +21,11 @@ const page = () => {
           priority
         />
 
-        <div className="w-full text-[#433E78] bottom-45 absolute z-20 text-center text-2xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl  font-bold  transition-all duration-500 group-hover:translate-y-[-4px] ">
+        <div className="w-full text-[#433E78] bottom-[clamp(100px,10vw,200px)] absolute z-20 text-center text-2xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl  font-bold  transition-all duration-500 group-hover:translate-y-[-4px] ">
           كليات الجامعة و البرامج
         </div>
       </section>
-      <div className="transition-all duration-300 hover:translate-y-[-2px]">
+      <div className="relative lg:-top-[7vw] -top-[12vw]">
         <FacultiesSection />
       </div>
     </main>

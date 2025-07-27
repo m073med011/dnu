@@ -3,16 +3,14 @@
 import Image from "next/image";
 import image from "@/public/Trustees/image.png";
 import bi_stars from "@/public/bi_stars.svg";
-const PresidentMessage = () => {
+import Page from "@/components/Hero-section"; // Import your reusable Page component
+
+const PresidentMessageContent = () => {
   return (
     <section className="mx-auto max-w-[1440px] min-w-[320px] w-[clamp(320px,90vw,1280px)] lg:py-10 md:py-0 py-14 mt-25 lg:mt-0 px-4 lg:px-14">
-      {/* <h2 className=" block sm:hidden  w-full text-[clamp(20px,3vw,32px)] font-bold text-[#6F42C1] mb-[clamp(16px,3vw,24px)] text-center lg:text-right lg:hover:text-[#8B5CF6]  lg:duration-300 lg:hover:scale-105 lg:transform lg:transition-transform">
-        كلمة رئيس الجامعة
-      </h2> */}
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-[clamp(16px,4vw,32px)] items-start">
         <div className="flex flex-col items-center lg:items-start relative lg:hover:scale-105 lg:transition-transform lg:duration-500">
-          <div className="z-10 hidden lg:flex top-80 left-[30%] w-[clamp(109.80px,28.59vw,411.75px)] px-6 py-2 bg-[#F9F9F9] rounded-2xl border border-[#B3B3B3]  flex-col relative gap-2 mb-3 lg:hover:bg-white lg:hover:border-[#6F42C1] lg:hover:shadow-lg lg:transition-all lg:duration-300 lg:hover:-translate-y-1">
+          <div className="z-10 hidden lg:flex top-80 left-[30%] w-[clamp(109.80px,28.59vw,411.75px)] px-6 py-2 bg-[#F9F9F9] rounded-2xl border border-[#B3B3B3] flex-col relative gap-2 mb-3 lg:hover:bg-white lg:hover:border-[#6F42C1] lg:hover:shadow-lg lg:transition-all lg:duration-300 lg:hover:-translate-y-1">
             <div className="text-right">
               <p className="text-black text-[24px] font-medium text-right lg:hover:text-[#6F42C1] lg:transition-colors lg:duration-300">
                 أ.د/ السيد أحمد
@@ -24,8 +22,8 @@ const PresidentMessage = () => {
             <Image
               alt="img stars"
               src={bi_stars}
-              className="absolute top-[55%] right-[80%]  lg:hover:rotate-12 lg:transition-transform lg:duration-300"
-            />{" "}
+              className="absolute top-[55%] right-[80%] lg:hover:rotate-12 lg:transition-transform lg:duration-300"
+            />
           </div>
 
           <div>
@@ -51,7 +49,7 @@ const PresidentMessage = () => {
         </div>
 
         <div className="text-center lg:text-right lg:hover:scale-105 lg:transition-transform lg:duration-500">
-          <h2 className="block text-[clamp(20px,3vw,32px)] font-bold text-[#6F42C1] mb-[clamp(16px,3vw,24px)] text-center lg:text-right lg:hover:text-[#8B5CF6]  lg:duration-300 lg:hover:scale-105 lg:transform lg:transition-transform">
+          <h2 className="block text-[clamp(20px,3vw,32px)] font-bold text-[#433E78] mb-[clamp(16px,3vw,24px)] text-center lg:text-right lg:hover:text-[#8B5CF6] lg:duration-300 lg:hover:scale-105 lg:transform lg:transition-transform">
             كلمة رئيس الجامعة
           </h2>
           <h3 className="text-[clamp(16px,2.5vw,20px)] text-center font-bold mb-[clamp(8px,2vw,12px)] lg:hover:text-[#6F42C1] lg:transition-colors lg:duration-300">
@@ -68,7 +66,7 @@ const PresidentMessage = () => {
             السياسية.
           </p>
 
-          <p className="mb-[clamp(12px,2vw,16px)] leading-relaxed font-bold lg:hover:text-[#4A4A4A]  lg:duration-300 lg:hover:scale-105 lg:transform lg:transition-transform">
+          <p className="mb-[clamp(12px,2vw,16px)] leading-relaxed font-bold lg:hover:text-[#4A4A4A] lg:duration-300 lg:hover:scale-105 lg:transform lg:transition-transform">
             وتتميز جامعة دمياط الأهلية بعدد من البرامج والتخصصات المتميزة التي
             تواكب احتياجات سوق العمل، وتحرص الجامعة على تعزيز منهجيات البحث
             المستمر والتعلم النشط من خلال تقديم برامج تعليمية مُتميزة في إطار
@@ -83,12 +81,21 @@ const PresidentMessage = () => {
             ورقي وطننا الحبيب.
           </p>
 
-          <p className=" mb-[clamp(12px,2vw,16px)] font-bold lg:hover:text-[#6F42C1]  lg:duration-300 lg:hover:scale-110 lg:transform lg:transition-transform">
+          <p className="mb-[clamp(12px,2vw,16px)] font-bold lg:hover:text-[#6F42C1] lg:duration-300 lg:hover:scale-110 lg:transform lg:transition-transform">
             والله ولي التوفيق
           </p>
         </div>
       </div>
     </section>
+  );
+};
+
+const PresidentMessage = () => {
+  return (
+    <Page 
+      title="كلمة رئيس الجامعة" 
+      content={<PresidentMessageContent />} 
+    />
   );
 };
 

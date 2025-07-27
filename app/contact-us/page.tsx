@@ -6,24 +6,24 @@ export default function ContactUsPage() {
   return (
     <div className=" mx-auto max-w-[1440px] bg-white relative">
       {/* Blurred Background Circles */}
-      <div className="absolute w-[617px] h-[617px] left-[-114px] top-[561px] bg-[#754FA8] rounded-full blur-[300px]" />
-      <div className="absolute w-[504px] h-[504px] left-[1000px] top-[-148px] bg-gradient-to-br from-[#677AE4] to-[#754FA8] rounded-full blur-[300px]" />
+      <div className="absolute w-[617px] h-[617px] left-[-114px] top-[561px] bg-[#433E78] rounded-full blur-[300px]" />
+      <div className="absolute w-[504px] h-[504px] left-[1000px] top-[-148px] bg-gradient-to-br from-[#677AE4] to-[#433E78] rounded-full blur-[300px]" />
       <div className="absolute w-[253px] h-[253px] left-[999px] top-[578px] bg-[#DBA1FF] rounded-full blur-[150px]" />
       <div className="absolute w-[253px] h-[253px] left-[250px] top-[65px] bg-[#677AE4] rounded-full blur-[150px]" />
 
       {/* Contact Box - Now centered */}
       <div className="flex justify-center items-start py-[64px] px-4">
         <div className="bg-white rounded-2xl p-10 flex flex-col items-center gap-8 shadow-xl w-full max-w-[720px] relative z-10">
-          <h1 className="text-[32px] font-bold text-[#677AE4]">اتصل بنا</h1>
+          <h1 className="text-[32px] font-bold text-gradient-primary">اتصل بنا</h1>
 
           {/* Info Section */}
           <div className="w-full flex flex-col gap-4">
             <div className="flex flex-col items-end gap-1">
               <div className="flex items-center gap-2">
-                <span className="text-[16px] font-bold text-[#754FA8]">
+                <span className="text-[16px] font-bold text-[#433E78]">
                   البريد الالكتروني
                 </span>
-                <Mail size={20} className="text-[#754FA8]" />
+                <Mail size={20} className="text-[#433E78]" />
               </div>
               <p className="text-right text-sm text-black/60">
                 Nursing@Damietta.edu.eg
@@ -32,10 +32,10 @@ export default function ContactUsPage() {
 
             <div className="flex flex-col items-end gap-1">
               <div className="flex items-center gap-2">
-                <span className="text-[16px] font-bold text-[#754FA8]">
+                <span className="text-[16px] font-bold text-[#433E78]">
                   العنوان
                 </span>
-                <MapPin size={20} className="text-[#754FA8]" />
+                <MapPin size={20} className="text-[#433E78]" />
               </div>
               <p className="text-right text-sm text-black/60">
                 الطريق الدولي الساحلي - مدينة دمياط الجديدة - محافظة دمياط

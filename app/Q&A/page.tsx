@@ -1,11 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
-import BgPage from "@/public/collages/BgPage.png";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import Page from "@/components/Hero-section"; // Import your reusable Page component
 
-export default function FAQPage() {
+const FAQContent = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const toggleItem = (index: number) => {
@@ -13,23 +12,7 @@ export default function FAQPage() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-white overflow-hidden">
-      <section className="relative w-full flex items-center justify-center text-black font-bold group overflow-hidden h-[282px]">
-        <div className="absolute bottom-0 left-0 right-0 h-1/2 z-10 bg-gradient-to-t from-white to-transparent transition-all duration-700 ease-in-out group-hover:h-2/3" />
-
-        <Image
-          src={BgPage}
-          alt="Background"
-          fill
-          className="object-cover z-0 transition-transform duration-1000 ease-out group-hover:scale-105"
-          priority
-        />
-
-        <div className="w-full z-20 text-center text-[48px] text-[#677AE4] font-[700] leading-none">
-          أسئلة وأجوبة
-        </div>
-      </section>
-
+    <div className="w-full bg-white overflow-hidden">
       <section className="w-full max-w-[1120px] pb-[2vw] mx-auto px-4 flex flex-col items-center gap-8">
         {[...Array(4)].map((_, i) => (
           <div
@@ -40,7 +23,7 @@ export default function FAQPage() {
               className="w-full flex justify-between items-center cursor-pointer transition-all duration-400 ease-in-out"
               onClick={() => toggleItem(i)}
             >
-              <div className="w-12 h-12 bg-gradient-to-br from-[#677AE4] to-[#754FA8] rounded-[30px] flex items-center justify-center transition-all duration-600 ease-out hover:shadow-lg hover:shadow-[#677AE4]/30 hover:rotate-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-[#899FCF] to-[#433E78] rounded-[30px] flex items-center justify-center transition-all duration-600 ease-out hover:shadow-lg hover:shadow-[#677AE4]/30 hover:rotate-3">
                 {openIndex === i ? (
                   <ChevronUp className="text-white w-5 h-5 transition-all duration-500 ease-in-out" />
                 ) : (
@@ -60,5 +43,14 @@ export default function FAQPage() {
         ))}
       </section>
     </div>
+  );
+};
+
+export default function FAQPage() {
+  return (
+    <Page 
+      title="أسئلة وأجوبة" 
+      content={<FAQContent />} 
+    />
   );
 }
