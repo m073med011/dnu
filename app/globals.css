@@ -6,10 +6,11 @@
 
 
 :root {
-  --color-primary-start: #677AE4;
-  --color-primary-end: #754FA8;
+  --color-primary-start: #899FCF;
+  --color-primary-end: #433E78;
   --gradient-primary: linear-gradient(135deg, var(--color-primary-start), var(--color-primary-end));
 }
+
 .gradient-bg {
   background: var(--gradient-primary);
 }

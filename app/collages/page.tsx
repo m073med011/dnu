@@ -1,4 +1,4 @@
-import BgPage from "@/public/collages/BgPage.png";
+import BgPage from "@/public/home/Background.jpg";
 import Image from "next/image";
 import FacultiesSection from "@/components/collages/FacultiesSection";
 
@@ -7,11 +7,11 @@ const page = () => {
     <main className="w-full h-full">
       {/* Hero Section */}
       <section
-        className="relative w-full flex items-center justify-center text-black font-bold group overflow-hidden"
-        style={{ height: "clamp(297.80px, 25.47vw, 366.75px)" }}
+        className="relative lg:-top-[7vw] -top-[12vw] w-full flex items-center justify-center text-black font-bold group overflow-hidden"
+        style={{ height: "clamp(297.80px, 35.47vw,35.47vw)" }}
       >
         {/* Gradient Overlay at the bottom */}
-        <div className="absolute bottom-0 left-0 right-0 h-1/2 z-10 bg-gradient-to-t from-white to-white/0 transition-all duration-500 group-hover:h-2/3" />
+        <div className="absolute bottom-0 left-0 right-0 h-3/4 z-10 bg-gradient-to-t from-white to-white/0 transition-all duration-500 group-hover:h-2/3" />
 
         <Image
           src={BgPage}
@@ -21,7 +21,7 @@ const page = () => {
           priority
         />
 
-        <div className="w-full z-20 text-center text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl text-gradient-primary font-inter font-bold break-words transition-all duration-500 group-hover:translate-y-[-4px] group-hover:drop-shadow-lg">
+        <div className="w-full text-[#433E78] bottom-45 absolute z-20 text-center text-2xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl  font-bold  transition-all duration-500 group-hover:translate-y-[-4px] ">
           كليات الجامعة و البرامج
         </div>
       </section>
