@@ -1,15 +1,23 @@
-'use client';
+"use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import Image from "next/image";
 import { StaticImageData } from "next/image";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import type { Swiper as SwiperType } from "swiper";
 
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 interface NewsItem {
   id: number;
   image: string | StaticImageData;
   title: string;
   description?: string;
+  date: string;
 }
 
 import image from "@/public/home/newsData/Rectangle.png";
@@ -18,7 +26,6 @@ import image1 from "@/public/home/newsData/Rectangle1.png";
 import image2 from "@/public/home/newsData/Rectangle2.png";
 import image3 from "@/public/home/newsData/Rectangle3.png";
 import image4 from "@/public/home/newsData/Rectangle4.png";
-// import { Bold } from "lucide-react";
 
 const newsData: NewsItem[] = [
   {
@@ -27,12 +34,24 @@ const newsData: NewsItem[] = [
     title: "فتح باب التقدم إلكترونيًا للطلاب الحاصلين على الشهادات المعادلة",
     description:
       "تُعلن جامعة دمياط الأهلية عن فتح باب التقدم إلكترونيًا للطلاب الحاصلين على الشهادات المعادلة",
+    date: new Date("2025-01-10").toLocaleDateString("ar-EG", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }),
   },
   {
     id: 2,
     image: image0,
     title:
       "جامعة دمياط الأهلية توقع بروتوكول تعاون مع مركز البحوث الطبية والطب التجديدي",
+    description:
+      "تُعلن جامعة دمياط الأهلية عن فتح باب التقدم إلكترونيًا للطلاب الحاصلين على الشهادات المعادلة",
+    date: new Date("2025-01-08").toLocaleDateString("ar-EG", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }),
   },
   {
     id: 3,
@@ -40,6 +59,11 @@ const newsData: NewsItem[] = [
     title: "يفتتح قمة جامعات إقليم الدلتا للاستدامة والتنمية",
     description:
       "تُعلن جامعة دمياط الأهلية عن فتح باب التقدم إلكترونيًا للطلاب الحاصلين على الشهادات المعادلة",
+    date: new Date("2025-01-05").toLocaleDateString("ar-EG", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }),
   },
   {
     id: 4,
@@ -47,6 +71,11 @@ const newsData: NewsItem[] = [
     title: "يفتتح قمة جامعات إقليم الدلتا للاستدامة والتنمية",
     description:
       "تُعلن جامعة دمياط الأهلية عن فتح باب التقدم إلكترونيًا للطلاب الحاصلين على الشهادات المعادلة",
+    date: new Date("2025-01-03").toLocaleDateString("ar-EG", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }),
   },
   {
     id: 5,
@@ -54,46 +83,108 @@ const newsData: NewsItem[] = [
     title: "فتح باب التقدم إلكترونيًا للطلاب الحاصلين على الشهادات المعادلة",
     description:
       "تُعلن جامعة دمياط الأهلية عن فتح باب التقدم إلكترونيًا للطلاب الحاصلين على الشهادات المعادلة",
+    date: new Date("2025-01-01").toLocaleDateString("ar-EG", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }),
   },
   {
     id: 6,
     image: image4,
     title:
       "جامعة دمياط الأهلية توقع بروتوكول تعاون مع مركز البحوث الطبية والطب التجديدي",
+    description:
+      "تُعلن جامعة دمياط الأهلية عن فتح باب التقدم إلكترونيًا للطلاب الحاصلين على الشهادات المعادلة",
+    date: new Date("2024-12-28").toLocaleDateString("ar-EG", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }),
   },
 ];
 
+// Minimal Arrow Button Component
+const MinimalArrowButton: React.FC<{
+  direction: "left" | "right";
+  onClick: () => void;
+}> = ({ direction, onClick }) => {
+  return (
+    <button
+      onClick={onClick}
+      className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-sm hover:shadow-md transition-all duration-200 hover:bg-[#AAB9DD] border border-[#AAB9DD]"
+      aria-label={`${direction === "left" ? "Previous" : "Next"} slide`}
+    >
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        className="text-gray-600"
+      >
+        <path
+          d={direction === "left" ? "M15 18L9 12L15 6" : "M9 18L15 12L9 6"}
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </button>
+  );
+};
+
 const NewsCard: React.FC<{ news: NewsItem }> = ({ news }) => {
   return (
-    <div className="w-full h-full p-4 bg-[#F8F8F8] rounded-2xl flex flex-col items-start gap-3 cursor-pointer transition-all duration-300 hover:bg-white hover:shadow-lg hover:shadow-gray-200/50 hover:-translate-y-1 group">
-      {typeof news.image === 'string' ? (
-        <img 
-          className="w-full h-[clamp(120px,25vw,210px)] object-cover flex-shrink-0 transition-all duration-300 group-hover:scale-105 group-hover:rounded-lg" 
-          src={news.image} 
-          alt={news.title}
-        />
-      ) : (
-        <Image 
-          className="w-full h-[clamp(120px,25vw,210px)] object-cover flex-shrink-0 transition-all duration-300 group-hover:scale-105 group-hover:rounded-lg" 
-          src={news.image} 
-          alt={news.title}
-          width={303}
-          height={210}
-        />
-      )}
-      <div className="w-full flex flex-col items-start gap-2 flex-grow">
-        <div className="w-full flex flex-col items-start gap-2 flex-grow">
-          <div className="w-full text-right flex justify-center flex-col text-black text-[clamp(16px,2.3vw,20px)] font-medium font-['Inter'] break-words transition-colors duration-300 group-hover:text-[#677AE4]">
+    <div className="w-full h-full bg-[#F9F9F9] overflow-hidden rounded-2xl border border-[#AAB9DD] flex flex-col justify-start items-start cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-gray-200/50 hover:-translate-y-1 group">
+      {/* Image Section with Date Badge */}
+      <div className="w-full h-[334px] relative overflow-hidden rounded-t-2xl">
+        {typeof news.image === "string" ? (
+          <Image
+            width={334}
+            height={334}
+            className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
+            src={news.image}
+            alt={news.title}
+          />
+        ) : (
+          <Image
+            className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
+            src={news.image}
+            alt={news.title}
+            fill
+          />
+        )}
+
+        {/* Date Badge */}
+        <div className="absolute top-3 right-3 h-8 px-4 py-2 bg-[#433E78] rounded-xl flex justify-center items-center">
+          <div className="text-white text-xs font-bold font-['Cairo']">
+            {news.date}
+          </div>
+        </div>
+      </div>
+
+      {/* Content Section */}
+      <div className="w-full px-4 py-6 flex flex-col justify-center items-end gap-4">
+        <div className="w-full flex flex-col justify-start items-start gap-2">
+          {/* Title */}
+          <div className="w-full text-right flex justify-center flex-col text-[#433E78] text-xl font-medium font-['Cairo'] break-words transition-colors duration-300 group-hover:text-[#433E78]/80">
             {news.title}
           </div>
+
+          {/* Description */}
           {news.description && (
-            <div className="w-full text-right flex justify-center flex-col text-black/60 text-[clamp(14px,2vw,16px)] font-medium font-['Inter'] break-words">
+            <div className="w-full text-right flex justify-center flex-col text-black/60 text-base font-medium font-['Cairo'] break-words">
               {news.description}
             </div>
           )}
         </div>
-        <div className="w-full text-right flex justify-center flex-col text-[#677AE4] text-[clamp(11px,1.5vw,12px)] font-medium font-['Inter'] break-words cursor-pointer hover:text-[#5a6bd8] transition-all duration-300 mt-auto group-hover:font-bold">
-          المزيد
+
+        {/* Read More Button */}
+        <div className="h-8 px-4 py-2 rounded-xl border border-[#899FCF] flex justify-center items-center cursor-pointer hover:bg-[#899FCF]/10 transition-all duration-300">
+          <div className="text-[#433E78] text-xs font-bold font-['Cairo']">
+            اقرأ المزيد
+          </div>
         </div>
       </div>
     </div>
@@ -101,43 +192,124 @@ const NewsCard: React.FC<{ news: NewsItem }> = ({ news }) => {
 };
 
 const UniversityNews: React.FC = () => {
-  return (
-    <div className="w-full h-full flex flex-col items-center gap-4 p-[clamp(24.00px,6.25vw,90.00px)]">
-      {/* Header */}
-      <div className="w-full h-auto py-2  flex justify-center font-bold items-center">
-        <div className="font-bold" style={{textAlign: 'center', color: '#677AE4', fontSize: 32, fontFamily: 'Inter', fontWeight: '700', wordWrap: 'break-word'}}>أخبار الجامعة</div>
+  const swiperRef = useRef<SwiperType | null>(null);
 
+  return (
+    <div className="w-full max-w-[1920px] mx-auto h-full flex flex-col items-center gap-8 p-[clamp(24px,6.25vw,90px)]">
+      {/* Header */}
+      <div className="w-full  h-auto  justify-center font-bold items-center">
+        <div className="font-bold text-center text-[#433E78] text-[32px] pb-[1vw] font-['Cairo']">
+          أخبار الجامعة
+        </div>
+        <div
+          style={{
+            width: "100%",
+            textAlign: "center",
+            color: "rgba(0, 0, 0, 0.60)",
+            fontSize: 16,
+            fontFamily: "Cairo",
+            fontWeight: "500",
+            wordWrap: "break-word",
+          }}
+        >
+          آخر الأخبار و الفعاليات الأكاديمية
+        </div>
       </div>
 
-      {/* News Grid */}
-      <div className="w-full flex flex-col items-center gap-5">
-        <div className="w-full flex flex-col gap-6">
-          {/* First Row */}
-          <div className="w-full flex justify-center items-stretch gap-14 flex-wrap md:flex-nowrap">
-            {newsData.slice(0, 3).map((news) => (
-              <div key={news.id} className="flex-1 min-w-[250px]">
-                <NewsCard news={news} />
-              </div>
-            ))}
-          </div>
-          
-          {/* Second Row */}
-          <div className="w-full flex justify-center items-stretch gap-14 flex-wrap md:flex-nowrap">
-            {newsData.slice(3, 6).map((news) => (
-              <div key={news.id} className="flex-1 min-w-[250px]">
-                <NewsCard news={news} />
-              </div>
-            ))}
-          </div>
+      {/* Swiper Container with Minimal Navigation */}
+      <div className="w-full relative">
+        {/* Minimal Navigation Arrows - Positioned on sides */}
+        <div className="absolute -left-5 top-1/2 -translate-y-1/2 z-10">
+          <MinimalArrowButton
+            direction="left"
+            onClick={() => swiperRef.current?.slidePrev()}
+          />
         </div>
 
-        {/* View All Button */}
-        <button className="w-[clamp(50.25px,13.09vw,188.44px)] h-9 px-8 py-2 bg-gradient-to-br from-[#677AE4] to-[#754FA8] rounded-xl flex justify-center items-center gap-2 hover:opacity-90 transition-opacity">
-          <span className="text-white text-base font-bold font-['Inter']">
-            جميع الأخبار
-          </span>
-        </button>
+        <div className="absolute -right-5 top-1/2 -translate-y-1/2 z-10">
+          <MinimalArrowButton
+            direction="right"
+            onClick={() => swiperRef.current?.slideNext()}
+          />
+        </div>
+
+        <Swiper
+          onBeforeInit={(swiper) => {
+            swiperRef.current = swiper;
+          }}
+          modules={[Navigation, Pagination, Autoplay]}
+          spaceBetween={30}
+          slidesPerView={1}
+          pagination={{
+            clickable: true,
+            dynamicBullets: true,
+            bulletClass: "swiper-pagination-bullet",
+            bulletActiveClass: "swiper-pagination-bullet-active",
+          }}
+          autoplay={{
+            delay: 4000,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true,
+          }}
+          loop={true}
+          breakpoints={{
+            640: {
+              slidesPerView: 2,
+              spaceBetween: 20,
+            },
+            1024: {
+              slidesPerView: 3,
+              spaceBetween: 30,
+            },
+          }}
+          className="university-news-swiper"
+          style={{
+            paddingBottom: "50px",
+            paddingLeft: "60px",
+            paddingRight: "60px",
+          }}
+        >
+          {newsData.map((news) => (
+            <SwiperSlide key={news.id}>
+              <div className="h-[500px]">
+                <NewsCard news={news} />
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </div>
+
+      {/* View All Button */}
+      <button className="w-[clamp(188px,13.09vw,250px)] h-12 px-8 py-3 bg-gradient-to-br from-[#433E78] to-[#433E78] rounded-xl flex justify-center items-center gap-2 hover:opacity-90 transition-opacity">
+        <span className="text-white text-base font-bold font-['Inter']">
+          جميع الأخبار
+        </span>
+      </button>
+
+      {/* Custom Swiper Styles */}
+      <style jsx global>{`
+        .university-news-swiper .swiper-pagination {
+          bottom: 0 !important;
+        }
+
+        .university-news-swiper .swiper-pagination-bullet {
+          width: 12px;
+          height: 12px;
+          background: #433e78;
+          opacity: 0.3;
+          transition: all 0.3s ease;
+        }
+
+        .university-news-swiper .swiper-pagination-bullet-active {
+          opacity: 1;
+          transform: scale(1.2);
+        }
+
+        .university-news-swiper .swiper-pagination-bullet:hover {
+          opacity: 0.7;
+          transform: scale(1.1);
+        }
+      `}</style>
     </div>
   );
 };

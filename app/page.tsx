@@ -4,12 +4,14 @@ import UniversityPage from "@/components/home/page";
 // import ImageSction from "@/components/home/image";
 import UniversityNews from "@/components/home/UniversityNews";
 import ArabicFAQ from "@/components/home/ArabicFAQ";
+import UniversityInfo from "@/components/home/UniversityInfo";
 export default function Home() {
   return (
-    <div className=" w-full mx-auto px-4 lg:px-0 md::px-0">
+    <div className=" w-full mx-auto">
       <UniversityPage />
       {/* <UniversityFaculties /> */}
       {/* <ImageSction /> */}
+      <UniversityInfo/>
       <UniversityNews />
       <ArabicFAQ />
     </div>

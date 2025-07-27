@@ -1,132 +1,202 @@
-"use client";
-
-import React, { useState } from "react";
-import Head from "next/head";
-import { ChevronDown, ChevronRight } from "lucide-react";
+"use client"
+import React, { useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 
 interface FAQItem {
   id: number;
   question: string;
-  answer?: string;
+  answer: string;
 }
 
-const ArabicFAQPage: React.FC = () => {
-  const [expandedId, setExpandedId] = useState<number | null>(3);
+const ArabicFAQ: React.FC = () => {
+  const [currentSlide, setCurrentSlide] = useState<number>(0);
+  const [expandedCards, setExpandedCards] = useState<Record<number, boolean>>({});
 
-  const faqItems: FAQItem[] = [
+  const faqData: FAQItem[] = [
     {
       id: 1,
-      question: "أين تقع الجامعية الأهلية",
+      question: "كيفية القبول في الجامعة؟",
+      answer: "وسوف يتم إنشاء جامعة خاصة على تمكن الحكومة بحد أدنى من جمع هوية صغيرة للجامعات الحكومية، وسيتمكن من تشغيلها بشكل تلقائي وبشكل مستقل عن نجاحها بالجامعات الحكومية"
     },
     {
       id: 2,
-      question: "ما أسباب الجامعية الأهلية",
+      question: "كيفية القبول في الجامعة؟",
+      answer: "إجابة تفصيلية أخرى حول كيفية القبول في الجامعة والخطوات المطلوبة لإتمام عملية التسجيل والقبول."
     },
     {
       id: 3,
-      question: "كيفية القبول في الجامعة",
-      answer:
-        "وسوف يتم إنشاء جامعة خاصة على تمكن الحكومة بحد أدنى من جمع هوية صغيرة للجامعات الحكومية، وسيتمكن من تشغيلها بشكل تلقائي وبشكل مستقل عن نجاحها بالجامعات الحكومية",
+      question: "كيفية القبول في الجامعة؟",
+      answer: "معلومات إضافية حول متطلبات القبول والوثائق المطلوبة والمواعيد النهائية للتقديم."
     },
     {
       id: 4,
-      question: "هل هناك اختبارات للقبول",
+      question: "ما هي المتطلبات الأكاديمية؟",
+      answer: "تفاصيل المتطلبات الأكاديمية والدرجات المطلوبة للقبول في التخصصات المختلفة."
     },
     {
       id: 5,
-      question: "ما أسباب الجامعية الأهلية",
+      question: "كيفية دفع الرسوم الدراسية؟",
+      answer: "شرح طرق دفع الرسوم الدراسية والأقساط المتاحة والمواعيد المحددة للدفع."
     },
+    {
+      id: 6,
+      question: "ما هي الخدمات المتاحة للطلاب؟",
+      answer: "نظرة شاملة على الخدمات المتاحة للطلاب مثل المكتبة والمختبرات والأنشطة الطلابية."
+    }
   ];
 
-  const toggleExpanded = (id: number) => {
-    setExpandedId(expandedId === id ? null : id);
+  // Responsive slides per view
+  const getSlidesPerView = (): number => {
+    if (typeof window === 'undefined') return 3;
+    const width = window.innerWidth;
+    if (width < 768) return 1; // Mobile: 1 card
+    if (width < 1024) return 2; // Tablet: 2 cards
+    return 3; // Desktop: 3 cards
+  };
+
+  const [slidesPerView] = useState<number>(getSlidesPerView());
+  const totalSlides = Math.ceil(faqData.length / slidesPerView);
+
+  const toggleCard = (cardId: number): void => {
+    setExpandedCards(prev => ({
+      ...prev,
+      [cardId]: !prev[cardId]
+    }));
+  };
+
+  const nextSlide = (): void => {
+    setCurrentSlide((prev) => (prev + 1) % totalSlides);
+  };
+
+  const prevSlide = (): void => {
+    setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
+  };
+
+  const goToSlide = (index: number): void => {
+    setCurrentSlide(index);
+  };
+
+  const getCurrentSlideCards = (): FAQItem[] => {
+    const startIndex = currentSlide * slidesPerView;
+    return faqData.slice(startIndex, startIndex + slidesPerView);
   };
 
   return (
-    <>
-      <Head>
-        <title>أسئلة وأجوبة - الجامعة الأهلية</title>
-      </Head>
+    <div className="w-full  pt-6 pb-6 sm:pt-8 sm:pb-8 lg:pt-10 lg:pb-10 bg-[#EFF3FF] flex flex-col justify-start items-start gap-6 sm:gap-8 lg:gap-10">
+      {/* Header */}
+      <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-10 flex justify-between items-center h-auto sm:h-[90px]">
+        {/* Navigation arrows - Hidden on mobile, shown on larger screens */}
+        <div className="hidden sm:flex justify-start items-center gap-3 lg:gap-5">
+          <button
+            onClick={prevSlide}
+            className="w-8 h-8 sm:w-10 sm:h-10 bg-transparent border-[1.5px] border-[#433E78] rounded-lg flex items-center justify-center cursor-pointer transition-all duration-300 hover:bg-[#433E78] group"
+          >
+            <ChevronDown
+              size={16}
+              className="sm:w-5 sm:h-5 text-[#433E78] group-hover:text-white rotate-90 transition-colors duration-300"
+            />
+          </button>
+          <button
+            onClick={nextSlide}
+            className="w-8 h-8 sm:w-10 sm:h-10 bg-transparent border-[1.5px] border-[#433E78] rounded-lg flex items-center justify-center cursor-pointer transition-all duration-300 hover:bg-[#433E78] group"
+          >
+            <ChevronDown
+              size={16}
+              className="sm:w-5 sm:h-5 text-[#433E78] group-hover:text-white -rotate-90 transition-colors duration-300"
+            />
+          </button>
+        </div>
 
-      <main className="s bg-[#F8F8F8]">
-        <div
-          className="w-full  px-4 sm:px-20 py-6 sm:py-10 bg-[#F8F8F8] flex flex-col justify-center items-end gap-4"
-          style={{ fontFamily: "Inter, sans-serif" }}
-        >
-          {/* Header */}
-          <div className="w-full pt-3 pb-3 border-b border-black flex justify-between items-center">
-            <div
-              className="text-center text-[#677AE4] font-medium"
-              style={{ fontSize: "clamp(0.875rem, 2vw, 1rem)" }}
-            >
-              المزيد من الأسئلة
-            </div>
-            <div
-              className="text-center text-black font-medium"
-              style={{ fontSize: "clamp(1.25rem, 4vw, 1.5rem)" }}
-            >
-              أسئلة وأجوبة
-            </div>
+        {/* Mobile navigation arrows */}
+        <div className="flex sm:hidden justify-start items-center gap-3 order-2">
+          <button
+            onClick={prevSlide}
+            className="w-8 h-8 bg-transparent border-[1.5px] border-[#433E78] rounded-lg flex items-center justify-center cursor-pointer transition-all duration-300 hover:bg-[#433E78] group"
+          >
+            <ChevronDown
+              size={14}
+              className="text-[#433E78] group-hover:text-white rotate-90 transition-colors duration-300"
+            />
+          </button>
+          <button
+            onClick={nextSlide}
+            className="w-8 h-8 bg-transparent border-[1.5px] border-[#433E78] rounded-lg flex items-center justify-center cursor-pointer transition-all duration-300 hover:bg-[#433E78] group"
+          >
+            <ChevronDown
+              size={14}
+              className="text-[#433E78] group-hover:text-white -rotate-90 transition-colors duration-300"
+            />
+          </button>
+        </div>
+
+        {/* Title section */}
+        <div className="flex flex-col justify-start items-end order-1 sm:order-2">
+          <div className="text-center text-[#899FCF] text-xl sm:text-2xl lg:text-[32px] font-bold break-words">
+            الأسئلة & الأجوبة
           </div>
+          <div className="text-center text-black/60 text-xs sm:text-sm lg:text-base font-medium break-words mt-1 sm:mt-2 max-w-xs sm:max-w-none">
+            إجابات واضحة على أكثر الأسئلة الشائعة لتكون الصورة كاملة أمامك
+          </div>
+        </div>
+      </div>
 
-          {/* FAQ Items */}
-          <div className="w-full flex flex-col justify-center items-end gap-3">
-            {faqItems.map((item, index) => (
-              <React.Fragment key={item.id}>
-                <div className="w-full flex justify-between items-center">
-                  <button
-                    onClick={() => toggleExpanded(item.id)}
-                    className="flex items-center justify-center w-6 h-6 text-[#677AE4] hover:text-[#5A6BD1] transition-colors duration-200 "
-                    aria-label={
-                      expandedId === item.id ? "إغلاق الإجابة" : "فتح الإجابة"
-                    }
-                  >
-                    {expandedId === item.id ? (
-                      <ChevronDown size={20} />
-                    ) : (
-                      <ChevronRight size={20} />
-                    )}
-                  </button>
-                  <button
-                    onClick={() => toggleExpanded(item.id)}
-                    className="text-[#677AE4] font-medium hover:text-[#5A6BD1] transition-colors duration-200 focus:outline-none"
-                    style={{ fontSize: "clamp(1rem, 3vw, 1.25rem)" }}
-                  >
-                    {item.question}
-                  </button>
+      {/* Main content */}
+      <div className="w-full max-w-[1920px] mx-auto flex flex-col justify-center items-center gap-6 sm:gap-8 lg:gap-10">
+        {/* Cards container */}
+        <div className="w-full px-4 sm:px-6 lg:px-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 transition-all duration-500 ease-in-out items-start">
+            {getCurrentSlideCards().map((item) => (
+              <div
+                key={item.id}
+                onClick={() => toggleCard(item.id)}
+                className="w-full p-4 sm:p-5 lg:p-6 bg-white rounded-2xl border border-[#AAB9DD] flex flex-col justify-start items-end gap-4 sm:gap-5 lg:gap-6 transition-all duration-300 cursor-pointer shadow-lg hover:-translate-y-0.5 hover:shadow-xl h-fit"
+              >
+                {/* Question */}
+                <div className="w-full text-right text-black text-lg sm:text-xl lg:text-2xl font-medium break-words leading-tight">
+                  {item.question}
                 </div>
 
-                {/* Expanded Answer with Animation */}
-                {item.answer && (
-                  <div
-                    className={`w-full overflow-hidden transition-all duration-300 ease-in-out ${
-                      expandedId === item.id
-                        ? "max-h-96 opacity-100 mb-2"
-                        : "max-h-0 opacity-0"
+                {/* Toggle button */}
+                <div className="w-full flex justify-between items-center mt-auto">
+                  <ChevronDown
+                    size={14}
+                    className={`sm:w-4 sm:h-4 text-[#433E78] transition-transform duration-300 ${
+                      expandedCards[item.id] ? 'rotate-180' : 'rotate-0'
                     }`}
-                  >
-                    <div className="flex flex-col justify-center items-end gap-2.5 pt-2">
-                      <div
-                        className="max-w-[985px] text-right text-black/60 font-medium leading-relaxed"
-                        style={{ fontSize: "clamp(0.875rem, 2.5vw, 1.25rem)" }}
-                      >
-                        {item.answer}
-                      </div>
-                    </div>
+                  />
+                  <div className="text-right text-[#433E78] text-sm sm:text-base font-bold break-words">
+                    {expandedCards[item.id] ? 'إظهار أقل' : 'قراءة المزيد'}
+                  </div>
+                </div>
+
+                {/* Answer - only show if expanded */}
+                {expandedCards[item.id] && (
+                  <div className="w-full text-right text-black/60 text-base sm:text-lg lg:text-xl font-medium break-words leading-relaxed animate-in fade-in slide-in-from-top-2 duration-300">
+                    {item.answer}
                   </div>
                 )}
-
-                {/* Divider */}
-                {index < faqItems.length - 1 && (
-                  <div className="w-full h-0 border-t border-[#B3B3B3]" />
-                )}
-              </React.Fragment>
+              </div>
             ))}
           </div>
         </div>
-      </main>
-    </>
+
+        {/* Pagination dots */}
+        <div className="flex justify-center items-center gap-2">
+          {Array.from({ length: totalSlides }, (_, index) => (
+            <button
+              key={index}
+              onClick={() => goToSlide(index)}
+              className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full border-none cursor-pointer transition-all duration-300 ${
+                currentSlide === index
+                  ? 'bg-[#433E78]'
+                  : 'bg-[#EFF3FF] hover:bg-[#899FCF]'
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
   );
 };
 
-export default ArabicFAQPage;
+export default ArabicFAQ;

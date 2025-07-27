@@ -2,14 +2,19 @@ import type { Metadata } from "next";
 // import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
-// import { Cairo } from 'next/font/google'
-import { Inter } from "next/font/google";
+import { Cairo } from 'next/font/google'
+// import { Inter } from "next/font/google";
 
 import UniversityFooter from "@/components/Footer";
 
-const inter = Inter({
+// const inter = Inter({
+//   subsets: ["latin"],
+//   variable: "--font-inter",
+// });
+
+const cairo = Cairo({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-cairo",
 });
 
 export const metadata: Metadata = {
@@ -26,8 +31,8 @@ export default function RootLayout({
     // <html lang="en" className={cairo.className}>
     //   <body className={cairo.className}>
 
-    <html lang="ar" className={`${inter.variable} ${inter.className}`}>
-       <body className={inter.variable}>
+    <html lang="ar" className={` ${cairo.variable} ${cairo.className}`}>
+      <body className={` ${cairo.variable}`}>
         <Header />
         <main className="pt-[clamp(44.40px,11.56vw,116px)]">
           {children}

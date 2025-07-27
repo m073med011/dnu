@@ -270,7 +270,7 @@ const Header: FC = () => {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 w-full bg-white shadow-sm">
+      <header className={`fixed top-0 left-0 right-0 z-50 w-full ${scrolled ? "bg-white shadow-md" : ""}`}>
         <div className="w-full sm:max-w-[1440px] mx-0 px-0 sm:mx-auto sm:px-8 lg:px-12">
           <div
             className={`flex items-center lg:justify-around justify-between px-12 lg:px-0 transition-all duration-300 ${
@@ -292,7 +292,7 @@ const Header: FC = () => {
                 >
                   {item.hasDropdown ? (
                     <div className="flex items-center cursor-pointer relative after:absolute after:bottom-[-2px] after:right-0 after:h-[2px] after:w-0 after:bg-black after:transition-all after:duration-300 group-hover:after:w-full">
-                      <span className="text-black font-bold text-sm xl:text-base whitespace-nowrap">
+                      <span className={` ${scrolled ? "text-black" : "text-white"} font-bold text-sm xl:text-base whitespace-nowrap`}>
                         {item.label}
                       </span>
                       <div className="ml-2">
@@ -308,7 +308,7 @@ const Header: FC = () => {
                       href={item.href || "#"}
                       className="flex items-center cursor-pointer relative after:absolute after:bottom-[-2px] after:right-0 after:h-[2px] after:w-0 after:bg-black after:transition-all after:duration-300 group-hover:after:w-full"
                     >
-                      <span className="text-black font-bold text-sm xl:text-base whitespace-nowrap">
+                      <span className={` ${scrolled ? "text-black" : "text-white"} font-bold text-sm xl:text-base whitespace-nowrap`}>
                         {item.label}
                       </span>
                     </Link>
@@ -343,8 +343,8 @@ const Header: FC = () => {
                   alt="Logo"
                   className={`object-contain rounded-full transition-all duration-300 cursor-pointer ${
                     scrolled
-                      ? "h-10 w-10 sm:h-12 sm:w-12"
-                      : "h-12 w-12 sm:h-16 sm:w-16 lg:h-20 lg:w-20"
+                      ? "translate-y-6"
+                      : ""
                   }`}
                 />
               </Link>

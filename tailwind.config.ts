@@ -11,7 +11,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         inter: ["var(--font-inter)", "sans-serif"],
-        // sans: ["var(--font-inter)", "ui-sans-serif", "system-ui"], // Set as default sans
+        cairo: ["var(--font-cairo)", "serif"], // Cairo font family added
       },
     },
   },
