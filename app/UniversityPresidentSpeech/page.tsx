@@ -1,7 +1,7 @@
 // "use client";
 // import { useState } from "react";
 import Image from "next/image";
-import image from "@/public/Trustees/trustees_image.png";
+import image from "@/public/trustees_image.png";
 import bi_stars from "@/public/bi_stars.svg";
 import Page from "@/components/Hero-section"; // Import your reusable Page component
 
