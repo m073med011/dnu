@@ -6,6 +6,8 @@ import { Cairo } from 'next/font/google'
 // import { Inter } from "next/font/google";
 
 import UniversityFooter from "@/components/Footer";
+import  { Toaster } from 'react-hot-toast';
+// import 'react-hot-toast/dist/index.css';
 
 // const inter = Inter({
 //   subsets: ["latin"],
@@ -35,6 +37,17 @@ export default function RootLayout({
       <body className={` ${cairo.variable}`}>
         <Header />
         <main className="pt-[clamp(44.40px,11.56vw,116px)]">
+           <Toaster
+      position="top-right"
+      reverseOrder={false}
+      gutter={8}
+      containerClassName=""
+      containerStyle={{}}
+      toastOptions={{
+        className: 'text-right',
+        duration: 5000,
+      }}
+    />
           {children}
         </main>
         <UniversityFooter />

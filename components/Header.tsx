@@ -2,6 +2,7 @@
 import { ChevronDown, ChevronUp, Menu, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import logo from "@/public/logo.svg";
 import { FC, useState, useEffect } from "react";
 
@@ -216,12 +217,16 @@ const MobileSidebar: FC<{
 };
 
 const Header: FC = () => {
+  const pathname = usePathname();
   const [hoveredDropdown, setHoveredDropdown] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [openMobileDropdown, setOpenMobileDropdown] = useState<string | null>(
     null
   );
   const [scrolled, setScrolled] = useState(false);
+
+  // Check if current path requires white background
+  const shouldHaveWhiteBackground = pathname === '/contact-us' || pathname === '/Registration';
 
   const handleMobileDropdownToggle = (label: string) => {
     console.log(`Toggling dropdown for: ${label}`);
@@ -270,7 +275,7 @@ const Header: FC = () => {
 
   return (
     <>
-      <header className={`fixed top-0 left-0 right-0 z-50 w-full ${scrolled ? "bg-white shadow-md" : ""}`}>
+      <header className={`fixed top-0 left-0 right-0 z-50 w-full ${scrolled || shouldHaveWhiteBackground ? "bg-white shadow-md" : ""}`}>
         <div className="w-full sm:max-w-[1440px] mx-0 px-0 sm:mx-auto sm:px-8 lg:px-12">
           <div
             className={`flex items-center lg:justify-around justify-between px-12 lg:px-0 transition-all duration-300 ${
@@ -292,7 +297,7 @@ const Header: FC = () => {
                 >
                   {item.hasDropdown ? (
                     <div className="flex items-center cursor-pointer relative after:absolute after:bottom-[-2px] after:right-0 after:h-[2px] after:w-0 after:bg-black after:transition-all after:duration-300 group-hover:after:w-full">
-                      <span className={` ${scrolled ? "text-black" : "text-white"} font-bold text-sm xl:text-base whitespace-nowrap`}>
+                      <span className={` ${scrolled || shouldHaveWhiteBackground ? "text-black" : "text-white"} font-bold text-sm xl:text-base whitespace-nowrap`}>
                         {item.label}
                       </span>
                       <div className="ml-2">
@@ -308,7 +313,7 @@ const Header: FC = () => {
                       href={item.href || "#"}
                       className="flex items-center cursor-pointer relative after:absolute after:bottom-[-2px] after:right-0 after:h-[2px] after:w-0 after:bg-black after:transition-all after:duration-300 group-hover:after:w-full"
                     >
-                      <span className={` ${scrolled ? "text-black" : "text-white"} font-bold text-sm xl:text-base whitespace-nowrap`}>
+                      <span className={` ${scrolled || shouldHaveWhiteBackground ? "text-black" : "text-white"} font-bold text-sm xl:text-base whitespace-nowrap`}>
                         {item.label}
                       </span>
                     </Link>
