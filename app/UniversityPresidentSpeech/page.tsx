@@ -1,7 +1,7 @@
 // "use client";
 // import { useState } from "react";
 import Image from "next/image";
-import image from "@/public/Trustees/image.png";
+import image from "@/public/Trustees/trustees_image.png";
 import bi_stars from "@/public/bi_stars.svg";
 import Page from "@/components/Hero-section"; // Import your reusable Page component
 
@@ -13,10 +13,13 @@ const PresidentMessageContent = () => {
           <div className="z-10 hidden lg:flex top-80 left-[30%] w-[clamp(109.80px,28.59vw,411.75px)] px-6 py-2 bg-[#F9F9F9] rounded-2xl border border-[#B3B3B3] flex-col relative gap-2 mb-3 lg:hover:bg-white lg:hover:border-[#6F42C1] lg:hover:shadow-lg lg:transition-all lg:duration-300 lg:hover:-translate-y-1">
             <div className="text-right">
               <p className="text-black text-[24px] font-medium text-right lg:hover:text-[#6F42C1] lg:transition-colors lg:duration-300">
-                أ.د/ السيد أحمد
+                أ.د/ حمدان ربيع المتولى
               </p>
               <p className="text-black/60 text-[16px] font-medium lg:hover:text-black/80 lg:transition-colors lg:duration-300">
-                رئيس الجامعة
+                رئيس جامعة دمياط
+              </p>
+              <p className="text-black/60 text-[14px] font-medium lg:hover:text-black/80 lg:transition-colors lg:duration-300">
+                المشرف على جامعة دمياط الأهلية
               </p>
             </div>
             <Image
@@ -40,10 +43,13 @@ const PresidentMessageContent = () => {
           {/* Mobile name div - shows under image on mobile only */}
           <div className="text-center mt-3 lg:hidden">
             <p className="text-black text-[20px] lg:text-[24px] font-medium">
-              أ.د/ السيد أحمد
+              أ.د/ حمدان ربيع المتولى
             </p>
             <p className="text-black/60 text-[14px] lg:text-[16px] font-medium">
-              رئيس الجامعة
+              رئيس جامعة دمياط
+            </p>
+            <p className="text-black/60 text-[12px] lg:text-[14px] font-medium">
+              المشرف على جامعة دمياط الأهلية
             </p>
           </div>
         </div>
@@ -53,32 +59,49 @@ const PresidentMessageContent = () => {
             كلمة رئيس الجامعة
           </h2>
           <h3 className="text-[clamp(16px,2.5vw,20px)] text-center font-bold mb-[clamp(8px,2vw,12px)] lg:hover:text-[#6F42C1] lg:transition-colors lg:duration-300">
-            أبنائي وبناتي الأعزاء
+            أبنائي وبناتي الطلاب الأعزاء
           </h3>
+          
           <p className="mb-[clamp(12px,2vw,16px)] leading-relaxed font-bold lg:hover:text-[#4A4A4A] lg:duration-300 lg:hover:scale-105 lg:transform lg:transition-transform">
-            إنه لمن دواعي سروري أن أرحب بكم في رحاب جامعة دمياط الأهلية، والتي
-            تضع البحث العلمي والخبرة العملية في مقدمات أولوياتها بما يُسهم في
-            تحقيق استراتيجياتها، وتأهيل خريجين قادرين على المُنافسة في أسواق
-            العمل المُختلفة بما يتوافق مع رؤية مصر للتنمية المستدامة 2030 في
-            مجال التعليم العالي وفي ضوء توجهات الدولة في إنشاء جامعات مصرية
-            بجودة عالمية تُصنف كنماذج دولية معاصرة لجامعات الجيل الرابع قادرة
-            على إحداث طفرة غير مسبوقة في التعليم الجامعي تنفيذًا لرؤية القيادة
-            السياسية.
+            بداية أتوجه بأسمى آيات الشكر والتقدير لفخامة السيد/ عبد الفتاح السيسي 
+            رئيس الجمهورية بمناسبة صدور قرار فخامته رقم (266) بتاريخ 24 مايو 
+            2025 بإنشاء جامعة دمياط الأهلية وإلى معالي الأستاذ الدكتور/ محمد أيمن 
+            عاشور وزير التعليم العالي على دعمه الكامل والمستمر لإنشاء الجامعة.
           </p>
 
           <p className="mb-[clamp(12px,2vw,16px)] leading-relaxed font-bold lg:hover:text-[#4A4A4A] lg:duration-300 lg:hover:scale-105 lg:transform lg:transition-transform">
-            وتتميز جامعة دمياط الأهلية بعدد من البرامج والتخصصات المتميزة التي
-            تواكب احتياجات سوق العمل، وتحرص الجامعة على تعزيز منهجيات البحث
-            المستمر والتعلم النشط من خلال تقديم برامج تعليمية مُتميزة في إطار
-            السعي إلى تحقيق الجودة، وبما يُساهم في إعداد قادة المستقبل وتطوير
-            شخصيتهم وتعزيز مهاراتهم وخبراتهم وتسهيل حصولهم على فرص عمل أكثر
-            تميزاً.
+            كما يسعدني اليوم أن أتحدث إليكم في لحظة تاريخية متمثلة في فتح باب 
+            التقدم لاستقبال الدفعة الأولى بجامعة دمياط الأهلية وبدء الدراسة للعام الجامعي 
+            2025/2026 في الكليات التالية: كلية التمريض، كلية الحاسبات والمعلومات، 
+            كلية الفنون والتصميم، كلية الآثار والسياحة، كلية الأعمال، وكلية الألسن.
           </p>
 
           <p className="mb-[clamp(12px,2vw,16px)] leading-relaxed font-bold lg:hover:text-[#4A4A4A] lg:duration-300 lg:hover:scale-105 lg:transform lg:transition-transform">
-            وختاماً أتقدم بخالص الشكر والتقدير لجميع منسوبي جامعة دمياط الأهلية
-            لجهودهم المتواصلة بما يسهم في وصول الجامعة لمصاف الجامعات العالمية،
-            ورقي وطننا الحبيب.
+            إن إنشاء جامعة دمياط الأهلية يأتي انطلاقاً من رؤية مصر 2030، واستراتيجية 
+            وزارة التعليم العالي التي تهدف إلى تعزيز جودة التعليم، وربط مخرجاته باحتياجات 
+            سوق العمل، وتوفير بيئة تعليمية تحفز الإبداع والابتكار. هذه الجامعة ستكون 
+            صرحاً أكاديمياً يواكب أحدث التطورات العالمية في مجالات العلوم والتكنولوجيا، 
+            مع الحفاظ على قيمنا الأصيلة وهويتنا الوطنية.
+          </p>
+
+          <p className="mb-[clamp(12px,2vw,16px)] leading-relaxed font-bold lg:hover:text-[#4A4A4A] lg:duration-300 lg:hover:scale-105 lg:transform lg:transition-transform">
+            لقد حرصنا على أن تكون جامعة دمياط الأهلية نموذجاً للتميز، من خلال برامج 
+            أكاديمية متميزة تلبي احتياجات العصر وتُقدم بتكلفة تنافسية، وشراكات استراتيجية 
+            مع الجامعات الدولية والقطاعات الصناعية لضمان جودة المخرجات، ومراكز بحثية 
+            متطورة تُسهم في حل المشكلات المجتمعية والتنموية، وبيئة جامعية متكاملة تُتيح 
+            للطلاب فرصاً للتعلم والأنشطة الطلابية المتنوعة.
+          </p>
+
+          <p className="mb-[clamp(12px,2vw,16px)] leading-relaxed font-bold lg:hover:text-[#4A4A4A] lg:duration-300 lg:hover:scale-105 lg:transform lg:transition-transform">
+            أبنائي الطلاب... أنتم عماد المستقبل، وهذه الجامعة أُنشأت من أجلكم، لتُتيح 
+            لكم فرصاً تعليمية تُناسب طموحاتكم، وتُساعدكم على اكتساب المهارات والمعارف 
+            التي تؤهلكم لقيادة مسيرة التنمية في وطننا الغالي مصر.
+          </p>
+
+          <p className="mb-[clamp(12px,2vw,16px)] leading-relaxed font-bold lg:hover:text-[#4A4A4A] lg:duration-300 lg:hover:scale-105 lg:transform lg:transition-transform">
+            ختاماً، أتوجه بالشكر الجزيل إلى كل من ساهم في إنجاز هذا المشروع الوطني 
+            الكبير، من قيادات سياسية وأكاديمية، وشركاء من القطاع الخاص، وجميع العاملين 
+            الذين بذلوا جهوداً مضنية لتحويل الحلم إلى حقيقة.
           </p>
 
           <p className="mb-[clamp(12px,2vw,16px)] font-bold lg:hover:text-[#6F42C1] lg:duration-300 lg:hover:scale-110 lg:transform lg:transition-transform">
