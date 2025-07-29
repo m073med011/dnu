@@ -130,7 +130,7 @@ const MobileSidebar: FC<{
             <Image
               src={logo}
               alt="Logo"
-              className="h-10 w-10 object-contain rounded-full"
+              className="h-9 w-9 object-contain rounded-full"
             />
             <span className="text-lg font-bold text-gray-900">القائمة</span>
           </div>
@@ -352,7 +352,7 @@ const Header: FC = () => {
                 <Image
                   src={logo}
                   alt="Logo"
-                  className={`object-contain w-[clamp(90.00px,6vw,130.00px)]  rounded-full transition-all duration-300 cursor-pointer ${
+                  className={`object-contain w-[clamp(90.00px,5.5vw,130.00px)]  rounded-full transition-all duration-300 cursor-pointer ${
                     scrolled
                       ? "translate-y-6"
                       : ""

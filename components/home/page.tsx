@@ -2,8 +2,9 @@
 
 import "swiper/css";
 import "swiper/css/pagination";
+import "swiper/css/navigation";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination, Autoplay } from "swiper/modules";
+import { Pagination, Autoplay, Navigation } from "swiper/modules";
 import Image from "next/image";
 import backgound1 from "@/public/home/backgrounds/background1.jpg";
 import backgound2 from "@/public/home/backgrounds/background2.jpg";
@@ -42,9 +43,9 @@ export default function UniversityPage() {
   ];
 
   return (
-    <section className="relative w-full h-screen lg:-top-[7vw] -top-[12vw] flex items-center justify-center">
+    <section className="relative w-full h-screen lg:-top-[7vw] -top-[12vw] flex items-center justify-center group">
       <Swiper
-        modules={[Pagination, Autoplay]}
+        modules={[Pagination, Autoplay, Navigation]}
         spaceBetween={0}
         slidesPerView={1}
         pagination={{
@@ -53,7 +54,10 @@ export default function UniversityPage() {
           bulletClass: "swiper-pagination-bullet",
           bulletActiveClass: "swiper-pagination-bullet-active",
         }}
-
+        navigation={{
+          nextEl: '.swiper-button-next-custom',
+          prevEl: '.swiper-button-prev-custom',
+        }}
         autoplay={{
           delay: 5000,
           disableOnInteraction: false,
@@ -86,9 +90,34 @@ export default function UniversityPage() {
             </div>
           </SwiperSlide>
         ))}
-
-
       </Swiper>
+
+      {/* Custom Navigation Arrows */}
+      <div className="swiper-button-prev-custom absolute left-4 md:left-8 top-1/2 transform -translate-y-1/2 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer">
+        <div className="w-12 h-12 md:w-14 md:h-14 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full flex items-center justify-center hover:bg-white/30 hover:border-white/50 transition-all duration-300">
+          <svg 
+            className="w-6 h-6 md:w-7 md:h-7 text-white" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </div>
+      </div>
+
+      <div className="swiper-button-next-custom absolute right-4 md:right-8 top-1/2 transform -translate-y-1/2 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer">
+        <div className="w-12 h-12 md:w-14 md:h-14 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full flex items-center justify-center hover:bg-white/30 hover:border-white/50 transition-all duration-300">
+          <svg 
+            className="w-6 h-6 md:w-7 md:h-7 text-white" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+      </div>
 
       {/* Custom styles for pagination */}
       <style jsx>{`
