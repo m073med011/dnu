@@ -106,7 +106,7 @@ export default function FacultiesSection() {
             />
 
             {/* Fee Badge */}
-            <div className={`absolute top-4 left-4 ${faculty.feeColor} text-white px-3 py-2 rounded-full font-bold text-sm shadow-lg`}>
+            <div className={`absolute top-4 left-4 bg-gradient-to-r from-orange-400 to-yellow-500 text-white px-3 py-2 rounded-full font-bold text-sm shadow-lg`}>
               {faculty.fee}
             </div>
 

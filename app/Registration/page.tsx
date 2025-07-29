@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import {
+  IdCard,
   User,
   GraduationCap,
   Award,
@@ -13,7 +14,7 @@ import toast, { Toaster } from "react-hot-toast";
 
 // Define the type for form data
 interface FormData {
-  // Personal Info
+  guardianRelation: string;
   arabicName: string;
   englishName: string;
   nationality: string;
@@ -60,6 +61,7 @@ interface FormData {
   alternateMobile: string;
   email: string;
   homePhone: string;
+  nationalId: string; // ✅ الحقل الجديد: الرقم القومي
 }
 
 // Define the type for errors
@@ -71,7 +73,8 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
-    // Personal Info
+    nationalId: "", // ✅ تهيئة الحقل الجديد
+    guardianRelation: "",
     arabicName: "",
     englishName: "",
     nationality: "",
@@ -125,52 +128,84 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     { id: 1, name: "البيانات الشخصية", progress: 17 },
     { id: 2, name: "معلومات الاتصال", progress: 29 },
     { id: 3, name: "معلومات ولي الأمر", progress: 43 },
-    { id: 4, name: "معلومات البحوث", progress: 57 },
+    { id: 4, name: "معلومات الإخوة", progress: 57 },
     { id: 5, name: "بيانات الشهادة", progress: 71 },
     { id: 6, name: "الرغبات والمصاريف", progress: 86 },
+    { id: 7, name: "معلومات الحساب", progress: 100 }, // New tab
   ];
-
-  const validateField = (
-    name: keyof FormData,
-    value: string | boolean
-  ): string => {
-    if (value === "" || value === false) {
-      return "هذا الحقل مطلوب";
-    }
-    return "";
-  };
-
   const validateTab = (tabId: number): FormErrors => {
     const newErrors: FormErrors = {};
+
     switch (tabId) {
       case 1:
-        [
-          "arabicName",
-          "englishName",
-          "nationality",
-          "state",
-          "city",
-          "religion",
-          "birthYear",
-          "birthMonth",
-          "birthDay",
-        ].forEach((field) => {
-          const error = validateField(
-            field as keyof FormData,
-            formData[field as keyof FormData]
-          );
-          if (error) newErrors[field as keyof FormData] = error;
+        (
+          [
+            "arabicName",
+            "englishName",
+            "nationality",
+            "state",
+            "city",
+            "religion",
+          ] as const
+        ).forEach((field) => {
+          const value = formData[field];
+          if (!value || value === "") {
+            newErrors[field] = "هذا الحقل مطلوب";
+          }
         });
+
+        // Validate Day
+        if (!formData.birthDay || !/^\d+$/.test(formData.birthDay)) {
+          newErrors.birthDay = "أدخل يوماً صالحاً";
+        } else if (+formData.birthDay < 1 || +formData.birthDay > 31) {
+          newErrors.birthDay = "أدخل يوماً بين 1 و31";
+        }
+
+        // Validate Month
+        if (!formData.birthMonth || !/^\d+$/.test(formData.birthMonth)) {
+          newErrors.birthMonth = "أدخل شهراً صالحاً";
+        } else if (+formData.birthMonth < 1 || +formData.birthMonth > 12) {
+          newErrors.birthMonth = "أدخل شهراً بين 1 و12";
+        }
+
+        // Validate Year
+        if (!formData.birthYear || !/^\d+$/.test(formData.birthYear)) {
+          newErrors.birthYear = "أدخل سنة صالحة";
+        } else if (+formData.birthYear < 1900 || +formData.birthYear > 2025) {
+          newErrors.birthYear = "أدخل سنة بين 1900 و2025";
+        }
+        if (formData.nationalId && formData.nationalId.length > 0) {
+          if (!/^\d{14}$/.test(formData.nationalId.replace(/\s+/g, ""))) {
+            newErrors.nationalId = "الرقم القومي يجب أن يكون 14 رقمًا";
+          }
+        }
         break;
+
       case 2:
         ["address", "mobile", "email"].forEach((field) => {
-          const error = validateField(
-            field as keyof FormData,
-            formData[field as keyof FormData]
-          );
-          if (error) newErrors[field as keyof FormData] = error;
+          const value = formData[field as keyof FormData];
+          if (!value || value === "") {
+            newErrors[field as keyof FormData] = "هذا الحقل مطلوب";
+          }
         });
+
+        // Validate Email
+        if (
+          formData.email &&
+          !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+        ) {
+          newErrors.email = "البريد الإلكتروني غير صالح";
+        }
+
+        // Validate Mobile
+        if (
+          formData.mobile &&
+          !/^(?:\+20|0)?1[0-9]{9}$/.test(formData.mobile.replace(/\s+/g, ""))
+        ) {
+          newErrors.mobile = "رقم الموبايل غير صالح (مثال: 01012345678)";
+        }
         break;
+
       case 3:
         [
           "guardianName",
@@ -180,26 +215,44 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
           "guardianMobile",
           "guardianNationalId",
         ].forEach((field) => {
-          const error = validateField(
-            field as keyof FormData,
-            formData[field as keyof FormData]
-          );
-          if (error) newErrors[field as keyof FormData] = error;
+          const value = formData[field as keyof FormData];
+          if (!value || value === "") {
+            newErrors[field as keyof FormData] = "هذا الحقل مطلوب";
+          }
         });
+
+        // Validate Guardian Email
+        if (
+          formData.guardianEmail &&
+          !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.guardianEmail)
+        ) {
+          newErrors.guardianEmail = "البريد الإلكتروني لولي الأمر غير صالح";
+        }
+
+        // Validate Guardian Mobile
+        if (
+          formData.guardianMobile &&
+          !/^(?:\+20|0)?1[0-9]{9}$/.test(
+            formData.guardianMobile.replace(/\s+/g, "")
+          )
+        ) {
+          newErrors.guardianMobile = "رقم موبايل ولي الأمر غير صالح";
+        }
         break;
+
       case 4:
         if (formData.hasTeachingExperience) {
           ["parentName", "universityId", "faculty", "studyYear"].forEach(
             (field) => {
-              const error = validateField(
-                field as keyof FormData,
-                formData[field as keyof FormData]
-              );
-              if (error) newErrors[field as keyof FormData] = error;
+              const value = formData[field as keyof FormData];
+              if (!value || value === "") {
+                newErrors[field as keyof FormData] = "هذا الحقل مطلوب";
+              }
             }
           );
         }
         break;
+
       case 5:
         [
           "certificateType",
@@ -211,25 +264,35 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
           "certificateCountry",
           "certificateYear",
         ].forEach((field) => {
-          const error = validateField(
-            field as keyof FormData,
-            formData[field as keyof FormData]
-          );
-          if (error) newErrors[field as keyof FormData] = error;
+          const value = formData[field as keyof FormData];
+          if (!value || value === "") {
+            newErrors[field as keyof FormData] = "هذا الحقل مطلوب";
+          }
         });
+
+        // Validate Certificate Year
+        if (
+          formData.certificateYear &&
+          !/^\d+$/.test(formData.certificateYear)
+        ) {
+          newErrors.certificateYear = "يجب أن تكون السنة رقماً";
+        } else if (
+          +formData.certificateYear < 1900 ||
+          +formData.certificateYear > 2025
+        ) {
+          newErrors.certificateYear = "أدخل سنة بين 1900 و2025";
+        }
         break;
+
       case 6:
-        ["firstChoice"].forEach((field) => {
-          const error = validateField(
-            field as keyof FormData,
-            formData[field as keyof FormData]
-          );
-          if (error) newErrors[field as keyof FormData] = error;
-        });
+        if (!formData.firstChoice || formData.firstChoice === "") {
+          newErrors.firstChoice = "الرغبة الأولى مطلوبة";
+        }
         break;
       default:
         break;
     }
+
     return newErrors;
   };
 
@@ -257,18 +320,39 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
       return;
     }
 
+    // --- ✅ التحقق من أن "الاسم بالعربية" يحتوي فقط على أحرف عربية ---
+    let error = "";
+    let validatedValue = value;
+
+    if (field === "arabicName") {
+      if (typeof value === "string") {
+        validatedValue = value;
+
+        // التعبير المنتظم: يسمح بالحروف العربية، المسافات، الشرطات، التشكيل
+        const arabicRegex = /^[\u0600-\u06FF\s\-ءآأإة]+$/;
+
+        if (value && !arabicRegex.test(value)) {
+          error = "يجب أن يحتوي الاسم على حروف عربية فقط";
+        }
+      }
+    }
+
+    // التحديث العادي للبيانات
     setFormData((prev) => ({
       ...prev,
-      [field]: value,
+      [field]: validatedValue,
     }));
 
-    if (errors[field]) {
-      setErrors((prev) => {
-        const newErrors = { ...prev };
+    // تحديث الأخطاء
+    setErrors((prev) => {
+      const newErrors = { ...prev };
+      if (error) {
+        newErrors[field] = error;
+      } else {
         delete newErrors[field];
-        return newErrors;
-      });
-    }
+      }
+      return newErrors;
+    });
   };
 
   const handleNext = () => {
@@ -278,9 +362,11 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
       return;
     }
     if (activeTab === 6) {
-      handleSubmit();
+      setActiveTab(7); // Navigate to the new tab
+    } else if (activeTab === 7) {
+      handleSubmit(); // Submit the form when on the last tab
     } else {
-      setActiveTab(Math.min(activeTab + 1, 6));
+      setActiveTab(activeTab + 1);
     }
   };
 
@@ -290,6 +376,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
       setErrors(tabErrors);
       return;
     }
+    // Check if current tab has any errors
 
     setIsSubmitting(true);
 
@@ -312,6 +399,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
       other_mobile_number: formData.alternateMobile,
       email: formData.email,
       home_number: formData.homePhone,
+      national_id: formData.nationalId,
       // الصفحة 3: معلومات ولي الأمر
       guardian_name: formData.guardianName,
       guardian_nationality: formData.guardianNationality,
@@ -654,6 +742,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
               البيانات الشخصية
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* اسم الطالب بالعربية */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   اسم الطالب بالعربية <span className="text-red-500">*</span>
@@ -662,13 +751,17 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   <input
                     type="text"
                     value={formData.arabicName}
-                    onChange={(e) =>
-                      handleInputChange("arabicName", e.target.value)
-                    }
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      // السماح فقط بالحروف العربية، المسافات، والشرطات
+                      if (/^[\u0600-\u06FF\s\-ءآأإة]*$/.test(value)) {
+                        handleInputChange("arabicName", value);
+                      }
+                    }}
                     className={`w-full px-4 py-3 pr-12 border ${
                       errors.arabicName ? "border-red-500" : "border-gray-300"
                     } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                    placeholder="اسم الطالب بالعربية"
+                    placeholder="مثل: محمد أحمد"
                   />
                   <User className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
                 </div>
@@ -676,6 +769,8 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   <p className="text-red-500 text-sm">{errors.arabicName}</p>
                 )}
               </div>
+
+              {/* اسم الطالب بالإنجليزية */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   اسم الطالب بالإنجليزية <span className="text-red-500">*</span>
@@ -684,93 +779,72 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   <input
                     type="text"
                     value={formData.englishName}
-                    onChange={(e) =>
-                      handleInputChange("englishName", e.target.value)
-                    }
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      // السماح فقط بالحروف الإنجليزية، المسافات، والشرطات
+                      if (/^[a-zA-Z\s\-]*$/.test(value)) {
+                        handleInputChange("englishName", value);
+                      }
+                    }}
                     className={`w-full px-4 py-3 pr-12 border ${
                       errors.englishName ? "border-red-500" : "border-gray-300"
                     } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
-                    placeholder="Student English Name"
+                    placeholder="مثل: Mohamed Ahmed"
                   />
-                  <User className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
+                  <GraduationCap className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
                 </div>
                 {errors.englishName && (
                   <p className="text-red-500 text-sm">{errors.englishName}</p>
                 )}
               </div>
+
+              {/* الجنسية */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   الجنسية <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <select
+                  <input
+                    type="text"
                     value={formData.nationality}
                     onChange={(e) =>
                       handleInputChange("nationality", e.target.value)
                     }
                     className={`w-full px-4 py-3 pr-12 border ${
                       errors.nationality ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right appearance-none`}
-                  >
-                    <option value="">اختر الجنسية</option>
-                    <option value="egyptian">مصري</option>
-                    <option value="saudi">سعودي</option>
-                    <option value="emirati">إماراتي</option>
-                    <option value="other">أخرى</option>
-                  </select>
+                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
+                    placeholder="مثل: مصري"
+                  />
                   <MapPin className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
                 </div>
                 {errors.nationality && (
                   <p className="text-red-500 text-sm">{errors.nationality}</p>
                 )}
               </div>
+
+              {/* المحافظة */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
-                  الولاية - المحافظة <span className="text-red-500">*</span>
+                  المحافظة <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <select
+                  <input
+                    type="text"
                     value={formData.state}
                     onChange={(e) => handleInputChange("state", e.target.value)}
                     className={`w-full px-4 py-3 pr-12 border ${
                       errors.state ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right appearance-none`}
-                  >
-                    <option value="">اختر المحافظة</option>
-                    <option value="cairo">القاهرة</option>
-                    <option value="giza">الجيزة</option>
-                    <option value="alexandria">الإسكندرية</option>
-                    <option value="dakahlia">الدقهلية</option>
-                    <option value="beheira">البحيرة</option>
-                    <option value="sharqia">الشرقية</option>
-                    <option value="gharbia">الغربية</option>
-                    <option value="monufia">المنوفية</option>
-                    <option value="kafr_elsheikh">كفر الشيخ</option>
-                    <option value="fayoum">الفيوم</option>
-                    <option value="beni_suef">بني سويف</option>
-                    <option value="minya">المنيا</option>
-                    <option value="assuit">أسيوط</option>
-                    <option value="sohag">سوهاج</option>
-                    <option value="qena">قنا</option>
-                    <option value="luxor">الأقصر</option>
-                    <option value="aswan">أسوان</option>
-                    <option value="red_sea">البحر الأحمر</option>
-                    <option value="new_valley">الوادي الجديد</option>
-                    <option value="matrouh">مطروح</option>
-                    <option value="north_sinai">شمال سيناء</option>
-                    <option value="south_sinai">جنوب سيناء</option>
-                    <option value="ismailia">الإسماعيلية</option>
-                    <option value="suez">السويس</option>
-                    <option value="port_said">بورسعيد</option>
-                    <option value="damietta">دمياط</option>
-
-                  </select>
+                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
+                    placeholder="مثل: القاهرة"
+                  />
                   <MapPin className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
                 </div>
                 {errors.state && (
                   <p className="text-red-500 text-sm">{errors.state}</p>
                 )}
               </div>
+
+              {/* المدينة */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   المدينة <span className="text-red-500">*</span>
@@ -783,7 +857,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                     className={`w-full px-4 py-3 pr-12 border ${
                       errors.city ? "border-red-500" : "border-gray-300"
                     } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                    placeholder="المدينة"
+                    placeholder="مثل: مصر الجديدة"
                   />
                   <MapPin className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
                 </div>
@@ -791,116 +865,165 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   <p className="text-red-500 text-sm">{errors.city}</p>
                 )}
               </div>
+
+              {/* الدين */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
-                  الديانة <span className="text-red-500">*</span>
+                  الدين <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <select
+                  <input
+                    type="text"
                     value={formData.religion}
                     onChange={(e) =>
                       handleInputChange("religion", e.target.value)
                     }
                     className={`w-full px-4 py-3 pr-12 border ${
                       errors.religion ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right appearance-none`}
-                  >
-                    <option value="">اختر الديانة</option>
-                    <option value="muslim">مسلم</option>
-                    <option value="christian">مسيحي</option>
-                    <option value="other">أخرى</option>
-                  </select>
-                  <MapPin className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
+                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
+                    placeholder="مثل: إسلامي"
+                  />
+                  <Award className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
                 </div>
                 {errors.religion && (
                   <p className="text-red-500 text-sm">{errors.religion}</p>
                 )}
               </div>
+
+              {/* رقم شهادة الميلاد */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   رقم شهادة الميلاد
                 </label>
-                <input
-                  type="text"
-                  value={formData.birthCertNumber}
-                  onChange={(e) =>
-                    handleInputChange("birthCertNumber", e.target.value)
-                  }
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right"
-                  placeholder="رقم شهادة الميلاد"
-                />
+                <div className="relative">
+                  <input
+                    type="number"
+                    value={formData.birthCertNumber}
+                    onChange={(e) =>
+                      handleInputChange("birthCertNumber", e.target.value)
+                    }
+                    className={`w-full px-4 py-3 pr-12 border ${
+                      errors.birthCertNumber
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
+                    placeholder="رقم شهادة الميلاد"
+                  />
+                  <Award className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
+                </div>
+                {errors.birthCertNumber && (
+                  <p className="text-red-500 text-sm">
+                    {errors.birthCertNumber}
+                  </p>
+                )}
               </div>
+
+              {/* جواز السفر */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   رقم جواز السفر
                 </label>
-                <input
-                  type="text"
-                  value={formData.passportNumber}
-                  onChange={(e) =>
-                    handleInputChange("passportNumber", e.target.value)
-                  }
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right"
-                  placeholder="رقم جواز السفر"
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  السنة <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={formData.birthYear}
-                  onChange={(e) =>
-                    handleInputChange("birthYear", e.target.value)
-                  }
-                  className={`w-full px-4 py-3 border ${
-                    errors.birthYear ? "border-red-500" : "border-red-300"
-                  } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                  placeholder="1990"
-                />
-                {errors.birthYear && (
-                  <p className="text-red-500 text-sm">{errors.birthYear}</p>
+                <div className="relative">
+                  <input
+                    type="number"
+                    value={formData.passportNumber}
+                    onChange={(e) =>
+                      handleInputChange("passportNumber", e.target.value)
+                    }
+                    className={`w-full px-4 py-3 pr-12 border ${
+                      errors.passportNumber
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
+                    placeholder="رقم جواز السفر"
+                  />
+                  <Award className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
+                </div>
+                {errors.passportNumber && (
+                  <p className="text-red-500 text-sm">
+                    {errors.passportNumber}
+                  </p>
                 )}
               </div>
+
+              {/* تاريخ الميلاد */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
-                  الشهر <span className="text-red-500">*</span>
+                  تاريخ الميلاد <span className="text-red-500">*</span>
                 </label>
-                <input
-                  type="text"
-                  value={formData.birthMonth}
-                  onChange={(e) =>
-                    handleInputChange("birthMonth", e.target.value)
-                  }
-                  className={`w-full px-4 py-3 border ${
-                    errors.birthMonth ? "border-red-500" : "border-red-300"
-                  } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                  placeholder="05"
-                />
-                {errors.birthMonth && (
-                  <p className="text-red-500 text-sm">{errors.birthMonth}</p>
+                <div className="grid grid-cols-3 gap-2">
+                  <select
+                    value={formData.birthDay}
+                    onChange={(e) =>
+                      handleInputChange("birthDay", e.target.value)
+                    }
+                    className={`px-4 py-3 border ${
+                      errors.birthDay ? "border-red-500" : "border-gray-300"
+                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center`}
+                  >
+                    <option value="">اليوم</option>
+                    {Array.from({ length: 31 }, (_, i) => (
+                      <option key={i + 1} value={i + 1}>
+                        {i + 1}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    value={formData.birthMonth}
+                    onChange={(e) =>
+                      handleInputChange("birthMonth", e.target.value)
+                    }
+                    className={`px-4 py-3 border ${
+                      errors.birthMonth ? "border-red-500" : "border-gray-300"
+                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center`}
+                  >
+                    <option value="">الشهر</option>
+                    {Array.from({ length: 12 }, (_, i) => (
+                      <option key={i + 1} value={i + 1}>
+                        {i + 1}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    type="text"
+                    value={formData.birthYear}
+                    onChange={(e) =>
+                      handleInputChange("birthYear", e.target.value)
+                    }
+                    placeholder="السنة"
+                    className={`px-4 py-3 border ${
+                      errors.birthYear ? "border-red-500" : "border-gray-300"
+                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center`}
+                  />
+                </div>
+                {(errors.birthDay || errors.birthMonth || errors.birthYear) && (
+                  <p className="text-red-500 text-sm">
+                    {errors.birthDay || errors.birthMonth || errors.birthYear}
+                  </p>
                 )}
               </div>
+              {/* ✅ الرقم القومي */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
-                  اليوم <span className="text-red-500">*</span>
+                  الرقم القومي
                 </label>
-                <input
-                  type="text"
-                  value={formData.birthDay}
-                  onChange={(e) =>
-                    handleInputChange("birthDay", e.target.value)
-                  }
-                  className={`w-full px-4 py-3 border ${
-                    errors.birthDay ? "border-red-500" : "border-red-300"
-                  } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                  placeholder="21"
-                />
-                {errors.birthDay && (
-                  <p className="text-red-500 text-sm">{errors.birthDay}</p>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={formData.nationalId}
+                    onChange={(e) =>
+                      handleInputChange("nationalId", e.target.value)
+                    }
+                    className={`w-full px-4 py-3 pr-12 border ${
+                      errors.nationalId ? "border-red-500" : "border-gray-300"
+                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
+                    placeholder="أدخل الرقم القومي (14 رقمًا)"
+                    maxLength={14}
+                  />
+                  <IdCard className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
+                </div>
+                {errors.nationalId && (
+                  <p className="text-red-500 text-sm">{errors.nationalId}</p>
                 )}
               </div>
             </div>
@@ -1043,6 +1166,33 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   <p className="text-red-500 text-sm">{errors.guardianName}</p>
                 )}
               </div>
+              {/* ✅ حقل جديد: صلة القرابة */}
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700 text-right">
+                  صلة القرابة <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={formData.guardianRelation}
+                    onChange={(e) =>
+                      handleInputChange("guardianRelation", e.target.value)
+                    }
+                    className={`w-full px-4 py-3 pr-12 border ${
+                      errors.guardianRelation
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
+                    placeholder="مثل: أب، أم، عم، خال"
+                  />
+                  <User className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
+                </div>
+                {errors.guardianRelation && (
+                  <p className="text-red-500 text-sm">
+                    {errors.guardianRelation}
+                  </p>
+                )}
+              </div>
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   جنسية ولي الأمر <span className="text-red-500">*</span>
@@ -1059,10 +1209,28 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                         : "border-gray-300"
                     } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right appearance-none`}
                   >
-                    <option value="">جنسية ولي الأمر</option>
+                    <option value="">اختر الجنسية</option>
+                    <option value="algerian">جزائري</option>
+                    <option value="bahraini">بحريني</option>
+                    <option value="comoran">قمرية</option>
+                    <option value="djiboutian">جيبوتي</option>
                     <option value="egyptian">مصري</option>
+                    <option value="iraqi">عراقي</option>
+                    <option value="jordanian">أردني</option>
+                    <option value="kuwaiti">كويتي</option>
+                    <option value="lebanese">لبناني</option>
+                    <option value="libyan">ليبي</option>
+                    <option value="moroccan">مغربي</option>
+                    <option value="mauritanian">موريتاني</option>
+                    <option value="omani">عماني</option>
+                    <option value="qatari">قطري</option>
                     <option value="saudi">سعودي</option>
+                    <option value="somali">صومالي</option>
+                    <option value="sudanese">سوداني</option>
+                    <option value="syrian">سوري</option>
+                    <option value="tunisian">تونسي</option>
                     <option value="emirati">إماراتي</option>
+                    <option value="yemeni">يمني</option>
                   </select>
                   <MapPin className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
                 </div>
@@ -1316,10 +1484,16 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                       } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right appearance-none`}
                     >
                       <option value="">اختر الكلية</option>
-                      <option value="engineering">كلية الهندسة</option>
-                      <option value="medicine">كلية الطب</option>
-                      <option value="science">كلية العلوم</option>
-                      <option value="commerce">كلية التجارة</option>
+                      <option value="cs_ai">
+                        كلية الحاسبات والمعلومات والذكاء الاصطناعي
+                      </option>
+                      <option value="nursing">كلية التمريض</option>
+                      <option value="arts_design">كلية الفنون والتصميم</option>
+                      <option value="dental">كلية الألسن</option>
+                      <option value="tourism_archaeology">
+                        كلية الآثار والسياحة
+                      </option>
+                      <option value="business">كلية الأعمال</option>
                     </select>
                     <School className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
                   </div>
@@ -1532,12 +1706,38 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
           </div>
         );
       case 6:
+        // Define all faculties
+        const allFaculties = [
+          {
+            value: "cs_ai",
+            label: "كلية الحاسبات والمعلومات والذكاء الاصطناعي",
+          },
+          { value: "nursing", label: "كلية التمريض" },
+          { value: "arts_design", label: "كلية الفنون والتصميم" },
+          { value: "dental", label: "كلية الألسن" },
+          { value: "tourism_archaeology", label: "كلية الآثار والسياحة" },
+          { value: "business", label: "كلية الأعمال" },
+        ];
+
+        // Filter options based on previous choices
+        const secondOptions = allFaculties.filter(
+          (opt) => opt.value !== formData.firstChoice
+        );
+        const thirdOptions = allFaculties.filter(
+          (opt) =>
+            opt.value !== formData.firstChoice &&
+            opt.value !== formData.secondChoice
+        );
+
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold text-gray-800 text-right mb-8">
               الرغبات والمصاريف
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            {/* First and Second Choices in Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
+              {/* الرغبة الأولى */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   الرغبة الأولى <span className="text-red-500">*</span>
@@ -1550,16 +1750,14 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                     }
                     className={`w-full px-4 py-3 pr-12 border ${
                       errors.firstChoice ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right appearance-none`}
+                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
                   >
                     <option value="">اختر الكلية</option>
-                    <option value="cs_ai">كلية الحاسبات والمعلومات والذكاء الاصطناعي</option>
-                    <option value="nursing">كلية التمريض</option>
-                    <option value="arts_design">كلية الفنون والتصميم</option>
-                    <option value="dentistry">كلية الأسنان</option>
-                    <option value="tourism_archaeology">كلية الآثار والسياحة</option>
-                    <option value="business">كلية الأعمال</option>
-
+                    {allFaculties.map((faculty) => (
+                      <option key={faculty.value} value={faculty.value}>
+                        {faculty.label}
+                      </option>
+                    ))}
                   </select>
                   <School className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
                 </div>
@@ -1567,6 +1765,8 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   <p className="text-red-500 text-sm">{errors.firstChoice}</p>
                 )}
               </div>
+
+              {/* الرغبة الثانية */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   الرغبة الثانية
@@ -1577,20 +1777,27 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                     onChange={(e) =>
                       handleInputChange("secondChoice", e.target.value)
                     }
-                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right appearance-none"
+                    disabled={!formData.firstChoice}
+                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right disabled:bg-gray-100 disabled:cursor-not-allowed"
                   >
-                    <option value="">اختر الكلية</option>
-                    <option value="cs_ai">كلية الحاسبات والمعلومات والذكاء الاصطناعي</option>
-                    <option value="nursing">كلية التمريض</option>
-                    <option value="arts_design">كلية الفنون والتصميم</option>
-                    <option value="dentistry">كلية الأسنان</option>
-                    <option value="tourism_archaeology">كلية الآثار والسياحة</option>
-                    <option value="business">كلية الأعمال</option>
-
+                    <option value="">
+                      {formData.firstChoice
+                        ? "اختر الكلية"
+                        : "اختر الرغبة الأولى أولاً"}
+                    </option>
+                    {secondOptions.map((faculty) => (
+                      <option key={faculty.value} value={faculty.value}>
+                        {faculty.label}
+                      </option>
+                    ))}
                   </select>
                   <School className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
                 </div>
               </div>
+            </div>
+
+            {/* الرغبة الثالثة - Full Width (optional, but clearer) */}
+            <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   الرغبة الثالثة
@@ -1601,24 +1808,29 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                     onChange={(e) =>
                       handleInputChange("thirdChoice", e.target.value)
                     }
-                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right appearance-none"
+                    disabled={!formData.secondChoice}
+                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right disabled:bg-gray-100 disabled:cursor-not-allowed"
                   >
-                      <option value="">اختر الكلية</option>
-                      <option value="cs_ai">كلية الحاسبات والمعلومات والذكاء الاصطناعي</option>
-                      <option value="nursing">كلية التمريض</option>
-                      <option value="arts_design">كلية الفنون والتصميم</option>
-                      <option value="dentistry">كلية الأسنان</option>
-                      <option value="tourism_archaeology">كلية الآثار والسياحة</option>
-                      <option value="business">كلية الأعمال</option>
-
+                    <option value="">
+                      {formData.secondChoice
+                        ? "اختر الكلية"
+                        : "اختر الرغبة الثانية أولاً"}
+                    </option>
+                    {thirdOptions.map((faculty) => (
+                      <option key={faculty.value} value={faculty.value}>
+                        {faculty.label}
+                      </option>
+                    ))}
                   </select>
                   <School className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
                 </div>
               </div>
             </div>
+
+            {/* ✅ New Field: Appears FULL WIDTH and UNDER all other fields */}
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700 text-right">
-                ملاحظات إضافية
+                ملاحظات إضافية أو رغبات أخرى
               </label>
               <textarea
                 value={formData.additionalNotes}
@@ -1627,10 +1839,12 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                 }
                 rows={4}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right resize-none"
-                placeholder="Ut aperiam ratione i"
+                placeholder="أدخل أي ملاحظات إضافية أو رغبات لم تُذكر"
               />
             </div>
-            <div className="flex items-center justify-end space-x-2 space-x-reverse">
+
+            {/* Terms & Conditions */}
+            <div className="flex items-center justify-end space-x-2 space-x-reverse mt-6">
               <label className="text-sm text-blue-600 cursor-pointer">
                 سياسة الخصوصية
               </label>
@@ -1641,11 +1855,75 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
               <span className="text-sm text-gray-700">و</span>
               <input
                 type="checkbox"
+                defaultChecked
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
             </div>
           </div>
         );
+      case 7:
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-800 text-right mb-8">
+              معلومات الحساب
+            </h2>
+            <div className="bg-white rounded-lg p-4 shadow-md">
+              <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                  <tr>
+                    <th scope="col" className="px-6 py-3">
+                      IBAN
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      رقم الحساب
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      العملة
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      اسم الحساب
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                    <td className="px-6 py-4">EG370038002800000280000150150</td>
+                    <td className="px-6 py-4">0280000150150</td>
+                    <td className="px-6 py-4">مصري</td>
+                    <td className="px-6 py-4">جامعة دمياط الأهلية</td>
+                  </tr>
+                  <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                    <td className="px-6 py-4">EG100038002800000280000150151</td>
+                    <td className="px-6 py-4">0280000150151</td>
+                    <td className="px-6 py-4">دولار</td>
+                    <td className="px-6 py-4">جامعة دمياط الأهلية</td>
+                  </tr>
+                  <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                    <td className="px-6 py-4">EG800038002800000280000150152</td>
+                    <td className="px-6 py-4">0280000150152</td>
+                    <td className="px-6 py-4">يورو</td>
+                    <td className="px-6 py-4">جامعة دمياط الأهلية</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            {/* Submit Button */}
+            <div className="flex justify-end mt-8">
+              {/* <button
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                className={`px-8 py-3 rounded-lg font-medium transition-all duration-200 ${
+                  isSubmitting
+                    ? "bg-gray-400 cursor-not-allowed text-white"
+                    : "bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl"
+                }`}
+              >
+                {isSubmitting ? "جاري الإرسال..." : "إرسال"}
+              </button> */}
+            </div>
+          </div>
+        );
+
       default:
         return null;
     }
@@ -1707,16 +1985,16 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
           <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-200">
             <button
               onClick={handleNext}
-              disabled={isSubmitting}
+              // ❌ أزلنا disabled تمامًا
               className={`px-8 py-3 rounded-lg font-medium transition-all duration-200 ${
                 isSubmitting
-                  ? "bg-gray-400 cursor-not-allowed"
+                  ? "bg-gray-400 cursor-not-allowed text-white"
                   : "bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl"
               }`}
             >
               {isSubmitting
                 ? "جاري الإرسال..."
-                : activeTab === 6
+                : activeTab === 7
                 ? "إرسال"
                 : "التالي"}
             </button>

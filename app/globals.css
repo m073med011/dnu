@@ -22,3 +22,34 @@
   background-clip: text;
   color: transparent;
 }
+
+.gradient-hover {
+  position: relative;
+  display: inline-block;
+  color: inherit;
+  transition: color 0.3s ease;
+}
+
+/* Gradient Text on Hover */
+.gradient-hover:hover {
+  background: linear-gradient(to right, #fb9300, #ffb700); /* orange-400 to yellow-500 */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Gradient Underline */
+.gradient-hover::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  right: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(to right, theme('colors.orange.400'), theme('colors.yellow.500'));
+  transition: width 0.3s ease;
+}
+
+.gradient-hover:hover::after {
+  width: 100%;
+}

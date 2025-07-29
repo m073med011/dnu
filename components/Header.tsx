@@ -78,17 +78,21 @@ const Dropdown: FC<{ items: DropdownItem[] }> = ({ items }) => {
               href={item.href || "#"}
               target="_blank"
               rel="noopener noreferrer"
-              className="block px-6 py-3 text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors duration-200 text-right"
+              className="block px-6 py-3 text-black hover:bg-gray-50 transition-colors duration-200 text-right"
             >
-              {item.label}
+              <span className="hover:bg-gradient-to-r hover:from-[#fb9300] hover:to-[#ffb700] hover:bg-clip-text hover:text-transparent transition-all duration-200">
+                {item.label}
+              </span>
             </a>
           ) : (
             <Link
               key={index}
               href={item.href || "#"}
-              className="block px-6 py-3 text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors duration-200 text-right"
+              className="block px-6 py-3 text-black hover:bg-gray-50 transition-colors duration-200 text-right"
             >
-              {item.label}
+              <span className="hover:bg-gradient-to-r hover:from-[#fb9300] hover:to-[#ffb700] hover:bg-clip-text hover:text-transparent transition-all duration-200">
+                {item.label}
+              </span>
             </Link>
           )
         ))}
@@ -145,7 +149,7 @@ const MobileSidebar: FC<{
             {navItems.map((item, index) => (
               <div key={index} className="px-4">
                 <div
-                  className="flex items-center justify-between cursor-pointer py-4 px-4 hover:bg-gray-50 rounded-lg transition-colors"
+                  className="flex items-center justify-between cursor-pointer py-4 px-4 hover:bg-gray-50 rounded-lg transition-colors group"
                   onClick={() => {
                     if (item.hasDropdown) {
                       onDropdownToggle(item.label);
@@ -160,15 +164,15 @@ const MobileSidebar: FC<{
                     }
                   }}
                 >
-                  <span className="font-semibold text-gray-900 text-base">
+                  <span className="font-semibold text-gray-900 text-base group-hover:bg-gradient-to-r group-hover:from-[#fb9300] group-hover:to-[#ffb700] group-hover:bg-clip-text group-hover:text-transparent transition-all duration-200">
                     {item.label}
                   </span>
                   {item.hasDropdown && (
                     <div className="ml-3">
                       {openDropdown === item.label ? (
-                        <ChevronUp size={20} className="text-gray-500" />
+                        <ChevronUp size={20} className="text-gray-500 group-hover:text-[#fb9300] transition-colors duration-200" />
                       ) : (
-                        <ChevronDown size={20} className="text-gray-500" />
+                        <ChevronDown size={20} className="text-gray-500 group-hover:text-[#fb9300] transition-colors duration-200" />
                       )}
                     </div>
                   )}
@@ -187,9 +191,9 @@ const MobileSidebar: FC<{
                               href={dropdownItem.href || "#"}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="block py-3 px-6 pr-12 text-gray-600 hover:text-blue-600 hover:bg-white border-b border-gray-200 last:border-b-0 transition-colors duration-200 text-right relative"
+                              className="block py-3 px-6 pr-12 text-gray-600 hover:bg-white border-b border-gray-200 last:border-b-0 transition-colors duration-200 text-right relative group"
                             >
-                              <span className="text-sm">
+                              <span className="text-sm group-hover:bg-gradient-to-r group-hover:from-[#fb9300] group-hover:to-[#ffb700] group-hover:bg-clip-text group-hover:text-transparent transition-all duration-200">
                                 • {dropdownItem.label}
                               </span>
                             </a>
@@ -198,9 +202,9 @@ const MobileSidebar: FC<{
                               key={dropdownIndex}
                               href={dropdownItem.href || "#"}
                               onClick={onClose}
-                              className="block py-3 px-6 pr-12 text-gray-600 hover:text-blue-600 hover:bg-white border-b border-gray-200 last:border-b-0 transition-colors duration-200 text-right relative"
+                              className="block py-3 px-6 pr-12 text-gray-600 hover:bg-white border-b border-gray-200 last:border-b-0 transition-colors duration-200 text-right relative group"
                             >
-                              <span className="text-sm">
+                              <span className="text-sm group-hover:bg-gradient-to-r group-hover:from-[#fb9300] group-hover:to-[#ffb700] group-hover:bg-clip-text group-hover:text-transparent transition-all duration-200">
                                 • {dropdownItem.label}
                               </span>
                             </Link>
@@ -298,24 +302,24 @@ const Header: FC = () => {
                   }
                 >
                   {item.hasDropdown ? (
-                    <div className="flex items-center cursor-pointer relative after:absolute after:bottom-[-2px] after:right-0 after:h-[2px] after:w-0 after:bg-black after:transition-all after:duration-300 group-hover:after:w-full">
-                      <span className={` ${scrolled || shouldHaveWhiteBackground ? "text-black" : "text-white"} font-bold text-sm xl:text-base whitespace-nowrap`}>
+                    <div className="flex items-center cursor-pointer relative after:absolute after:bottom-[-2px] after:right-0 after:h-[2px] after:w-0 after:bg-gradient-to-r after:from-[#fb9300] after:to-[#ffb700] after:transition-all after:duration-300 hover:after:w-full">
+                      <span className={`${scrolled || shouldHaveWhiteBackground ? "text-black" : "text-white"} font-bold text-sm xl:text-base whitespace-nowrap hover:bg-gradient-to-r hover:from-[#fb9300] hover:to-[#ffb700] hover:bg-clip-text hover:text-transparent transition-all duration-300`}>
                         {item.label}
                       </span>
                       <div className="ml-2">
                         {hoveredDropdown === item.label ? (
-                          <ChevronUp size={16} className="text-gray-400" />
+                          <ChevronUp size={16} className="text-gray-400 hover:text-[#fb9300] transition-colors duration-300" />
                         ) : (
-                          <ChevronDown size={16} className="text-gray-400" />
+                          <ChevronDown size={16} className="text-gray-400 hover:text-[#fb9300] transition-colors duration-300" />
                         )}
                       </div>
                     </div>
                   ) : (
                     <Link
                       href={item.href || "#"}
-                      className="flex items-center cursor-pointer relative after:absolute after:bottom-[-2px] after:right-0 after:h-[2px] after:w-0 after:bg-black after:transition-all after:duration-300 group-hover:after:w-full"
+                      className="flex items-center cursor-pointer relative after:absolute after:bottom-[-2px] after:right-0 after:h-[2px] after:w-0 after:bg-gradient-to-r after:from-[#fb9300] after:to-[#ffb700] after:transition-all after:duration-300 hover:after:w-full"
                     >
-                      <span className={` ${scrolled || shouldHaveWhiteBackground ? "text-black" : "text-white"} font-bold text-sm xl:text-base whitespace-nowrap`}>
+                      <span className={`${scrolled || shouldHaveWhiteBackground ? "text-black" : "text-white"} font-bold text-sm xl:text-base whitespace-nowrap hover:bg-gradient-to-r hover:from-[#fb9300] hover:to-[#ffb700] hover:bg-clip-text hover:text-transparent transition-all duration-300`}>
                         {item.label}
                       </span>
                     </Link>

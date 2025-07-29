@@ -5,17 +5,17 @@ const UniversityFooter: React.FC = () => {
     <div className="w-full max-w-[1920px] mx-auto flex flex-col justify-start items-center gap-4 sm:gap-5 lg:gap-5 py-6 sm:py-8 lg:py-10">
       {/* Divider line */}
       <div className="w-full h-0 border-t-[3px] sm:border-t-[4px] lg:border-t-[5px] border-[#EFF3FF]"></div>
-      
+
       {/* Footer content */}
       <div className="flex flex-col justify-center items-center text-center px-4 sm:px-6 lg:px-8">
         {/* Number/ID */}
-        <div className="text-[#899FCF] text-xl sm:text-2xl lg:text-[32px] font-semibold mb-2 sm:mb-3 lg:mb-4">
+        {/* <div className="text-[#899FCF] text-xl sm:text-2xl lg:text-[32px] font-semibold mb-2 sm:mb-3 lg:mb-4">
           2750413
-        </div>
-        
+        </div> */}
+
         {/* Copyright text */}
         <div className="text-[#433E78] text-sm sm:text-lg lg:text-xl font-medium leading-relaxed max-w-4xl">
-          جميع الحقوق محفوظة © 2025 مركز تقنية الإتصالات والمعلومات - جامعة دمياط
+          جميع الحقوق محفوظة 2025 - مركز الحلول الذكية الجامعة (SUS)
         </div>
       </div>
     </div>
