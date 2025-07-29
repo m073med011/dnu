@@ -35,7 +35,7 @@ interface FormData {
   certificateType: string;
   schoolName: string;
   totalGrade: string;
-  percentage: string;
+  percentage: number;
   sittingNumber: string;
   obtainedGrade: string;
   certificateCountry: string;
@@ -70,6 +70,8 @@ type FormErrors = Partial<Record<keyof FormData, string>>;
 // Main Component
 const UniversityRegistrationForm = (): React.JSX.Element => {
   const [activeTab, setActiveTab] = useState<number>(1);
+  const [registrationNumber, setRegistrationNumber] = useState<string>("");
+  const [amountDue, setAmountDue] = useState<number | null>(null);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
@@ -95,7 +97,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     certificateType: "",
     schoolName: "",
     totalGrade: "",
-    percentage: "",
+    percentage: 0,
     sittingNumber: "",
     obtainedGrade: "",
     certificateCountry: "",
@@ -258,7 +260,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
           "certificateType",
           "schoolName",
           "totalGrade",
-          "percentage",
+          // "percentage",
           "sittingNumber",
           "obtainedGrade",
           "certificateCountry",
@@ -271,6 +273,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
         });
 
         // Validate Certificate Year
+        
         if (
           formData.certificateYear &&
           !/^\d+$/.test(formData.certificateYear)
@@ -297,63 +300,71 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
   };
 
   const handleInputChange = (
-    field: keyof FormData,
-    value: string | boolean
-  ) => {
-    if (field === "hasTeachingExperience" && value === false) {
-      setFormData((prev) => ({
-        ...prev,
-        hasTeachingExperience: false,
-        parentName: "",
-        universityId: "",
-        faculty: "",
-        studyYear: "",
-      }));
-      setErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors.parentName;
-        delete newErrors.universityId;
-        delete newErrors.faculty;
-        delete newErrors.studyYear;
-        return newErrors;
-      });
-      return;
-    }
-
-    // --- ✅ التحقق من أن "الاسم بالعربية" يحتوي فقط على أحرف عربية ---
-    let error = "";
-    let validatedValue = value;
-
-    if (field === "arabicName") {
-      if (typeof value === "string") {
-        validatedValue = value;
-
-        // التعبير المنتظم: يسمح بالحروف العربية، المسافات، الشرطات، التشكيل
-        const arabicRegex = /^[\u0600-\u06FF\s\-ءآأإة]+$/;
-
-        if (value && !arabicRegex.test(value)) {
-          error = "يجب أن يحتوي الاسم على حروف عربية فقط";
-        }
-      }
-    }
-
-    // التحديث العادي للبيانات
+  field: keyof FormData,
+  value: string | boolean
+) => {
+  // Reset sibling fields if hasTeachingExperience is unchecked
+  if (field === "hasTeachingExperience" && value === false) {
     setFormData((prev) => ({
       ...prev,
-      [field]: validatedValue,
+      hasTeachingExperience: false,
+      parentName: "",
+      universityId: "",
+      faculty: "",
+      studyYear: "",
     }));
-
-    // تحديث الأخطاء
     setErrors((prev) => {
       const newErrors = { ...prev };
-      if (error) {
-        newErrors[field] = error;
-      } else {
-        delete newErrors[field];
-      }
+      delete newErrors.parentName;
+      delete newErrors.universityId;
+      delete newErrors.faculty;
+      delete newErrors.studyYear;
       return newErrors;
     });
-  };
+    return;
+  }
+
+  // Update the field
+  setFormData((prev) => {
+    const updated = { ...prev, [field]: value };
+
+    // 🔁 Auto-calculate percentage if totalGrade or obtainedGrade changes
+    if (field === "totalGrade" || field === "obtainedGrade") {
+      const total = parseFloat(updated.totalGrade);
+      const obtained = parseFloat(updated.obtainedGrade);
+
+      if (!isNaN(total) && !isNaN(obtained) && total !== 0) {
+        const percentage = ((obtained / total) * 100).toFixed(2);
+        updated.percentage = Number(percentage); // e.g., "95.50%"
+      } else {
+        updated.percentage = 0; // Reset if invalid
+      }
+    }
+
+    return updated;
+  });
+
+  // Validation logic (existing)
+  let error = "";
+  if (field === "arabicName") {
+    if (typeof value === "string") {
+      const arabicRegex = /^[\u0600-\u06FF\s\-ءآأإة]+$/;
+      if (value && !arabicRegex.test(value)) {
+        error = "يجب أن يحتوي الاسم على حروف عربية فقط";
+      }
+    }
+  }
+
+  setErrors((prev) => {
+    const newErrors = { ...prev };
+    if (error) {
+      newErrors[field] = error;
+    } else {
+      delete newErrors[field];
+    }
+    return newErrors;
+  });
+};
 
   const handleNext = () => {
     const tabErrors = validateTab(activeTab);
@@ -444,6 +455,12 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
       );
 
       if (response.status === 200 || response.status === 201) {
+        const resData = response.data;
+
+        // Extract and store dynamic values
+        setRegistrationNumber(resData.registration_number || "غير متوفر");
+        setAmountDue(resData.fees_applied?.amount_egp || null);
+
         setIsSubmitted(true);
       } else {
         const resData = response.data;
@@ -565,13 +582,21 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
               <div className="bg-blue-50 rounded-lg p-6 space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-blue-600 font-medium">رقم الطلب:</span>
-                  <span className="font-bold text-gray-800">#REG2025001</span>
+                  <span className="font-bold text-gray-800">
+                    {registrationNumber}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-blue-600 font-medium">
                     تاريخ التسجيل:
                   </span>
-                  <span className="font-bold text-gray-800">28 يوليو 2025</span>
+                  <span className="font-bold text-gray-800">
+                    {new Date().toLocaleDateString("ar-EG", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-blue-600 font-medium">الحالة:</span>
@@ -579,6 +604,16 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                     قيد المراجعة
                   </span>
                 </div>
+                {amountDue !== null && (
+                  <div className="flex justify-between items-center pt-2 border-t border-blue-200">
+                    <span className="text-blue-600 font-medium">
+                      المبلغ المستحق:
+                    </span>
+                    <span className="font-bold text-red-600">
+                      {amountDue} جنيه مصري
+                    </span>
+                  </div>
+                )}
               </div>
               {/* Information Box */}
               <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-right">
@@ -734,6 +769,16 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
   }
 
   const renderTabContent = () => {
+    // Helper to calculate percentage
+    const calculatePercentage = (): string => {
+  const total = parseFloat(formData.totalGrade);
+  const obtained = parseFloat(formData.obtainedGrade);
+  if (!isNaN(total) && !isNaN(obtained) && total !== 0) {
+    const percentage = (obtained / total) * 100;
+    return `${percentage.toFixed(2)}%`; // e.g., "95.50%"
+  }
+  return "";
+};
     switch (activeTab) {
       case 1:
         return (
@@ -828,15 +873,43 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   المحافظة <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <input
-                    type="text"
+                  <select
                     value={formData.state}
                     onChange={(e) => handleInputChange("state", e.target.value)}
                     className={`w-full px-4 py-3 pr-12 border ${
                       errors.state ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                    placeholder="مثل: القاهرة"
-                  />
+                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right appearance-none`}
+                  >
+                    <option value="">اختر المحافظة</option>
+                    <option value="القاهرة">القاهرة</option>
+                    <option value="الجيزة">الجيزة</option>
+                    <option value="الإسكندرية">الإسكندرية</option>
+                    <option value="الدقهلية">الدقهلية</option>
+                    <option value="البحر الأحمر">البحر الأحمر</option>
+                    <option value="البحيرة">البحيرة</option>
+                    <option value="الفيوم">الفيوم</option>
+                    <option value="الغربية">الغربية</option>
+                    <option value="الإسماعيلية">الإسماعيلية</option>
+                    <option value="المنوفية">المنوفية</option>
+                    <option value="المنيا">المنيا</option>
+                    <option value="القليوبية">القليوبية</option>
+                    <option value="الوادي الجديد">الوادي الجديد</option>
+                    <option value="السويس">السويس</option>
+                    <option value="اسيوط">أسيوط</option>
+                    <option value="اسوان">أسوان</option>
+                    <option value="الأقصر">الأقصر</option>
+                    <option value="مطروح">مطروح</option>
+                    <option value="شمال سيناء">شمال سيناء</option>
+                    <option value="جنوب سيناء">جنوب سيناء</option>
+                    <option value="دمياط">دمياط</option>
+                    <option value="كفر الشيخ">كفر الشيخ</option>
+                    <option value="قنا">قنا</option>
+                    <option value="مرسى مطروح">مرسى مطروح</option>
+                    <option value="الشرقية">الشرقية</option>
+                    <option value="سوهاج">سوهاج</option>
+                    <option value="القليوبية">القليوبية</option>
+                    <option value="الوادي الجديد">الوادي الجديد</option>
+                  </select>
                   <MapPin className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
                 </div>
                 {errors.state && (
@@ -881,7 +954,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                     className={`w-full px-4 py-3 pr-12 border ${
                       errors.religion ? "border-red-500" : "border-gray-300"
                     } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                    placeholder="مثل: إسلامي"
+                    placeholder="مثل: مسلم"
                   />
                   <Award className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
                 </div>
@@ -985,7 +1058,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                     ))}
                   </select>
                   <input
-                    type="text"
+                    type="number"
                     value={formData.birthYear}
                     onChange={(e) =>
                       handleInputChange("birthYear", e.target.value)
@@ -1009,7 +1082,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                 </label>
                 <div className="relative">
                   <input
-                    type="text"
+                    type="number"
                     value={formData.nationalId}
                     onChange={(e) =>
                       handleInputChange("nationalId", e.target.value)
@@ -1563,76 +1636,15 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   <p className="text-red-500 text-sm">{errors.schoolName}</p>
                 )}
               </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  الدرجة الكلية <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={formData.totalGrade}
-                    onChange={(e) =>
-                      handleInputChange("totalGrade", e.target.value)
-                    }
-                    className={`w-full px-4 py-3 pr-12 border ${
-                      errors.totalGrade ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                    placeholder="الدرجة الكلية"
-                  />
-                  <Award className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-                {errors.totalGrade && (
-                  <p className="text-red-500 text-sm">{errors.totalGrade}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  النسبة المئوية <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={formData.percentage}
-                    onChange={(e) =>
-                      handleInputChange("percentage", e.target.value)
-                    }
-                    className={`w-full px-4 py-3 pr-12 border ${
-                      errors.percentage ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                    placeholder="النسبة المئوية"
-                  />
-                  <Award className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-                {errors.percentage && (
-                  <p className="text-red-500 text-sm">{errors.percentage}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  رقم الجلوس <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={formData.sittingNumber}
-                  onChange={(e) =>
-                    handleInputChange("sittingNumber", e.target.value)
-                  }
-                  className={`w-full px-4 py-3 border ${
-                    errors.sittingNumber ? "border-red-500" : "border-gray-300"
-                  } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                  placeholder="رقم الجلوس"
-                />
-                {errors.sittingNumber && (
-                  <p className="text-red-500 text-sm">{errors.sittingNumber}</p>
-                )}
-              </div>
+              
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   الدرجة المحصل عليها <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <input
-                    type="text"
+                    type="number"
+                    step="any"
                     value={formData.obtainedGrade}
                     onChange={(e) =>
                       handleInputChange("obtainedGrade", e.target.value)
@@ -1642,7 +1654,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                         ? "border-red-500"
                         : "border-gray-300"
                     } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                    placeholder="الدرجة المحصل عليها"
+                    placeholder="مثلاً: 350"
                   />
                   <Award className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
                 </div>
@@ -1650,6 +1662,47 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   <p className="text-red-500 text-sm">{errors.obtainedGrade}</p>
                 )}
               </div>
+              {/* الدرجة الكلية */}
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700 text-right">
+                  الدرجة الكلية <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    step="any"
+                    value={formData.totalGrade}
+                    onChange={(e) =>
+                      handleInputChange("totalGrade", e.target.value)
+                    }
+                    className={`w-full px-4 py-3 pr-12 border ${
+                      errors.totalGrade ? "border-red-500" : "border-gray-300"
+                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
+                    placeholder="مثلاً: 410"
+                  />
+                  <Award className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
+                </div>
+                {errors.totalGrade && (
+                  <p className="text-red-500 text-sm">{errors.totalGrade}</p>
+                )}
+              </div>
+{/* النسبة المئوية */}
+<div className="space-y-2">
+  <label className="block text-sm font-medium text-gray-700 text-right">
+    النسبة المئوية
+  </label>
+  <div className="relative">
+    <input
+      type="text"
+      value={calculatePercentage()} // Auto-generated: e.g., "85.37%"
+      readOnly
+      className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg bg-gray-50 text-gray-700 cursor-not-allowed text-right"
+      placeholder="سيتم حساب النسبة تلقائياً"
+    />
+    <Award className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
+  </div>
+  {errors.percentage && <p className="text-red-500 text-sm">{errors.percentage}</p>}
+</div>
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   دولة الشهادة <span className="text-red-500">*</span>
@@ -1700,6 +1753,25 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   <p className="text-red-500 text-sm">
                     {errors.certificateYear}
                   </p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700 text-right">
+                  رقم الجلوس <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={formData.sittingNumber}
+                  onChange={(e) =>
+                    handleInputChange("sittingNumber", e.target.value)
+                  }
+                  className={`w-full px-4 py-3 border ${
+                    errors.sittingNumber ? "border-red-500" : "border-gray-300"
+                  } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
+                  placeholder="رقم الجلوس"
+                />
+                {errors.sittingNumber && (
+                  <p className="text-red-500 text-sm">{errors.sittingNumber}</p>
                 )}
               </div>
             </div>
