@@ -726,7 +726,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
               </div>
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
-                  الولاية <span className="text-red-500">*</span>
+                  الولاية - المحافظة <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <select
@@ -736,11 +736,34 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                       errors.state ? "border-red-500" : "border-gray-300"
                     } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right appearance-none`}
                   >
-                    <option value="">اختر الولاية</option>
+                    <option value="">اختر المحافظة</option>
                     <option value="cairo">القاهرة</option>
                     <option value="giza">الجيزة</option>
                     <option value="alexandria">الإسكندرية</option>
                     <option value="dakahlia">الدقهلية</option>
+                    <option value="beheira">البحيرة</option>
+                    <option value="sharqia">الشرقية</option>
+                    <option value="gharbia">الغربية</option>
+                    <option value="monufia">المنوفية</option>
+                    <option value="kafr_elsheikh">كفر الشيخ</option>
+                    <option value="fayoum">الفيوم</option>
+                    <option value="beni_suef">بني سويف</option>
+                    <option value="minya">المنيا</option>
+                    <option value="assuit">أسيوط</option>
+                    <option value="sohag">سوهاج</option>
+                    <option value="qena">قنا</option>
+                    <option value="luxor">الأقصر</option>
+                    <option value="aswan">أسوان</option>
+                    <option value="red_sea">البحر الأحمر</option>
+                    <option value="new_valley">الوادي الجديد</option>
+                    <option value="matrouh">مطروح</option>
+                    <option value="north_sinai">شمال سيناء</option>
+                    <option value="south_sinai">جنوب سيناء</option>
+                    <option value="ismailia">الإسماعيلية</option>
+                    <option value="suez">السويس</option>
+                    <option value="port_said">بورسعيد</option>
+                    <option value="damietta">دمياط</option>
+
                   </select>
                   <MapPin className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
                 </div>
@@ -1529,10 +1552,14 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                       errors.firstChoice ? "border-red-500" : "border-gray-300"
                     } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right appearance-none`}
                   >
-                    <option value="">كلية الهندسة</option>
-                    <option value="engineering">كلية الهندسة</option>
-                    <option value="medicine">كلية الطب</option>
-                    <option value="science">كلية العلوم</option>
+                    <option value="">اختر الكلية</option>
+                    <option value="cs_ai">كلية الحاسبات والمعلومات والذكاء الاصطناعي</option>
+                    <option value="nursing">كلية التمريض</option>
+                    <option value="arts_design">كلية الفنون والتصميم</option>
+                    <option value="dentistry">كلية الأسنان</option>
+                    <option value="tourism_archaeology">كلية الآثار والسياحة</option>
+                    <option value="business">كلية الأعمال</option>
+
                   </select>
                   <School className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
                 </div>
@@ -1552,10 +1579,14 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                     }
                     className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right appearance-none"
                   >
-                    <option value="">كلية علوم الحاسوب</option>
-                    <option value="computer">كلية علوم الحاسوب</option>
-                    <option value="business">كلية إدارة الأعمال</option>
-                    <option value="arts">كلية الآداب</option>
+                    <option value="">اختر الكلية</option>
+                    <option value="cs_ai">كلية الحاسبات والمعلومات والذكاء الاصطناعي</option>
+                    <option value="nursing">كلية التمريض</option>
+                    <option value="arts_design">كلية الفنون والتصميم</option>
+                    <option value="dentistry">كلية الأسنان</option>
+                    <option value="tourism_archaeology">كلية الآثار والسياحة</option>
+                    <option value="business">كلية الأعمال</option>
+
                   </select>
                   <School className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
                 </div>
@@ -1572,10 +1603,14 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                     }
                     className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right appearance-none"
                   >
-                    <option value="">كلية التجارة</option>
-                    <option value="commerce">كلية التجارة</option>
-                    <option value="law">كلية الحقوق</option>
-                    <option value="education">كلية التربية</option>
+                      <option value="">اختر الكلية</option>
+                      <option value="cs_ai">كلية الحاسبات والمعلومات والذكاء الاصطناعي</option>
+                      <option value="nursing">كلية التمريض</option>
+                      <option value="arts_design">كلية الفنون والتصميم</option>
+                      <option value="dentistry">كلية الأسنان</option>
+                      <option value="tourism_archaeology">كلية الآثار والسياحة</option>
+                      <option value="business">كلية الأعمال</option>
+
                   </select>
                   <School className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
                 </div>
