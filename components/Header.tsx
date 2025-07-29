@@ -30,6 +30,8 @@ const navItems: NavItem[] = [
       // { label: "مركز الحاسوب", href: "#" },
     ],
   },
+  { label: "القبول والتسجيل", hasDropdown: false, href: "/Registration" },
+
   { label: "مكتب التنسيق والقبول", hasDropdown: false, href: "/CoordinationOffice" },
   {
     label: "الحياة الجامعية",
@@ -346,7 +348,7 @@ const Header: FC = () => {
                 <Image
                   src={logo}
                   alt="Logo"
-                  className={`object-contain w-[clamp(70.00px,5vw,112.50px)]  rounded-full transition-all duration-300 cursor-pointer ${
+                  className={`object-contain w-[clamp(90.00px,6vw,130.00px)]  rounded-full transition-all duration-300 cursor-pointer ${
                     scrolled
                       ? "translate-y-6"
                       : ""

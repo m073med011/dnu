@@ -5,7 +5,11 @@ import "swiper/css/pagination";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Autoplay } from "swiper/modules";
 import Image from "next/image";
-import backgound from "@/public/home/Background.jpg";
+import backgound1 from "@/public/home/backgrounds/background1.jpg";
+import backgound2 from "@/public/home/backgrounds/background2.jpg";
+import backgound3 from "@/public/home/backgrounds/background3.jpg";
+import backgound4 from "@/public/home/backgrounds/background4.jpeg";
+import backgound5 from "@/public/home/backgrounds/background5.jpeg";
 
 export default function UniversityPage() {
   // Sample slides data - you can modify this array to add more slides
@@ -13,27 +17,27 @@ export default function UniversityPage() {
     {
       title: "جامعة دمياط الأهلية",
       description: "بيئة أكاديمية متطورة تجمع بين الجودة والحداثة، وتُعدّك لمستقبل مهني واعد في قلب الدلتا.",
-      backgroundImage: backgound,
+      backgroundImage: backgound1,
     },
     {
       title: "التميز الأكاديمي",
       description: "برامج دراسية متنوعة ومعتمدة دولياً تلبي احتياجات سوق العمل المحلي والإقليمي",
-      backgroundImage: backgound,
+      backgroundImage: backgound2,
     },
     {
       title: "البحث العلمي",
       description: "مراكز بحثية متقدمة ومختبرات حديثة تدعم الابتكار والتطوير العلمي",
-      backgroundImage: backgound,
+      backgroundImage: backgound3,
     },
     {
       title: "الحرم الجامعي",
       description: "مرافق عصرية ومساحات خضراء واسعة توفر بيئة تعليمية مثالية للطلاب",
-      backgroundImage: backgound,
+      backgroundImage: backgound4,
     },
     {
       title: "التواصل المجتمعي",
       description: "شراكات استراتيجية مع المؤسسات المحلية والدولية لخدمة المجتمع",
-      backgroundImage: backgound,
+      backgroundImage: backgound5,
     },
   ];
 

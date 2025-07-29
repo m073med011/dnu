@@ -1,4 +1,4 @@
-import BgPage from "@/public/home/Background.jpg";
+import BgPage from "@/public/home/backgrounds/background1.jpg";
 import Image from "next/image";
 import FacultiesSection from "@/components/collages/FacultiesSection";
 

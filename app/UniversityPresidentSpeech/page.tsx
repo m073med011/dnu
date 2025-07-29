@@ -1,7 +1,7 @@
 // "use client";
 // import { useState } from "react";
 import Image from "next/image";
-import image from "@/public/trustees_image.png";
+import image from "@/public/trustees_image.jpeg";
 import bi_stars from "@/public/bi_stars.svg";
 import Page from "@/components/Hero-section"; // Import your reusable Page component
 
@@ -35,7 +35,7 @@ const PresidentMessageContent = () => {
                 src={image}
                 alt="رئيس الجامعة"
                 fill
-                className="object-cover lg:hover:scale-110 lg:transition-transform lg:duration-700"
+                className="object-cover scale-75 lg:hover:scale-110 lg:transition-transform lg:duration-700"
               />
             </div>
           </div>

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import BgPage from "@/public/home/Background.jpg";
+import BgPage from "@/public/home/backgrounds/background1.jpg";
 
 interface PageProps {
   title: string;
