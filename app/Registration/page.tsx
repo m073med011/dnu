@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
+// import Priceing from "@/components/home/Priceing";
+import BankingInformation from "@/components/home/BankingInformation";
 
 // Define the type for form data (✅ removed 'religion')
 interface FormData {
@@ -995,58 +997,60 @@ const calculatePercentage = (): string => {
       // ... other cases unchanged
       case 7:
         return (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800 text-right mb-8">
-              معلومات الحساب
-            </h2>
-            <div className="bg-white rounded-lg p-4 shadow-md">
-              <table className="w-full text-sm text-left text-black dark:text-black">
-                <thead className="text-xs text-black uppercase bg-white border-b-2 border-gray-200">
-                  <tr>
-                    <th scope="col" className="px-6 py-3">
-                      IBAN
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      رقم الحساب
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      العملة
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      اسم الحساب
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      اسم البنك
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="bg-white border-b dark:bg-whtie dark:border-gray-700">
-                    <td className="px-6 py-4">EG370038002800000280000150150</td>
-                    <td className="px-6 py-4">0280000150150</td>
-                    <td className="px-6 py-4">مصري</td>
-                    <td className="px-6 py-4">جامعة دمياط الأهلية</td>
-                    <td className="px-6 py-4">CIB</td>
-                  </tr>
-                  <tr className="bg-white border-b dark:bg-whtie dark:border-gray-700">
-                    <td className="px-6 py-4">EG100038002800000280000150151</td>
-                    <td className="px-6 py-4">0280000150151</td>
-                    <td className="px-6 py-4">دولار</td>
-                    <td className="px-6 py-4">جامعة دمياط الأهلية</td>
-                    <td className="px-6 py-4">CIB</td>
-                  </tr>
-                  <tr className="bg-white border-b dark:bg-whtie dark:border-gray-700">
-                    <td className="px-6 py-4">EG800038002800000280000150152</td>
-                    <td className="px-6 py-4">0280000150152</td>
-                    <td className="px-6 py-4">يورو</td>
-                    <td className="px-6 py-4">جامعة دمياط الأهلية</td>
-                    <td className="px-6 py-4">CIB</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+                  <BankingInformation/>
         );
+          // <div className="space-y-6">
+          //   <h2 className="text-2xl font-bold text-gray-800 text-right mb-8">
+          //     معلومات الحساب
+          //   </h2>
+          //   <div className="bg-white rounded-lg p-4 shadow-md">
+          //     <table className="w-full text-sm text-left text-black dark:text-black">
+          //       <thead className="text-xs text-black uppercase bg-white border-b-2 border-gray-200">
+          //         <tr>
+          //           <th scope="col" className="px-6 py-3">
+          //             IBAN
+          //           </th>
+          //           <th scope="col" className="px-6 py-3">
+          //             رقم الحساب
+          //           </th>
+          //           <th scope="col" className="px-6 py-3">
+          //             العملة
+          //           </th>
+          //           <th scope="col" className="px-6 py-3">
+          //             اسم الحساب
+          //           </th>
+          //           <th scope="col" className="px-6 py-3">
+          //             اسم البنك
+          //           </th>
+          //         </tr>
+          //       </thead>
+          //       <tbody>
+          //         <tr className="bg-white border-b dark:bg-whtie dark:border-gray-700">
+          //           <td className="px-6 py-4">EG370038002800000280000150150</td>
+          //           <td className="px-6 py-4">0280000150150</td>
+          //           <td className="px-6 py-4">مصري</td>
+          //           <td className="px-6 py-4">جامعة دمياط الأهلية</td>
+          //           <td className="px-6 py-4">CIB</td>
+          //         </tr>
+          //         <tr className="bg-white border-b dark:bg-whtie dark:border-gray-700">
+          //           <td className="px-6 py-4">EG100038002800000280000150151</td>
+          //           <td className="px-6 py-4">0280000150151</td>
+          //           <td className="px-6 py-4">دولار</td>
+          //           <td className="px-6 py-4">جامعة دمياط الأهلية</td>
+          //           <td className="px-6 py-4">CIB</td>
+          //         </tr>
+          //         <tr className="bg-white border-b dark:bg-whtie dark:border-gray-700">
+          //           <td className="px-6 py-4">EG800038002800000280000150152</td>
+          //           <td className="px-6 py-4">0280000150152</td>
+          //           <td className="px-6 py-4">يورو</td>
+          //           <td className="px-6 py-4">جامعة دمياط الأهلية</td>
+          //           <td className="px-6 py-4">CIB</td>
+          //         </tr>
+          //       </tbody>
+          //     </table>
+          //   </div>
+          // </div>
+          
       default:
         return renderTabContentFallback();
     }
