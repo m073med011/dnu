@@ -127,7 +127,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     { id: 3, name: "معلومات ولي الأمر", progress: 43 },
     { id: 4, name: "معلومات الإخوة", progress: 57 },
     { id: 5, name: "بيانات الشهادة", progress: 71 },
-    { id: 6, name: "الرغبات والمصاريف", progress: 86 },
+    { id: 6, name: "الرغبات والمصاريف", progress: 80 },
     { id: 7, name: "معلومات الحساب", progress: 100 }, // New tab
   ];
   const validateTab = (tabId: number): FormErrors => {
@@ -2015,8 +2015,8 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
           </p>
         </div>
         {/* Tab Navigation */}
-        <div className="bg-white/5 backdrop-blur-sm px-6 py-4">
-          <div className="flex justify-center space-x-3 space-x-reverse">
+        <div className="bg-white/5 backdrop-blur-sm px-4 py-4">
+          <div className="flex justify-center space-x-1">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
