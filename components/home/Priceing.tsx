@@ -41,12 +41,12 @@ const Priceing = () => {
   ];
 
   return (
-    <div className="min-h-screen " dir="rtl">
+    <div className="min-h-screen mb-8 " dir="rtl">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">الكليات المتاحة</h1>
-          <p className="text-lg text-white/90">اكتشف الكليات المتميزة وخيارات الدراسة المتاحة</p>
+          <h1 className="text-4xl font-bold text-black mb-4">الكليات المتاحة</h1>
+          <p className="text-lg text-black/90">اكتشف الكليات المتميزة وخيارات الدراسة المتاحة</p>
         </div>
 
         {/* Modern Table */}

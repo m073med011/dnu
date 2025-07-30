@@ -71,7 +71,7 @@ type FormErrors = Partial<Record<keyof FormData, string>>;
 const UniversityRegistrationForm = (): React.JSX.Element => {
   const [activeTab, setActiveTab] = useState<number>(1);
   const [registrationNumber, setRegistrationNumber] = useState<string>("");
-  const [amountDue, setAmountDue] = useState<number | null>(null);
+  // const [amountDue, setAmountDue] = useState<number | null>(null);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
@@ -454,7 +454,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
 
         // Extract and store dynamic values
         setRegistrationNumber(resData.registration_number || "غير متوفر");
-        setAmountDue(resData.fees_applied?.amount_egp || null);
+        // setAmountDue(resData.fees_applied?.amount_egp || null);
 
         setIsSubmitted(true);
       } else {
@@ -599,7 +599,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                     قيد المراجعة
                   </span>
                 </div>
-                {amountDue !== null && (
+                {/* {amountDue !== null && (
                   <div className="flex justify-between items-center pt-2 border-t border-blue-200">
                     <span className="text-blue-600 font-medium">
                       المبلغ المستحق:
@@ -608,7 +608,13 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                       {amountDue} جنيه مصري
                     </span>
                   </div>
-                )}
+                )} */}
+                <div className="flex justify-between items-center pt-2 border-t border-blue-200">
+                  <p className="text-blue-600 font-medium text-center w-full">
+                    ستقوم إدارة جامعة دمياط الأهلية بفحص الطلب، وفي حالة
+                    الموافقة سيتم التواصل معكم خلال أسبوع من تاريخه.
+                  </p>
+                </div>
               </div>
               {/* Information Box */}
               <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-right">
@@ -936,27 +942,31 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
 
               {/* الدين */}
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  الدين <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={formData.religion}
-                    onChange={(e) =>
-                      handleInputChange("religion", e.target.value)
-                    }
-                    className={`w-full px-4 py-3 pr-12 border ${
-                      errors.religion ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                    placeholder="مثل: مسلم"
-                  />
-                  <Award className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-                {errors.religion && (
-                  <p className="text-red-500 text-sm">{errors.religion}</p>
-                )}
-              </div>
+  <label
+    htmlFor="religion"
+    className="block text-sm font-medium text-gray-700 text-right"
+  >
+    الدين <span className="text-red-500">*</span>
+  </label>
+  <div className="relative">
+    <select
+      id="religion"
+      value={formData.religion}
+      onChange={(e) => handleInputChange("religion", e.target.value)}
+      className={`w-full px-4 py-3 pr-12 border ${
+        errors.religion ? "border-red-500" : "border-gray-300"
+      } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right appearance-none`}
+    >
+      <option value="" className="text-gray-400">اختر الدين</option>
+      <option value="مسلم">مسلم</option>
+      <option value="مسيحي">مسيحي</option>
+    </select>
+    <Award className="absolute right-3 top-3.5 h-5 w-5 text-gray-400 pointer-events-none" />
+  </div>
+  {errors.religion && (
+    <p className="text-red-500 text-sm text-right">{errors.religion}</p>
+  )}
+</div>
 
               {/* رقم شهادة الميلاد */}
               <div className="space-y-2">

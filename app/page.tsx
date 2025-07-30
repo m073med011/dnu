@@ -15,8 +15,8 @@ export default function Home() {
       {/* <ImageSction /> */}
       <UniversityInfo/>
       <UniversityNews />
-      <ArabicFAQ />
       <Priceing />
+      <ArabicFAQ />
     </div>
   );
 }
