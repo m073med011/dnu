@@ -5,6 +5,8 @@ import UniversityPage from "@/components/home/page";
 import UniversityNews from "@/components/home/UniversityNews";
 import ArabicFAQ from "@/components/home/ArabicFAQ";
 import UniversityInfo from "@/components/home/UniversityInfo";
+import Priceing from "@/components/home/Priceing";
+
 export default function Home() {
   return (
     <div className=" w-full mx-auto">
@@ -14,6 +16,7 @@ export default function Home() {
       <UniversityInfo/>
       <UniversityNews />
       <ArabicFAQ />
+      <Priceing />
     </div>
   );
 }
