@@ -12,7 +12,7 @@ import {
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 
-// Define the type for form data
+// Define the type for form data (✅ removed 'religion')
 interface FormData {
   guardianRelation: string;
   arabicName: string;
@@ -20,7 +20,6 @@ interface FormData {
   nationality: string;
   state: string;
   city: string;
-  religion: string;
   birthCertNumber: string;
   passportNumber: string;
   birthYear: string;
@@ -61,7 +60,7 @@ interface FormData {
   alternateMobile: string;
   email: string;
   homePhone: string;
-  nationalId: string; // ✅ الحقل الجديد: الرقم القومي
+  nationalId: string;
 }
 
 // Define the type for errors
@@ -71,7 +70,6 @@ type FormErrors = Partial<Record<keyof FormData, string>>;
 const UniversityRegistrationForm = (): React.JSX.Element => {
   const [activeTab, setActiveTab] = useState<number>(1);
   const [registrationNumber, setRegistrationNumber] = useState<string>("");
-  // const [amountDue, setAmountDue] = useState<number | null>(null);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
@@ -82,7 +80,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     nationality: "",
     state: "",
     city: "",
-    religion: "",
     birthCertNumber: "",
     passportNumber: "",
     birthYear: "",
@@ -128,11 +125,11 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     { id: 4, name: "معلومات الإخوة", progress: 57 },
     { id: 5, name: "بيانات الشهادة", progress: 71 },
     { id: 6, name: "الرغبات والمصاريف", progress: 80 },
-    { id: 7, name: "معلومات الحساب", progress: 100 }, // New tab
+    { id: 7, name: "معلومات الحساب", progress: 100 },
   ];
+
   const validateTab = (tabId: number): FormErrors => {
     const newErrors: FormErrors = {};
-
     switch (tabId) {
       case 1:
         (
@@ -142,8 +139,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
             "nationality",
             "state",
             "city",
-            "religion",
-          ] as const
+          ] as const // ✅ Removed 'religion'
         ).forEach((field) => {
           const value = formData[field];
           if (!value || value === "") {
@@ -171,6 +167,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
         } else if (+formData.birthYear < 1900 || +formData.birthYear > 2025) {
           newErrors.birthYear = "أدخل سنة بين 1900 و2025";
         }
+
         if (formData.nationalId && formData.nationalId.length > 0) {
           if (!/^\d{14}$/.test(formData.nationalId.replace(/\s+/g, ""))) {
             newErrors.nationalId = "الرقم القومي يجب أن يكون 14 رقمًا";
@@ -186,7 +183,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
           }
         });
 
-        // Validate Email
         if (
           formData.email &&
           !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
@@ -194,7 +190,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
           newErrors.email = "البريد الإلكتروني غير صالح";
         }
 
-        // Validate Mobile
         if (
           formData.mobile &&
           !/^(?:\+20|0)?1[0-9]{9}$/.test(formData.mobile.replace(/\s+/g, ""))
@@ -218,7 +213,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
           }
         });
 
-        // Validate Guardian Email
         if (
           formData.guardianEmail &&
           !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.guardianEmail)
@@ -226,7 +220,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
           newErrors.guardianEmail = "البريد الإلكتروني لولي الأمر غير صالح";
         }
 
-        // Validate Guardian Mobile
         if (
           formData.guardianMobile &&
           !/^(?:\+20|0)?1[0-9]{9}$/.test(
@@ -255,7 +248,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
           "certificateType",
           "schoolName",
           "totalGrade",
-          // "percentage",
           "sittingNumber",
           "obtainedGrade",
           "certificateCountry",
@@ -266,8 +258,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
             newErrors[field as keyof FormData] = "هذا الحقل مطلوب";
           }
         });
-
-        // Validate Certificate Year
 
         if (
           formData.certificateYear &&
@@ -287,10 +277,10 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
           newErrors.firstChoice = "الرغبة الأولى مطلوبة";
         }
         break;
+
       default:
         break;
     }
-
     return newErrors;
   };
 
@@ -298,7 +288,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     field: keyof FormData,
     value: string | boolean
   ) => {
-    // Reset sibling fields if hasTeachingExperience is unchecked
     if (field === "hasTeachingExperience" && value === false) {
       setFormData((prev) => ({
         ...prev,
@@ -319,27 +308,21 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
       return;
     }
 
-    // Update the field
     setFormData((prev) => {
       const updated = { ...prev, [field]: value };
-
-      // 🔁 Auto-calculate percentage if totalGrade or obtainedGrade changes
       if (field === "totalGrade" || field === "obtainedGrade") {
         const total = parseFloat(updated.totalGrade);
         const obtained = parseFloat(updated.obtainedGrade);
-
         if (!isNaN(total) && !isNaN(obtained) && total !== 0) {
           const percentage = ((obtained / total) * 100).toFixed(2);
-          updated.percentage = Number(percentage); // e.g., "95.50%"
+          updated.percentage = Number(percentage);
         } else {
-          updated.percentage = 0; // Reset if invalid
+          updated.percentage = 0;
         }
       }
-
       return updated;
     });
 
-    // Validation logic (existing)
     let error = "";
     if (field === "arabicName") {
       if (typeof value === "string") {
@@ -368,9 +351,9 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
       return;
     }
     if (activeTab === 6) {
-      setActiveTab(7); // Navigate to the new tab
+      setActiveTab(7);
     } else if (activeTab === 7) {
-      handleSubmit(); // Submit the form when on the last tab
+      handleSubmit();
     } else {
       setActiveTab(activeTab + 1);
     }
@@ -382,7 +365,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
       setErrors(tabErrors);
       return;
     }
-    // Check if current tab has any errors
 
     setIsSubmitting(true);
 
@@ -390,7 +372,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
       // الصفحة 1: البيانات الشخصية
       student_english_name: formData.englishName,
       student_arabic_name: formData.arabicName,
-      religion: formData.religion,
       nationality: formData.nationality,
       governorate: formData.state,
       city: formData.city,
@@ -448,14 +429,9 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
           },
         }
       );
-
       if (response.status === 200 || response.status === 201) {
         const resData = response.data;
-
-        // Extract and store dynamic values
         setRegistrationNumber(resData.registration_number || "غير متوفر");
-        // setAmountDue(resData.fees_applied?.amount_egp || null);
-
         setIsSubmitted(true);
       } else {
         const resData = response.data;
@@ -485,13 +461,11 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
       }
     } catch (error) {
       console.error("Network error:", error);
-
       if (axios.isAxiosError(error) && error.response) {
         const resData = error.response.data as {
           message?: string;
           errors?: Record<string, string[]>;
         };
-
         if (resData.errors) {
           Object.keys(resData.errors).forEach((field) => {
             resData.errors![field].forEach((msg) => {
@@ -510,7 +484,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
             });
           });
         }
-
         if (resData.message) {
           toast.error(resData.message, {
             style: { direction: "rtl", textAlign: "right" },
@@ -548,7 +521,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
           {/* Success Message */}
           <div className="bg-white rounded-b-3xl p-8 shadow-2xl">
             <div className="text-center space-y-6">
-              {/* Success Icon */}
               <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
                 <svg
                   className="w-10 h-10 text-green-500"
@@ -564,7 +536,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   />
                 </svg>
               </div>
-              {/* Main Message */}
               <div className="space-y-2">
                 <h2 className="text-2xl font-bold text-gray-800">
                   تم تأكيد التسجيل
@@ -573,7 +544,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   تم إرسال طلبك بنجاح وسيتم مراجعته قريباً
                 </p>
               </div>
-              {/* Application Details */}
               <div className="bg-blue-50 rounded-lg p-6 space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-blue-600 font-medium">رقم الطلب:</span>
@@ -599,16 +569,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                     قيد المراجعة
                   </span>
                 </div>
-                {/* {amountDue !== null && (
-                  <div className="flex justify-between items-center pt-2 border-t border-blue-200">
-                    <span className="text-blue-600 font-medium">
-                      المبلغ المستحق:
-                    </span>
-                    <span className="font-bold text-red-600">
-                      {amountDue} جنيه مصري
-                    </span>
-                  </div>
-                )} */}
                 <div className="flex justify-between items-center pt-2 border-t border-blue-200">
                   <p className="text-blue-600 font-medium text-center w-full">
                     ستقوم إدارة جامعة دمياط الأهلية بفحص الطلب، وفي حالة
@@ -616,31 +576,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   </p>
                 </div>
               </div>
-              {/* Information Box */}
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-right">
-                <div className="flex items-start space-x-3 space-x-reverse">
-                  <svg
-                    className="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <div className="text-amber-800 text-sm">
-                    <p className="font-medium mb-1">هام:</p>
-                    <p>
-                      سيتم التواصل معك قريباً عبر البريد الإلكتروني أو الهاتف
-                      المحمول لإكمال إجراءات التسجيل. يرجى التأكد من صحة
-                      بياناتك.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              {/* Next Steps */}
               <div className="bg-cyan-50 rounded-lg p-6 text-right">
                 <h3 className="font-bold text-cyan-800 mb-3 flex items-center justify-end space-x-2 space-x-reverse">
                   <svg
@@ -659,12 +594,12 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                 <ul className="space-y-2 text-cyan-700 text-sm">
                   <li className="flex items-start space-x-2 space-x-reverse">
                     <span className="text-cyan-500">•</span>
-                    <span>سيتم مراجعة طلبك خلال 2-3 أيام عمل</span>
+                    <span>سيتم مراجعة طلبك خلال 7 أيام عمل</span>
                   </li>
-                  <li className="flex items-start space-x-2 space-x-reverse">
+                  {/* <li className="flex items-start space-x-2 space-x-reverse">
                     <span className="text-cyan-500">•</span>
                     <span>ستتلقى رسالة تأكيد عبر البريد الإلكتروني</span>
-                  </li>
+                  </li> */}
                   <li className="flex items-start space-x-2 space-x-reverse">
                     <span className="text-cyan-500">•</span>
                     <span>قد نتواصل معك لطلب مستندات إضافية</span>
@@ -675,7 +610,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   </li>
                 </ul>
               </div>
-              {/* Action Buttons */}
               <div className="space-y-3">
                 <button
                   onClick={() => window.print()}
@@ -707,7 +641,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                 </button>
               </div>
             </div>
-            {/* Contact Information Footer */}
             <div className="bg-gray-600 text-white p-4 mt-8 -mb-8 -mx-8 rounded-b-3xl">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
                 <div className="space-y-1">
@@ -715,7 +648,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                     <Phone className="w-4 h-4" />
                     <span className="text-sm font-medium">هاتف الجامعة</span>
                   </div>
-                  <p className="text-xs">057-2345678</p>
+                  <p className="text-xs">01021961996</p>
                   <p className="text-xs">فترة الصباح - الساعة 8:00</p>
                 </div>
                 <div className="space-y-1">
@@ -732,20 +665,18 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                       البريد الإلكتروني
                     </span>
                   </div>
-                  <p className="text-xs">admissions@damiettauniv.edu.eg</p>
+                  <p className="text-xs">info@dam-nu.edu.eg</p>
                 </div>
                 <div className="space-y-1">
                   <div className="flex items-center justify-center space-x-2 space-x-reverse">
                     <MapPin className="w-4 h-4" />
                     <span className="text-sm font-medium">الموقع</span>
                   </div>
-                  <p className="text-xs">057-2345678</p>
+                  <p className="text-xs">دمياط الجديدة</p>
                 </div>
               </div>
             </div>
           </div>
-
-          {/* Toast Notifications */}
           <Toaster
             position="top-right"
             reverseOrder={false}
@@ -768,18 +699,18 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
       </div>
     );
   }
-
-  const renderTabContent = () => {
-    // Helper to calculate percentage
-    const calculatePercentage = (): string => {
+const calculatePercentage = (): string => {
       const total = parseFloat(formData.totalGrade);
       const obtained = parseFloat(formData.obtainedGrade);
       if (!isNaN(total) && !isNaN(obtained) && total !== 0) {
         const percentage = (obtained / total) * 100;
-        return `${percentage.toFixed(2)}%`; // e.g., "95.50%"
+        return `${percentage.toFixed(2)}%`;
       }
       return "";
     };
+  const renderTabContent = () => {
+    
+
     switch (activeTab) {
       case 1:
         return (
@@ -788,7 +719,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
               البيانات الشخصية
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* اسم الطالب بالعربية */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   اسم الطالب بالعربية <span className="text-red-500">*</span>
@@ -799,7 +729,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                     value={formData.arabicName}
                     onChange={(e) => {
                       const value = e.target.value;
-                      // السماح فقط بالحروف العربية، المسافات، والشرطات
                       if (/^[\u0600-\u06FF\s\-ءآأإة]*$/.test(value)) {
                         handleInputChange("arabicName", value);
                       }
@@ -815,8 +744,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   <p className="text-red-500 text-sm">{errors.arabicName}</p>
                 )}
               </div>
-
-              {/* اسم الطالب بالإنجليزية */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   اسم الطالب بالإنجليزية <span className="text-red-500">*</span>
@@ -827,7 +754,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                     value={formData.englishName}
                     onChange={(e) => {
                       const value = e.target.value;
-                      // السماح فقط بالحروف الإنجليزية، المسافات، والشرطات
                       if (/^[a-zA-Z\s\-]*$/.test(value)) {
                         handleInputChange("englishName", value);
                       }
@@ -843,8 +769,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   <p className="text-red-500 text-sm">{errors.englishName}</p>
                 )}
               </div>
-
-              {/* الجنسية */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   الجنسية <span className="text-red-500">*</span>
@@ -867,8 +791,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   <p className="text-red-500 text-sm">{errors.nationality}</p>
                 )}
               </div>
-
-              {/* المحافظة */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   المحافظة <span className="text-red-500">*</span>
@@ -917,8 +839,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   <p className="text-red-500 text-sm">{errors.state}</p>
                 )}
               </div>
-
-              {/* المدينة */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   المدينة <span className="text-red-500">*</span>
@@ -939,7 +859,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   <p className="text-red-500 text-sm">{errors.city}</p>
                 )}
               </div>
-              {/* رقم شهادة الميلاد */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   رقم شهادة الميلاد
@@ -966,8 +885,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   </p>
                 )}
               </div>
-
-              {/* جواز السفر */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   رقم جواز السفر
@@ -994,8 +911,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   </p>
                 )}
               </div>
-
-              {/* تاريخ الميلاد */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   تاريخ الميلاد <span className="text-red-500">*</span>
@@ -1051,7 +966,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   </p>
                 )}
               </div>
-              {/* ✅ الرقم القومي */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   الرقم القومي
@@ -1078,6 +992,86 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
             </div>
           </div>
         );
+      // ... other cases unchanged
+      case 7:
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-800 text-right mb-8">
+              معلومات الحساب
+            </h2>
+            <div className="bg-white rounded-lg p-4 shadow-md">
+              <table className="w-full text-sm text-left text-black dark:text-black">
+                <thead className="text-xs text-black uppercase bg-white border-b-2 border-gray-200">
+                  <tr>
+                    <th scope="col" className="px-6 py-3">
+                      IBAN
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      رقم الحساب
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      العملة
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      اسم الحساب
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      اسم البنك
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="bg-white border-b dark:bg-whtie dark:border-gray-700">
+                    <td className="px-6 py-4">EG370038002800000280000150150</td>
+                    <td className="px-6 py-4">0280000150150</td>
+                    <td className="px-6 py-4">مصري</td>
+                    <td className="px-6 py-4">جامعة دمياط الأهلية</td>
+                    <td className="px-6 py-4">CIB</td>
+                  </tr>
+                  <tr className="bg-white border-b dark:bg-whtie dark:border-gray-700">
+                    <td className="px-6 py-4">EG100038002800000280000150151</td>
+                    <td className="px-6 py-4">0280000150151</td>
+                    <td className="px-6 py-4">دولار</td>
+                    <td className="px-6 py-4">جامعة دمياط الأهلية</td>
+                    <td className="px-6 py-4">CIB</td>
+                  </tr>
+                  <tr className="bg-white border-b dark:bg-whtie dark:border-gray-700">
+                    <td className="px-6 py-4">EG800038002800000280000150152</td>
+                    <td className="px-6 py-4">0280000150152</td>
+                    <td className="px-6 py-4">يورو</td>
+                    <td className="px-6 py-4">جامعة دمياط الأهلية</td>
+                    <td className="px-6 py-4">CIB</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        );
+      default:
+        return renderTabContentFallback();
+    }
+  };
+
+  const renderTabContentFallback = () => {
+    const allFaculties = [
+      { value: "cs_ai", label: "كلية الحاسبات والمعلومات والذكاء الاصطناعي" },
+      { value: "nursing", label: "كلية التمريض" },
+      { value: "arts_design", label: "كلية الفنون والتصميم" },
+      { value: "dental", label: "كلية الألسن" },
+      { value: "tourism_archaeology", label: "كلية الآثار والسياحة" },
+      { value: "business", label: "كلية الأعمال" },
+    ];
+
+    const secondOptions = allFaculties.filter(
+      (opt) => opt.value !== formData.firstChoice
+    );
+    const thirdOptions = allFaculties.filter(
+      (opt) =>
+        opt.value !== formData.firstChoice &&
+        opt.value !== formData.secondChoice
+    );
+
+    switch (activeTab) {
       case 2:
         return (
           <div className="space-y-6">
@@ -1215,7 +1209,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   <p className="text-red-500 text-sm">{errors.guardianName}</p>
                 )}
               </div>
-              {/* ✅ حقل جديد: صلة القرابة */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   صلة القرابة <span className="text-red-500">*</span>
@@ -1612,7 +1605,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   <p className="text-red-500 text-sm">{errors.schoolName}</p>
                 )}
               </div>
-
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   الدرجة المحصل عليها <span className="text-red-500">*</span>
@@ -1638,7 +1630,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   <p className="text-red-500 text-sm">{errors.obtainedGrade}</p>
                 )}
               </div>
-              {/* الدرجة الكلية */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   الدرجة الكلية <span className="text-red-500">*</span>
@@ -1662,7 +1653,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   <p className="text-red-500 text-sm">{errors.totalGrade}</p>
                 )}
               </div>
-              {/* النسبة المئوية */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   النسبة المئوية
@@ -1670,7 +1660,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                 <div className="relative">
                   <input
                     type="text"
-                    value={calculatePercentage()} // Auto-generated: e.g., "85.37%"
+                    value={calculatePercentage()}
                     readOnly
                     className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg bg-gray-50 text-gray-700 cursor-not-allowed text-right"
                     placeholder="سيتم حساب النسبة تلقائياً"
@@ -1756,38 +1746,12 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
           </div>
         );
       case 6:
-        // Define all faculties
-        const allFaculties = [
-          {
-            value: "cs_ai",
-            label: "كلية الحاسبات والمعلومات والذكاء الاصطناعي",
-          },
-          { value: "nursing", label: "كلية التمريض" },
-          { value: "arts_design", label: "كلية الفنون والتصميم" },
-          { value: "dental", label: "كلية الألسن" },
-          { value: "tourism_archaeology", label: "كلية الآثار والسياحة" },
-          { value: "business", label: "كلية الأعمال" },
-        ];
-
-        // Filter options based on previous choices
-        const secondOptions = allFaculties.filter(
-          (opt) => opt.value !== formData.firstChoice
-        );
-        const thirdOptions = allFaculties.filter(
-          (opt) =>
-            opt.value !== formData.firstChoice &&
-            opt.value !== formData.secondChoice
-        );
-
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold text-gray-800 text-right mb-8">
               الرغبات والمصاريف
             </h2>
-
-            {/* First and Second Choices in Grid */}
             <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
-              {/* الرغبة الأولى */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   الرغبة الأولى <span className="text-red-500">*</span>
@@ -1815,8 +1779,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   <p className="text-red-500 text-sm">{errors.firstChoice}</p>
                 )}
               </div>
-
-              {/* الرغبة الثانية */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   الرغبة الثانية
@@ -1845,8 +1807,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                 </div>
               </div>
             </div>
-
-            {/* الرغبة الثالثة - Full Width (optional, but clearer) */}
             <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
@@ -1876,8 +1836,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                 </div>
               </div>
             </div>
-
-            {/* ✅ New Field: Appears FULL WIDTH and UNDER all other fields */}
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700 text-right">
                 ملاحظات إضافية أو رغبات أخرى
@@ -1892,8 +1850,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                 placeholder="أدخل أي ملاحظات إضافية أو رغبات لم تُذكر"
               />
             </div>
-
-            {/* Terms & Conditions */}
             <div className="flex items-center justify-end space-x-2 space-x-reverse mt-6">
               <label className="text-sm text-blue-600 cursor-pointer">
                 سياسة الخصوصية
@@ -1911,75 +1867,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
             </div>
           </div>
         );
-      case 7:
-        return (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800 text-right mb-8">
-              معلومات الحساب
-            </h2>
-            <div className="bg-white rounded-lg p-4 shadow-md">
-              <table className="w-full text-sm text-left text-black dark:text-black">
-                <thead className="text-xs text-black uppercase bg-white border-b-2 border-gray-200">
-                  <tr>
-                    <th scope="col" className="px-6 py-3">
-                      IBAN
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      رقم الحساب
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      العملة
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      اسم الحساب
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      اسم البنك
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="bg-white border-b dark:bg-whtie dark:border-gray-700">
-                    <td className="px-6 py-4">EG370038002800000280000150150</td>
-                    <td className="px-6 py-4">0280000150150</td>
-                    <td className="px-6 py-4">مصري</td>
-                    <td className="px-6 py-4">جامعة دمياط الأهلية</td>
-                    <td className="px-6 py-4">CIB</td>
-                  </tr>
-                  <tr className="bg-white border-b dark:bg-whtie dark:border-gray-700">
-                    <td className="px-6 py-4">EG100038002800000280000150151</td>
-                    <td className="px-6 py-4">0280000150151</td>
-                    <td className="px-6 py-4">دولار</td>
-                    <td className="px-6 py-4">جامعة دمياط الأهلية</td>
-                    <td className="px-6 py-4">CIB</td>
-                  </tr>
-                  <tr className="bg-white border-b dark:bg-whtie dark:border-gray-700">
-                    <td className="px-6 py-4">EG800038002800000280000150152</td>
-                    <td className="px-6 py-4">0280000150152</td>
-                    <td className="px-6 py-4">يورو</td>
-                    <td className="px-6 py-4">جامعة دمياط الأهلية</td>
-                    <td className="px-6 py-4">CIB</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            {/* Submit Button */}
-            <div className="flex justify-end mt-8">
-              {/* <button
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-                className={`px-8 py-3 rounded-lg font-medium transition-all duration-200 ${
-                  isSubmitting
-                    ? "bg-gray-400 cursor-not-allowed text-white"
-                    : "bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl"
-                }`}
-              >
-                {isSubmitting ? "جاري الإرسال..." : "إرسال"}
-              </button> */}
-            </div>
-          </div>
-        );
-
       default:
         return null;
     }
@@ -1988,20 +1875,17 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
   return (
     <div className="min-h-screen  p-4">
       <div className="max-w-4xl mx-auto rounded-t-3xl bg-gradient-to-br from-[#754FA8] to-[#677AE4]">
-        {/* Header */}
         <div className="bg-white/10 backdrop-blur-sm rounded-t-3xl p-6 text-center text-white">
           <h1 className="text-2xl font-bold mb-2">جامعة دمياط الأهلية</h1>
           <p className="text-sm opacity-90">
             نموذج التسجيل المبدئي للعام الدراسي 2025-2026
           </p>
         </div>
-        {/* Tab Navigation */}
         <div className="bg-white/5 backdrop-blur-sm px-4 py-4">
           <div className="flex justify-center space-x-1">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                // onClick={() => setActiveTab(tab.id)}
                 className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-200 ${
                   activeTab === tab.id
                     ? "bg-blue-500 text-white shadow-lg"
@@ -2015,7 +1899,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
             ))}
           </div>
         </div>
-        {/* Progress Bar */}
         <div className="bg-white/5 backdrop-blur-sm px-6 py-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-white text-sm font-medium">
@@ -2034,14 +1917,11 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
             ></div>
           </div>
         </div>
-        {/* Form Content */}
         <div className="bg-white rounded-b-3xl p-8 shadow-2xl">
           {renderTabContent()}
-          {/* Navigation Buttons */}
           <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-200">
             <button
               onClick={handleNext}
-              // ❌ أزلنا disabled تمامًا
               className={`px-8 py-3 rounded-lg font-medium transition-all duration-200 ${
                 isSubmitting
                   ? "bg-gray-400 cursor-not-allowed text-white"
@@ -2067,8 +1947,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
             </button>
           </div>
         </div>
-
-        {/* Toast Notifications */}
         <Toaster
           position="top-right"
           reverseOrder={false}
