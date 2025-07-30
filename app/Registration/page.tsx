@@ -75,7 +75,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
-    nationalId: "", // ✅ تهيئة الحقل الجديد
+    nationalId: "", 
     guardianRelation: "",
     arabicName: "",
     englishName: "",
@@ -88,12 +88,10 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     birthYear: "",
     birthMonth: "",
     birthDay: "",
-    // Preferences
     firstChoice: "",
     secondChoice: "",
     thirdChoice: "",
     additionalNotes: "",
-    // Certificate Info
     certificateType: "",
     schoolName: "",
     totalGrade: "",
@@ -102,13 +100,11 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     obtainedGrade: "",
     certificateCountry: "",
     certificateYear: "",
-    // Research Info
     hasTeachingExperience: false,
     parentName: "",
     universityId: "",
     faculty: "",
     studyYear: "",
-    // Guardian Info
     guardianName: "",
     guardianNationality: "",
     guardianJob: "",
@@ -117,7 +113,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     guardianMobile: "",
     guardianNationalId: "",
     workPermit: "",
-    // Contact Info
     address: "",
     mobile: "",
     alternateMobile: "",
@@ -881,6 +876,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                     } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right appearance-none`}
                   >
                     <option value="">اختر المحافظة</option>
+                    <option value="دمياط">دمياط الجديدة</option>
                     <option value="القاهرة">القاهرة</option>
                     <option value="الجيزة">الجيزة</option>
                     <option value="الإسكندرية">الإسكندرية</option>
@@ -901,7 +897,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                     <option value="مطروح">مطروح</option>
                     <option value="شمال سيناء">شمال سيناء</option>
                     <option value="جنوب سيناء">جنوب سيناء</option>
-                    <option value="دمياط">دمياط</option>
                     <option value="كفر الشيخ">كفر الشيخ</option>
                     <option value="قنا">قنا</option>
                     <option value="مرسى مطروح">مرسى مطروح</option>
@@ -2017,7 +2012,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                // onClick={() => setActiveTab(tab.id)}
                 className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-200 ${
                   activeTab === tab.id
                     ? "bg-blue-500 text-white shadow-lg"

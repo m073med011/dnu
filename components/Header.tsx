@@ -1,10 +1,27 @@
 "use client";
-import { ChevronDown, ChevronUp, Menu, X } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Menu,
+  X,
+  Facebook,
+  Twitter,
+  Instagram,
+  Linkedin,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import logo from "@/public/vercel.svg";
 import { FC, useState, useEffect } from "react";
+
+// Social Icons with Lucide SVG icons
+const socialIcons = [
+  { name: "Facebook", href: "https://facebook.com", icon: Facebook },
+  { name: "Twitter", href: "https://twitter.com", icon: Twitter },
+  { name: "Instagram", href: "https://instagram.com", icon: Instagram },
+  { name: "LinkedIn", href: "https://linkedin.com", icon: Linkedin },
+];
 
 interface NavItem {
   label: string;
@@ -16,23 +33,21 @@ interface NavItem {
 interface DropdownItem {
   label: string;
   href?: string;
-  external?: boolean; // Add this to identify external links
+  external?: boolean;
 }
 
 const navItems: NavItem[] = [
   {
     label: "المراكز والوحدات",
     hasDropdown: true,
-    dropdown: [
-      { label: "مركز التميز والتدريب", href: "#" },
-      // { label: "مركز التطوير", href: "#" },
-      // { label: "وحدة الجودة", href: "#" },
-      // { label: "مركز الحاسوب", href: "#" },
-    ],
+    dropdown: [{ label: "مركز التميز والتدريب", href: "#" }],
   },
   { label: "القبول والتسجيل", hasDropdown: false, href: "/Registration" },
-
-  { label: "مكتب التنسيق والقبول", hasDropdown: false, href: "/CoordinationOffice" },
+  {
+    label: "مكتب التنسيق والقبول",
+    hasDropdown: false,
+    href: "/CoordinationOffice",
+  },
   {
     label: "الحياة الجامعية",
     hasDropdown: true,
@@ -40,9 +55,12 @@ const navItems: NavItem[] = [
       { label: "بوابه الخدمات الطلابيه", href: "#" },
       { label: "دليل الطالب", href: "#" },
       { label: "الميثاق الاخلاقي لطالب", href: "#" },
-      { label: "بنك المعرفه المصري", href: "https://www.ekb.eg/", external: true },
+      {
+        label: "بنك المعرفه المصري",
+        href: "https://www.ekb.eg/",
+        external: true,
+      },
       { label: "الاسكان الجامعي", href: "#" },
-      
     ],
   },
   { label: "الكليات والبرامج", hasDropdown: false, href: "/collages" },
@@ -71,7 +89,7 @@ const Dropdown: FC<{ items: DropdownItem[] }> = ({ items }) => {
       <div className="absolute -top-2 right-6 w-4 h-4 bg-white border-l border-t border-gray-200 rotate-45 z-10"></div>
 
       <div className="space-y-1 relative z-20">
-        {items.map((item, index) => (
+        {items.map((item, index) =>
           item.external ? (
             <a
               key={index}
@@ -95,7 +113,7 @@ const Dropdown: FC<{ items: DropdownItem[] }> = ({ items }) => {
               </span>
             </Link>
           )
-        ))}
+        )}
       </div>
     </div>
   );
@@ -130,7 +148,7 @@ const MobileSidebar: FC<{
             <Image
               src={logo}
               alt="Logo"
-              className="h-9 w-9 object-contain rounded-full"
+              className="h-10 w-10 object-contain rounded-full"
             />
             <span className="text-lg font-bold text-gray-900">القائمة</span>
           </div>
@@ -154,13 +172,11 @@ const MobileSidebar: FC<{
                     if (item.hasDropdown) {
                       onDropdownToggle(item.label);
                     } else if (item.href) {
-                      // Navigate to the href
                       window.location.href = item.href;
-                      onClose(); // Close sidebar after navigation
+                      onClose();
                     } else {
-                      // Handle navigation for non-dropdown items
                       console.log(`Navigating to: ${item.label}`);
-                      onClose(); // Close sidebar after navigation
+                      onClose();
                     }
                   }}
                 >
@@ -170,9 +186,15 @@ const MobileSidebar: FC<{
                   {item.hasDropdown && (
                     <div className="ml-3">
                       {openDropdown === item.label ? (
-                        <ChevronUp size={20} className="text-gray-500 group-hover:text-[#fb9300] transition-colors duration-200" />
+                        <ChevronUp
+                          size={20}
+                          className="text-gray-500 group-hover:text-[#fb9300] transition-colors duration-200"
+                        />
                       ) : (
-                        <ChevronDown size={20} className="text-gray-500 group-hover:text-[#fb9300] transition-colors duration-200" />
+                        <ChevronDown
+                          size={20}
+                          className="text-gray-500 group-hover:text-[#fb9300] transition-colors duration-200"
+                        />
                       )}
                     </div>
                   )}
@@ -184,7 +206,7 @@ const MobileSidebar: FC<{
                   item.dropdown && (
                     <div className="mt-2 mb-4 bg-gray-50 rounded-lg overflow-hidden">
                       <div className="space-y-0">
-                        {item.dropdown.map((dropdownItem, dropdownIndex) => (
+                        {item.dropdown.map((dropdownItem, dropdownIndex) =>
                           dropdownItem.external ? (
                             <a
                               key={dropdownIndex}
@@ -209,7 +231,7 @@ const MobileSidebar: FC<{
                               </span>
                             </Link>
                           )
-                        ))}
+                        )}
                       </div>
                     </div>
                   )}
@@ -232,11 +254,10 @@ const Header: FC = () => {
   const [scrolled, setScrolled] = useState(false);
 
   // Check if current path requires white background
-  const shouldHaveWhiteBackground = pathname === '/contact-us' || pathname === '/Registration';
+  const shouldHaveWhiteBackground =
+    pathname === "/contact-us" || pathname === "/Registration";
 
   const handleMobileDropdownToggle = (label: string) => {
-    console.log(`Toggling dropdown for: ${label}`);
-    console.log(`Current openMobileDropdown: ${openMobileDropdown}`);
     setOpenMobileDropdown(openMobileDropdown === label ? null : label);
   };
 
@@ -281,15 +302,73 @@ const Header: FC = () => {
 
   return (
     <>
-      <header className={`fixed top-0 left-0 right-0 z-50 w-full ${scrolled || shouldHaveWhiteBackground ? "bg-white shadow-md" : ""}`}>
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 w-full ${
+          scrolled || shouldHaveWhiteBackground ? "bg-white shadow-md" : ""
+        }`}
+      >
         <div className="w-full sm:max-w-[1440px] mx-0 px-0 sm:mx-auto sm:px-8 lg:px-12">
           <div
-            className={`flex items-center lg:justify-around justify-between px-12 lg:px-0 transition-all duration-300 ${
+            className={`flex items-center justify-center px-12 lg:px-0 transition-all duration-300 ${
               scrolled ? "h-16 sm:h-20" : "h-20 sm:h-24 lg:h-28"
             }`}
           >
-            {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center space-x-8 xl:space-x-12">
+            {/* Social Icons Container - Left Side */}
+            <div className="hidden lg:flex items-center mr-auto">
+              <div className="relative p-3 rounded-xl overflow-hidden">
+                {/* Liquid Glass Background */}
+                <div className="absolute inset-0">
+                  {/* Primary Glass Layer */}
+                  <div
+                    className="absolute inset-0 backdrop-blur-xl rounded-xl border border-white/30 shadow-lg"
+                    style={{
+                      background: `
+                        linear-gradient(135deg, 
+                          rgba(255,255,255,0.4) 0%, 
+                          rgba(255,255,255,0.2) 25%, 
+                          rgba(255,255,255,0.1) 50%, 
+                          rgba(251,147,0,0.1) 75%, 
+                          rgba(255,183,0,0.15) 100%
+                        )
+                      `,
+                    }}
+                  />
+
+                  {/* Secondary Highlight Layer */}
+                  <div className="absolute inset-[1px] rounded-xl opacity-10" />
+
+                  {/* Inner Glow */}
+                  <div className="absolute inset-[2px] rounded-xl " />
+                </div>
+
+                {/* Social Icons */}
+                <div className="relative z-10 flex items-center gap-3">
+                  {socialIcons.map((social, idx) => (
+                    <Link
+                      key={idx}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group transition-all duration-300 hover:scale-110"
+                      aria-label={social.name}
+                    >
+                      <social.icon
+                        size={14}
+                        className={` ${
+                          scrolled ? "text-black" : "text-white"
+                        } transition-colors duration-300`}
+                      />
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Desktop Navigation - Center */}
+            <nav
+              className="hidden lg:flex items-center"
+              style={{ gap: "clamp(0.75rem, 1.8vw, 1.5rem)" }}
+            >
               {navItems.map((item, index) => (
                 <div
                   key={index}
@@ -303,14 +382,26 @@ const Header: FC = () => {
                 >
                   {item.hasDropdown ? (
                     <div className="flex items-center cursor-pointer relative after:absolute after:bottom-[-2px] after:right-0 after:h-[2px] after:w-0 after:bg-gradient-to-r after:from-[#fb9300] after:to-[#ffb700] after:transition-all after:duration-300 hover:after:w-full">
-                      <span className={`${scrolled || shouldHaveWhiteBackground ? "text-black" : "text-white"} font-bold text-sm xl:text-base whitespace-nowrap hover:bg-gradient-to-r hover:from-[#fb9300] hover:to-[#ffb700] hover:bg-clip-text hover:text-transparent transition-all duration-300`}>
+                      <span
+                        className={`${
+                          scrolled || shouldHaveWhiteBackground
+                            ? "text-black"
+                            : "text-white"
+                        } font-bold text-sm xl:text-base whitespace-nowrap hover:bg-gradient-to-r hover:from-[#fb9300] hover:to-[#ffb700] hover:bg-clip-text hover:text-transparent transition-all duration-300`}
+                      >
                         {item.label}
                       </span>
                       <div className="ml-2">
                         {hoveredDropdown === item.label ? (
-                          <ChevronUp size={16} className="text-gray-400 hover:text-[#fb9300] transition-colors duration-300" />
+                          <ChevronUp
+                            size={16}
+                            className="text-gray-400 hover:text-[#fb9300] transition-colors duration-300"
+                          />
                         ) : (
-                          <ChevronDown size={16} className="text-gray-400 hover:text-[#fb9300] transition-colors duration-300" />
+                          <ChevronDown
+                            size={16}
+                            className="text-gray-400 hover:text-[#fb9300] transition-colors duration-300"
+                          />
                         )}
                       </div>
                     </div>
@@ -319,7 +410,13 @@ const Header: FC = () => {
                       href={item.href || "#"}
                       className="flex items-center cursor-pointer relative after:absolute after:bottom-[-2px] after:right-0 after:h-[2px] after:w-0 after:bg-gradient-to-r after:from-[#fb9300] after:to-[#ffb700] after:transition-all after:duration-300 hover:after:w-full"
                     >
-                      <span className={`${scrolled || shouldHaveWhiteBackground ? "text-black" : "text-white"} font-bold text-sm xl:text-base whitespace-nowrap hover:bg-gradient-to-r hover:from-[#fb9300] hover:to-[#ffb700] hover:bg-clip-text hover:text-transparent transition-all duration-300`}>
+                      <span
+                        className={`${
+                          scrolled || shouldHaveWhiteBackground
+                            ? "text-black"
+                            : "text-white"
+                        } font-bold text-sm xl:text-base whitespace-nowrap hover:bg-gradient-to-r hover:from-[#fb9300] hover:to-[#ffb700] hover:bg-clip-text hover:text-transparent transition-all duration-300`}
+                      >
                         {item.label}
                       </span>
                     </Link>
@@ -332,33 +429,33 @@ const Header: FC = () => {
               ))}
             </nav>
 
+            {/* Logo - Right Side */}
+            <div className="flex-shrink-0 ml-auto lg:ml-auto">
+              <Link href="/">
+                <Image
+                  src={logo}
+                  alt="Logo"
+                  className={`object-contain w-[clamp(90.00px,6vw,10.00px)] rounded-full transition-all duration-300 cursor-pointer ${
+                    scrolled ? "translate-y-6" : ""
+                  }`}
+                />
+              </Link>
+            </div>
+
             {/* Mobile Menu Button */}
-            <div className="lg:hidden">
+            <div className="lg:hidden absolute left-6">
               <button
                 onClick={() => setIsSidebarOpen(true)}
                 className={`p-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-all duration-300 ${
-                  isSidebarOpen ? "opacity-0 pointer-events-none" : "opacity-100"
+                  isSidebarOpen
+                    ? "opacity-0 pointer-events-none"
+                    : "opacity-100"
                 }`}
                 aria-label="Open sidebar menu"
                 disabled={isSidebarOpen}
               >
                 <Menu size={24} />
               </button>
-            </div>
-
-            {/* Logo */}
-            <div className="flex-shrink-0">
-              <Link href="/">
-                <Image
-                  src={logo}
-                  alt="Logo"
-                  className={`object-contain w-[clamp(90.00px,5.5vw,130.00px)]  rounded-full transition-all duration-300 cursor-pointer ${
-                    scrolled
-                      ? "translate-y-6"
-                      : ""
-                  }`}
-                />
-              </Link>
             </div>
           </div>
         </div>
