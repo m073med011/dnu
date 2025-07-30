@@ -15,7 +15,7 @@ const UniversityFooter: React.FC = () => {
 
         {/* Copyright text */}
         <div className="text-[#433E78] text-sm sm:text-lg lg:text-xl font-medium leading-relaxed max-w-4xl">
-          جميع الحقوق محفوظة 2025 - مركز الحلول الذكية الجامعة (SUS)
+        (SUS) جميع الحقوق محفوظة©️ 2025 - مركز الحلول الذكية الجامعة 
         </div>
       </div>
     </div>

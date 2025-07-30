@@ -882,7 +882,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                     } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right appearance-none`}
                   >
                     <option value="">اختر المحافظة</option>
-                    <option value="دمياط">دمياط الجديدة</option>
+                    <option value="دمياط">دمياط</option>
                     <option value="القاهرة">القاهرة</option>
                     <option value="الجيزة">الجيزة</option>
                     <option value="الإسكندرية">الإسكندرية</option>
@@ -931,7 +931,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                     className={`w-full px-4 py-3 pr-12 border ${
                       errors.city ? "border-red-500" : "border-gray-300"
                     } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                    placeholder="مثل: مصر الجديدة"
+                    placeholder="مثل: دمياط الجديدة"
                   />
                   <MapPin className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
                 </div>
@@ -939,35 +939,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   <p className="text-red-500 text-sm">{errors.city}</p>
                 )}
               </div>
-
-              {/* الدين */}
-              <div className="space-y-2">
-  <label
-    htmlFor="religion"
-    className="block text-sm font-medium text-gray-700 text-right"
-  >
-    الدين <span className="text-red-500">*</span>
-  </label>
-  <div className="relative">
-    <select
-      id="religion"
-      value={formData.religion}
-      onChange={(e) => handleInputChange("religion", e.target.value)}
-      className={`w-full px-4 py-3 pr-12 border ${
-        errors.religion ? "border-red-500" : "border-gray-300"
-      } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right appearance-none`}
-    >
-      <option value="" className="text-gray-400">اختر الدين</option>
-      <option value="مسلم">مسلم</option>
-      <option value="مسيحي">مسيحي</option>
-    </select>
-    <Award className="absolute right-3 top-3.5 h-5 w-5 text-gray-400 pointer-events-none" />
-  </div>
-  {errors.religion && (
-    <p className="text-red-500 text-sm text-right">{errors.religion}</p>
-  )}
-</div>
-
               {/* رقم شهادة الميلاد */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
