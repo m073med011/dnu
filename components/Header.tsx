@@ -1,7 +1,8 @@
 "use client";
 import {
-  ChevronDown,
-  ChevronUp,
+  // ChevronDown,
+  // ChevronUp,
+  Dot,
   Menu,
   X,
   Facebook,
@@ -63,7 +64,19 @@ const navItems: NavItem[] = [
       { label: "الاسكان الجامعي", href: "#" },
     ],
   },
-  { label: "الكليات والبرامج", hasDropdown: false, href: "/collages" },
+  {
+    label: "الكليات والبرامج",
+    hasDropdown: true,
+    href: "/collages",
+    dropdown: [
+      { label: "كلية الحاسبات والمعلومات والذكاء الاصطناعي", href: "/collages" },
+      { label: "كلية التمريض", href: "/collages" },
+      { label: "كلية الفنون والتصميم", href: "/collages" },
+      { label: "كلية الألسن", href: "/collages" },
+      { label: "كلية الآثار والسياحة", href: "/collages" },
+      { label: "كلية الأعمال", href: "/collages" },
+    ],
+  },
   {
     label: "عن الجامعة",
     hasDropdown: true,
@@ -84,9 +97,9 @@ const navItems: NavItem[] = [
 // Dropdown Component for Desktop
 const Dropdown: FC<{ items: DropdownItem[] }> = ({ items }) => {
   return (
-    <div className="absolute top-full right-0 w-64 bg-white shadow-lg border border-gray-200 py-4 z-50">
+    <div className="absolute top-full right-0 w-64 bg-white/80 backdrop-blur-xl shadow-lg border border-white/20 py-4 z-50 rounded-2xl">
       {/* Triangle Arrow */}
-      <div className="absolute -top-2 right-6 w-4 h-4 bg-white border-l border-t border-gray-200 rotate-45 z-10"></div>
+      <div className="absolute -top-2 right-6 w-4 h-4 bg-white/80 backdrop-blur-xl border-l border-t border-white/20 rotate-45 z-10"></div>
 
       <div className="space-y-1 relative z-20">
         {items.map((item, index) =>
@@ -96,7 +109,7 @@ const Dropdown: FC<{ items: DropdownItem[] }> = ({ items }) => {
               href={item.href || "#"}
               target="_blank"
               rel="noopener noreferrer"
-              className="block px-6 py-3 text-black hover:bg-gray-50 transition-colors duration-200 text-right"
+              className="block px-6 py-3 text-black/80 hover:bg-white/40 transition-all duration-200 text-right rounded-lg mx-2"
             >
               <span className="hover:bg-gradient-to-r hover:from-[#fb9300] hover:to-[#ffb700] hover:bg-clip-text hover:text-transparent transition-all duration-200">
                 {item.label}
@@ -106,7 +119,7 @@ const Dropdown: FC<{ items: DropdownItem[] }> = ({ items }) => {
             <Link
               key={index}
               href={item.href || "#"}
-              className="block px-6 py-3 text-black hover:bg-gray-50 transition-colors duration-200 text-right"
+              className="block px-6 py-3 text-black/80 hover:bg-white/40 transition-all duration-200 text-right rounded-lg mx-2"
             >
               <span className="hover:bg-gradient-to-r hover:from-[#fb9300] hover:to-[#ffb700] hover:bg-clip-text hover:text-transparent transition-all duration-200">
                 {item.label}
@@ -138,12 +151,12 @@ const MobileSidebar: FC<{
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
+        className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white/95 backdrop-blur-2xl shadow-xl z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         {/* Sidebar Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200/50">
           <div className="flex items-center space-x-3">
             <Image
               src={logo}
@@ -154,7 +167,7 @@ const MobileSidebar: FC<{
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+            className="p-2 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100/50 transition-colors"
             aria-label="Close sidebar"
           >
             <X size={24} />
@@ -167,7 +180,7 @@ const MobileSidebar: FC<{
             {navItems.map((item, index) => (
               <div key={index} className="px-4">
                 <div
-                  className="flex items-center justify-between cursor-pointer py-4 px-4 hover:bg-gray-50 rounded-lg transition-colors group"
+                  className="flex items-center justify-between cursor-pointer py-4 px-4 hover:bg-gray-50/50 rounded-lg transition-colors group"
                   onClick={() => {
                     if (item.hasDropdown) {
                       onDropdownToggle(item.label);
@@ -186,12 +199,12 @@ const MobileSidebar: FC<{
                   {item.hasDropdown && (
                     <div className="ml-3">
                       {openDropdown === item.label ? (
-                        <ChevronUp
+                        <Dot
                           size={20}
                           className="text-gray-500 group-hover:text-[#fb9300] transition-colors duration-200"
                         />
                       ) : (
-                        <ChevronDown
+                        <Dot
                           size={20}
                           className="text-gray-500 group-hover:text-[#fb9300] transition-colors duration-200"
                         />
@@ -204,7 +217,7 @@ const MobileSidebar: FC<{
                 {item.hasDropdown &&
                   openDropdown === item.label &&
                   item.dropdown && (
-                    <div className="mt-2 mb-4 bg-gray-50 rounded-lg overflow-hidden">
+                    <div className="mt-2 mb-4 bg-gray-50/50 rounded-lg overflow-hidden">
                       <div className="space-y-0">
                         {item.dropdown.map((dropdownItem, dropdownIndex) =>
                           dropdownItem.external ? (
@@ -213,7 +226,7 @@ const MobileSidebar: FC<{
                               href={dropdownItem.href || "#"}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="block py-3 px-6 pr-12 text-gray-600 hover:bg-white border-b border-gray-200 last:border-b-0 transition-colors duration-200 text-right relative group"
+                              className="block py-3 px-6 pr-12 text-gray-600 hover:bg-white/50 border-b border-gray-200/30 last:border-b-0 transition-colors duration-200 text-right relative group"
                             >
                               <span className="text-sm group-hover:bg-gradient-to-r group-hover:from-[#fb9300] group-hover:to-[#ffb700] group-hover:bg-clip-text group-hover:text-transparent transition-all duration-200">
                                 • {dropdownItem.label}
@@ -224,7 +237,7 @@ const MobileSidebar: FC<{
                               key={dropdownIndex}
                               href={dropdownItem.href || "#"}
                               onClick={onClose}
-                              className="block py-3 px-6 pr-12 text-gray-600 hover:bg-white border-b border-gray-200 last:border-b-0 transition-colors duration-200 text-right relative group"
+                              className="block py-3 px-6 pr-12 text-gray-600 hover:bg-white/50 border-b border-gray-200/30 last:border-b-0 transition-colors duration-200 text-right relative group"
                             >
                               <span className="text-sm group-hover:bg-gradient-to-r group-hover:from-[#fb9300] group-hover:to-[#ffb700] group-hover:bg-clip-text group-hover:text-transparent transition-all duration-200">
                                 • {dropdownItem.label}
@@ -303,11 +316,40 @@ const Header: FC = () => {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 w-full ${
-          scrolled || shouldHaveWhiteBackground ? "bg-white shadow-md" : ""
+        className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 ${
+          scrolled || shouldHaveWhiteBackground ? "shadow-md" : ""
         }`}
       >
-        <div className="w-full sm:max-w-[1440px] mx-0 px-0 sm:mx-auto sm:px-8 lg:px-12">
+        {/* Liquid Glass Background - Exact same as social icons */}
+        <div className="absolute inset-0">
+          {/* Primary Glass Layer */}
+          <div
+            className={`${
+              scrolled || shouldHaveWhiteBackground
+                ? "border-gray-300"
+                : "border-white/30"
+            } absolute inset-0 backdrop-blur-xl border-b shadow-lg`}
+            style={{
+              background: `
+                linear-gradient(135deg, 
+                  rgba(255,255,255,0.4) 0%, 
+                  rgba(255,255,255,0.2) 25%, 
+                  rgba(255,255,255,0.1) 50%, 
+                  rgba(251,147,0,0.1) 75%, 
+                  rgba(255,183,0,0.15) 100%
+                )
+              `,
+            }}
+          />
+
+          {/* Secondary Highlight Layer */}
+          <div className="absolute inset-[1px] opacity-10" />
+
+          {/* Inner Glow */}
+          <div className="absolute inset-[2px]" />
+        </div>
+
+        <div className="relative w-full sm:max-w-[1440px] mx-0 px-0 sm:mx-auto sm:px-8 lg:px-12">
           <div
             className={`flex items-center justify-center px-12 lg:px-0 transition-all duration-300 ${
               scrolled ? "h-16 sm:h-20" : "h-20 sm:h-24 lg:h-28"
@@ -315,34 +357,24 @@ const Header: FC = () => {
           >
             {/* Social Icons Container - Left Side */}
             <div className="hidden lg:flex items-center mr-auto">
-              <div className="relative p-3 rounded-xl overflow-hidden">
+              <div className="relative p-1 px-0 rounded-xl overflow-hidden">
                 {/* Liquid Glass Background */}
                 <div className="absolute inset-0">
                   {/* Primary Glass Layer */}
                   <div
-                    className="absolute inset-0 backdrop-blur-xl rounded-xl border border-white/30 shadow-lg"
-                    style={{
-                      background: `
-                        linear-gradient(135deg, 
-                          rgba(255,255,255,0.4) 0%, 
-                          rgba(255,255,255,0.2) 25%, 
-                          rgba(255,255,255,0.1) 50%, 
-                          rgba(251,147,0,0.1) 75%, 
-                          rgba(255,183,0,0.15) 100%
-                        )
-                      `,
-                    }}
+                    className={`${
+                      scrolled || shouldHaveWhiteBackground
+                        ? "border-gray-300/30 bg-white/40"
+                        : "border-white/20 bg-white/10"
+                    } absolute inset-0 backdrop-blur-2xl rounded-xl border shadow-lg transition-all duration-300`}
                   />
 
-                  {/* Secondary Highlight Layer */}
-                  <div className="absolute inset-[1px] rounded-xl opacity-10" />
-
                   {/* Inner Glow */}
-                  <div className="absolute inset-[2px] rounded-xl " />
+                  <div className="absolute inset-[2px] rounded-xl bg-gradient-to-br from-white/20 to-transparent" />
                 </div>
 
                 {/* Social Icons */}
-                <div className="relative z-10 flex items-center gap-3">
+                <div className="relative z-10 inline-flex items-center gap-3 px-4 py-2 rounded-full">
                   {socialIcons.map((social, idx) => (
                     <Link
                       key={idx}
@@ -354,9 +386,11 @@ const Header: FC = () => {
                     >
                       <social.icon
                         size={14}
-                        className={` ${
-                          scrolled ? "text-black" : "text-white"
-                        } transition-colors duration-300`}
+                        className={`${
+                          scrolled || shouldHaveWhiteBackground
+                            ? "text-black"
+                            : "text-white"
+                        } transition-colors duration-300 group-hover:text-[#fb9300]`}
                       />
                     </Link>
                   ))}
@@ -393,12 +427,12 @@ const Header: FC = () => {
                       </span>
                       <div className="ml-2">
                         {hoveredDropdown === item.label ? (
-                          <ChevronUp
+                          <Dot
                             size={16}
                             className="text-gray-400 hover:text-[#fb9300] transition-colors duration-300"
                           />
                         ) : (
-                          <ChevronDown
+                          <Dot
                             size={16}
                             className="text-gray-400 hover:text-[#fb9300] transition-colors duration-300"
                           />
@@ -413,8 +447,8 @@ const Header: FC = () => {
                       <span
                         className={`${
                           scrolled || shouldHaveWhiteBackground
-                            ? "text-black"
-                            : "text-white"
+                            ? "text-gray-800"
+                            : "text-white/90"
                         } font-bold text-sm xl:text-base whitespace-nowrap hover:bg-gradient-to-r hover:from-[#fb9300] hover:to-[#ffb700] hover:bg-clip-text hover:text-transparent transition-all duration-300`}
                       >
                         {item.label}
@@ -446,7 +480,11 @@ const Header: FC = () => {
             <div className="lg:hidden absolute left-6">
               <button
                 onClick={() => setIsSidebarOpen(true)}
-                className={`p-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-all duration-300 ${
+                className={`p-2 rounded-md ${
+                  scrolled || shouldHaveWhiteBackground
+                    ? "text-gray-700 hover:text-gray-900 hover:bg-gray-100/50"
+                    : "text-white hover:text-white hover:bg-white/10"
+                } focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-all duration-300 ${
                   isSidebarOpen
                     ? "opacity-0 pointer-events-none"
                     : "opacity-100"

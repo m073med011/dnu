@@ -17,7 +17,8 @@ export default function UniversityPage() {
   const slides = [
     {
       title: "جامعة دمياط الأهلية",
-      description: "بيئة أكاديمية متطورة تجمع بين الجودة والحداثة، وتُعدّك لمستقبل مهني واعد في قلب الدلتا.",
+      description: "في قلب الدلتا بيئة أكاديمية متطورة تجمع بين الجودة والحداثة، وتُعدّك لمستقبل مهني واعد",
+      // description: " في قلب الدلتا.",
       backgroundImage: backgound1,
     },
     {

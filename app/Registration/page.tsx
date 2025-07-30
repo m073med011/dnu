@@ -75,7 +75,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
-    nationalId: "", 
+    nationalId: "",
     guardianRelation: "",
     arabicName: "",
     englishName: "",
@@ -268,7 +268,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
         });
 
         // Validate Certificate Year
-        
+
         if (
           formData.certificateYear &&
           !/^\d+$/.test(formData.certificateYear)
@@ -295,71 +295,71 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
   };
 
   const handleInputChange = (
-  field: keyof FormData,
-  value: string | boolean
-) => {
-  // Reset sibling fields if hasTeachingExperience is unchecked
-  if (field === "hasTeachingExperience" && value === false) {
-    setFormData((prev) => ({
-      ...prev,
-      hasTeachingExperience: false,
-      parentName: "",
-      universityId: "",
-      faculty: "",
-      studyYear: "",
-    }));
+    field: keyof FormData,
+    value: string | boolean
+  ) => {
+    // Reset sibling fields if hasTeachingExperience is unchecked
+    if (field === "hasTeachingExperience" && value === false) {
+      setFormData((prev) => ({
+        ...prev,
+        hasTeachingExperience: false,
+        parentName: "",
+        universityId: "",
+        faculty: "",
+        studyYear: "",
+      }));
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors.parentName;
+        delete newErrors.universityId;
+        delete newErrors.faculty;
+        delete newErrors.studyYear;
+        return newErrors;
+      });
+      return;
+    }
+
+    // Update the field
+    setFormData((prev) => {
+      const updated = { ...prev, [field]: value };
+
+      // 🔁 Auto-calculate percentage if totalGrade or obtainedGrade changes
+      if (field === "totalGrade" || field === "obtainedGrade") {
+        const total = parseFloat(updated.totalGrade);
+        const obtained = parseFloat(updated.obtainedGrade);
+
+        if (!isNaN(total) && !isNaN(obtained) && total !== 0) {
+          const percentage = ((obtained / total) * 100).toFixed(2);
+          updated.percentage = Number(percentage); // e.g., "95.50%"
+        } else {
+          updated.percentage = 0; // Reset if invalid
+        }
+      }
+
+      return updated;
+    });
+
+    // Validation logic (existing)
+    let error = "";
+    if (field === "arabicName") {
+      if (typeof value === "string") {
+        const arabicRegex = /^[\u0600-\u06FF\s\-ءآأإة]+$/;
+        if (value && !arabicRegex.test(value)) {
+          error = "يجب أن يحتوي الاسم على حروف عربية فقط";
+        }
+      }
+    }
+
     setErrors((prev) => {
       const newErrors = { ...prev };
-      delete newErrors.parentName;
-      delete newErrors.universityId;
-      delete newErrors.faculty;
-      delete newErrors.studyYear;
+      if (error) {
+        newErrors[field] = error;
+      } else {
+        delete newErrors[field];
+      }
       return newErrors;
     });
-    return;
-  }
-
-  // Update the field
-  setFormData((prev) => {
-    const updated = { ...prev, [field]: value };
-
-    // 🔁 Auto-calculate percentage if totalGrade or obtainedGrade changes
-    if (field === "totalGrade" || field === "obtainedGrade") {
-      const total = parseFloat(updated.totalGrade);
-      const obtained = parseFloat(updated.obtainedGrade);
-
-      if (!isNaN(total) && !isNaN(obtained) && total !== 0) {
-        const percentage = ((obtained / total) * 100).toFixed(2);
-        updated.percentage = Number(percentage); // e.g., "95.50%"
-      } else {
-        updated.percentage = 0; // Reset if invalid
-      }
-    }
-
-    return updated;
-  });
-
-  // Validation logic (existing)
-  let error = "";
-  if (field === "arabicName") {
-    if (typeof value === "string") {
-      const arabicRegex = /^[\u0600-\u06FF\s\-ءآأإة]+$/;
-      if (value && !arabicRegex.test(value)) {
-        error = "يجب أن يحتوي الاسم على حروف عربية فقط";
-      }
-    }
-  }
-
-  setErrors((prev) => {
-    const newErrors = { ...prev };
-    if (error) {
-      newErrors[field] = error;
-    } else {
-      delete newErrors[field];
-    }
-    return newErrors;
-  });
-};
+  };
 
   const handleNext = () => {
     const tabErrors = validateTab(activeTab);
@@ -766,14 +766,14 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
   const renderTabContent = () => {
     // Helper to calculate percentage
     const calculatePercentage = (): string => {
-  const total = parseFloat(formData.totalGrade);
-  const obtained = parseFloat(formData.obtainedGrade);
-  if (!isNaN(total) && !isNaN(obtained) && total !== 0) {
-    const percentage = (obtained / total) * 100;
-    return `${percentage.toFixed(2)}%`; // e.g., "95.50%"
-  }
-  return "";
-};
+      const total = parseFloat(formData.totalGrade);
+      const obtained = parseFloat(formData.obtainedGrade);
+      if (!isNaN(total) && !isNaN(obtained) && total !== 0) {
+        const percentage = (obtained / total) * 100;
+        return `${percentage.toFixed(2)}%`; // e.g., "95.50%"
+      }
+      return "";
+    };
     switch (activeTab) {
       case 1:
         return (
@@ -1631,7 +1631,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   <p className="text-red-500 text-sm">{errors.schoolName}</p>
                 )}
               </div>
-              
+
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   الدرجة المحصل عليها <span className="text-red-500">*</span>
@@ -1681,23 +1681,25 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   <p className="text-red-500 text-sm">{errors.totalGrade}</p>
                 )}
               </div>
-{/* النسبة المئوية */}
-<div className="space-y-2">
-  <label className="block text-sm font-medium text-gray-700 text-right">
-    النسبة المئوية
-  </label>
-  <div className="relative">
-    <input
-      type="text"
-      value={calculatePercentage()} // Auto-generated: e.g., "85.37%"
-      readOnly
-      className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg bg-gray-50 text-gray-700 cursor-not-allowed text-right"
-      placeholder="سيتم حساب النسبة تلقائياً"
-    />
-    <Award className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-  </div>
-  {errors.percentage && <p className="text-red-500 text-sm">{errors.percentage}</p>}
-</div>
+              {/* النسبة المئوية */}
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700 text-right">
+                  النسبة المئوية
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={calculatePercentage()} // Auto-generated: e.g., "85.37%"
+                    readOnly
+                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg bg-gray-50 text-gray-700 cursor-not-allowed text-right"
+                    placeholder="سيتم حساب النسبة تلقائياً"
+                  />
+                  <Award className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
+                </div>
+                {errors.percentage && (
+                  <p className="text-red-500 text-sm">{errors.percentage}</p>
+                )}
+              </div>
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   دولة الشهادة <span className="text-red-500">*</span>
@@ -1935,8 +1937,8 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
               معلومات الحساب
             </h2>
             <div className="bg-white rounded-lg p-4 shadow-md">
-              <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+              <table className="w-full text-sm text-left text-black dark:text-black">
+                <thead className="text-xs text-black uppercase bg-white border-b-2 border-gray-200">
                   <tr>
                     <th scope="col" className="px-6 py-3">
                       IBAN
@@ -1950,26 +1952,32 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                     <th scope="col" className="px-6 py-3">
                       اسم الحساب
                     </th>
+                    <th scope="col" className="px-6 py-3">
+                      اسم البنك
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                  <tr className="bg-white border-b dark:bg-whtie dark:border-gray-700">
                     <td className="px-6 py-4">EG370038002800000280000150150</td>
                     <td className="px-6 py-4">0280000150150</td>
                     <td className="px-6 py-4">مصري</td>
                     <td className="px-6 py-4">جامعة دمياط الأهلية</td>
+                    <td className="px-6 py-4">CIB</td>
                   </tr>
-                  <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                  <tr className="bg-white border-b dark:bg-whtie dark:border-gray-700">
                     <td className="px-6 py-4">EG100038002800000280000150151</td>
                     <td className="px-6 py-4">0280000150151</td>
                     <td className="px-6 py-4">دولار</td>
                     <td className="px-6 py-4">جامعة دمياط الأهلية</td>
+                    <td className="px-6 py-4">CIB</td>
                   </tr>
-                  <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                  <tr className="bg-white border-b dark:bg-whtie dark:border-gray-700">
                     <td className="px-6 py-4">EG800038002800000280000150152</td>
                     <td className="px-6 py-4">0280000150152</td>
                     <td className="px-6 py-4">يورو</td>
                     <td className="px-6 py-4">جامعة دمياط الأهلية</td>
+                    <td className="px-6 py-4">CIB</td>
                   </tr>
                 </tbody>
               </table>
@@ -2008,7 +2016,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
         </div>
         {/* Tab Navigation */}
         <div className="bg-white/5 backdrop-blur-sm px-6 py-4">
-          <div className="flex justify-center space-x-2 space-x-reverse">
+          <div className="flex justify-center space-x-3 space-x-reverse">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
