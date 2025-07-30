@@ -69,7 +69,10 @@ const navItems: NavItem[] = [
     hasDropdown: true,
     href: "/collages",
     dropdown: [
-      { label: "كلية الحاسبات والمعلومات والذكاء الاصطناعي", href: "/collages" },
+      {
+        label: "كلية الحاسبات والمعلومات والذكاء الاصطناعي",
+        href: "/collages",
+      },
       { label: "كلية التمريض", href: "/collages" },
       { label: "كلية الفنون والتصميم", href: "/collages" },
       { label: "كلية الألسن", href: "/collages" },
@@ -143,7 +146,7 @@ const MobileSidebar: FC<{
     <>
       {/* Backdrop */}
       <div
-        className={`fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-300 lg:hidden ${
+        className={`fixed inset-0  bg-opacity-80 z-40 transition-opacity duration-300 lg:hidden ${
           isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         onClick={onClose}
@@ -151,107 +154,157 @@ const MobileSidebar: FC<{
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white/95 backdrop-blur-2xl shadow-xl z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
+        className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] shadow-xl z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        {/* Sidebar Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200/50">
-          <div className="flex items-center space-x-3">
-            <Image
-              src={logo}
-              alt="Logo"
-              className="h-10 w-10 object-contain rounded-full"
-            />
-            <span className="text-lg font-bold text-gray-900">القائمة</span>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-2 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100/50 transition-colors"
-            aria-label="Close sidebar"
-          >
-            <X size={24} />
-          </button>
+        {/* Liquid Glass Background - White and Transparent */}
+        <div className="absolute inset-0">
+          {/* Primary Glass Layer */}
+          <div
+            className="absolute inset-0 backdrop-blur-xl border-l border-white/20 shadow-lg"
+            style={{
+              background: `
+                linear-gradient(135deg, 
+                  rgba(255,255,255,0.1) 0%, 
+                  rgba(255,255,255,0.08) 25%, 
+                  rgba(255,255,255,0.06) 50%, 
+                  rgba(255,255,255,0.04) 75%, 
+                  rgba(255,255,255,0.02) 100%
+                )
+              `,
+            }}
+          />
+
+          {/* Secondary Highlight Layer */}
+          <div className="absolute inset-[1px] bg-gradient-to-br from-white/05 to-transparent opacity-30" />
+
+          {/* Inner Glow */}
+          <div className="absolute inset-[2px] bg-gradient-to-br from-white/03 to-transparent" />
         </div>
 
-        {/* Sidebar Navigation */}
-        <nav className="flex-1 overflow-y-auto py-4">
-          <div className="space-y-1" dir="rtl">
-            {navItems.map((item, index) => (
-              <div key={index} className="px-4">
-                <div
-                  className="flex items-center justify-between cursor-pointer py-4 px-4 hover:bg-gray-50/50 rounded-lg transition-colors group"
-                  onClick={() => {
-                    if (item.hasDropdown) {
-                      onDropdownToggle(item.label);
-                    } else if (item.href) {
-                      window.location.href = item.href;
-                      onClose();
-                    } else {
-                      console.log(`Navigating to: ${item.label}`);
-                      onClose();
-                    }
-                  }}
-                >
-                  <span className="font-semibold text-gray-900 text-base group-hover:bg-gradient-to-r group-hover:from-[#fb9300] group-hover:to-[#ffb700] group-hover:bg-clip-text group-hover:text-transparent transition-all duration-200">
-                    {item.label}
-                  </span>
-                  {item.hasDropdown && (
-                    <div className="ml-3">
-                      {openDropdown === item.label ? (
-                        <Dot
-                          size={20}
-                          className="text-gray-500 group-hover:text-[#fb9300] transition-colors duration-200"
-                        />
-                      ) : (
-                        <Dot
-                          size={20}
-                          className="text-gray-500 group-hover:text-[#fb9300] transition-colors duration-200"
-                        />
-                      )}
-                    </div>
-                  )}
-                </div>
+        {/* Sidebar Content */}
+        {/* i need receivers col */}
+        <div className="relative z-10 h-full flex flex-col   ">
+          {/* Sidebar Header */}
+          <div className="flex items-center  justify-between p-6 border-b border-white/20">
+            <div className="flex items-center space-x-3 ">
+              <Image
+                src={logo}
+                alt="Logo"
+                className="h-10 w-10 object-contain rounded-full"
+              />
+              <span className="text-lg font-bold text-gray-800">القائمة</span>
+            </div>
+            <button
+              onClick={onClose}
+              className="p-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-white/10 transition-colors"
+              aria-label="Close sidebar"
+            >
+              <X size={24} />
+            </button>
+          </div>
 
-                {/* Dropdown Items */}
-                {item.hasDropdown &&
-                  openDropdown === item.label &&
-                  item.dropdown && (
-                    <div className="mt-2 mb-4 bg-gray-50/50 rounded-lg overflow-hidden">
-                      <div className="space-y-0">
-                        {item.dropdown.map((dropdownItem, dropdownIndex) =>
-                          dropdownItem.external ? (
-                            <a
-                              key={dropdownIndex}
-                              href={dropdownItem.href || "#"}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="block py-3 px-6 pr-12 text-gray-600 hover:bg-white/50 border-b border-gray-200/30 last:border-b-0 transition-colors duration-200 text-right relative group"
-                            >
-                              <span className="text-sm group-hover:bg-gradient-to-r group-hover:from-[#fb9300] group-hover:to-[#ffb700] group-hover:bg-clip-text group-hover:text-transparent transition-all duration-200">
-                                • {dropdownItem.label}
-                              </span>
-                            </a>
-                          ) : (
-                            <Link
-                              key={dropdownIndex}
-                              href={dropdownItem.href || "#"}
-                              onClick={onClose}
-                              className="block py-3 px-6 pr-12 text-gray-600 hover:bg-white/50 border-b border-gray-200/30 last:border-b-0 transition-colors duration-200 text-right relative group"
-                            >
-                              <span className="text-sm group-hover:bg-gradient-to-r group-hover:from-[#fb9300] group-hover:to-[#ffb700] group-hover:bg-clip-text group-hover:text-transparent transition-all duration-200">
-                                • {dropdownItem.label}
-                              </span>
-                            </Link>
-                          )
+          {/* Sidebar Navigation */}
+          <nav className="flex-1 overflow-y-auto py-4 ">
+            <div className="space-y-1 flex-col-reverse flex" dir="rtl">
+              {navItems.map((item, index) => (
+                <div key={index} className="px-4">
+                  <div
+                    className="flex items-center justify-between cursor-pointer py-4 px-4 hover:bg-white/10 rounded-lg transition-colors group"
+                    onClick={() => {
+                      if (item.hasDropdown) {
+                        onDropdownToggle(item.label);
+                      } else if (item.href) {
+                        window.location.href = item.href;
+                        onClose();
+                      } else {
+                        console.log(`Navigating to: ${item.label}`);
+                        onClose();
+                      }
+                    }}
+                  >
+                    <span className="font-semibold text-white text-base group-hover:bg-gradient-to-r group-hover:from-[#fb9300] group-hover:to-[#ffb700] group-hover:bg-clip-text group-hover:text-transparent transition-all duration-200">
+                      {item.label}
+                    </span>
+                    {item.hasDropdown && (
+                      <div className="ml-3">
+                        {openDropdown === item.label ? (
+                          <Dot
+                            size={20}
+                            className="text-gray-500 group-hover:text-[#fb9300] transition-colors duration-200"
+                          />
+                        ) : (
+                          <Dot
+                            size={20}
+                            className="text-gray-500 group-hover:text-[#fb9300] transition-colors duration-200"
+                          />
                         )}
                       </div>
-                    </div>
-                  )}
-              </div>
-            ))}
-          </div>
-        </nav>
+                    )}
+                  </div>
+
+                  {/* Dropdown Items */}
+                  {item.hasDropdown &&
+                    openDropdown === item.label &&
+                    item.dropdown && (
+                      <div className="mt-2 mb-4 rounded-lg overflow-hidden">
+                        {/* Liquid Glass Background for Dropdown - White and Transparent */}
+                        <div className="relative">
+                          <div className="absolute inset-0">
+                            <div
+                              className="absolute inset-0 backdrop-blur-xl rounded-lg border border-white/30 shadow-lg"
+                              style={{
+                                background: `
+                                  linear-gradient(135deg, 
+                                    rgba(255,255,255,0.08) 0%, 
+                                    rgba(255,255,255,0.06) 25%, 
+                                    rgba(255,255,255,0.04) 50%, 
+                                    rgba(255,255,255,0.02) 75%, 
+                                    rgba(255,255,255,0.01) 100%
+                                  )
+                                `,
+                              }}
+                            />
+                            <div className="absolute inset-[1px] rounded-lg bg-gradient-to-br from-white/04 to-transparent" />
+                          </div>
+
+                          <div className="relative z-10 space-y-0">
+                            {item.dropdown.map((dropdownItem, dropdownIndex) =>
+                              dropdownItem.external ? (
+                                <a
+                                  key={dropdownIndex}
+                                  href={dropdownItem.href || "#"}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="block py-3 px-6 pr-12 text-gray-800 hover:bg-white/10 border-b border-white/30 last:border-b-0 transition-colors duration-200 text-right relative group"
+                                >
+                                  <span className="text-sm group-hover:bg-gradient-to-r group-hover:from-[#fb9300] group-hover:to-[#ffb700] group-hover:bg-clip-text group-hover:text-transparent transition-all duration-200">
+                                    • {dropdownItem.label}
+                                  </span>
+                                </a>
+                              ) : (
+                                <Link
+                                  key={dropdownIndex}
+                                  href={dropdownItem.href || "#"}
+                                  onClick={onClose}
+                                  className="block py-3 px-6 pr-12 text-gray-800 hover:bg-white/10 border-b border-white/30 last:border-b-0 transition-colors duration-200 text-right relative group"
+                                >
+                                  <span className="text-sm group-hover:bg-gradient-to-r group-hover:from-[#fb9300] group-hover:to-[#ffb700] group-hover:bg-clip-text group-hover:text-transparent transition-all duration-200">
+                                    • {dropdownItem.label}
+                                  </span>
+                                </Link>
+                              )
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                </div>
+              ))}
+            </div>
+          </nav>
+        </div>
       </div>
     </>
   );
