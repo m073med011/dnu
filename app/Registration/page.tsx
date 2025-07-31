@@ -807,6 +807,7 @@ const calculatePercentage = (): string => {
                   >
                     <option value="">اختر المحافظة</option>
                     <option value="دمياط">دمياط</option>
+                    <option value="بورسعيد">بورسعيد</option>
                     <option value="القاهرة">القاهرة</option>
                     <option value="الجيزة">الجيزة</option>
                     <option value="الإسكندرية">الإسكندرية</option>
