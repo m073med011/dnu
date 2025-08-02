@@ -131,7 +131,7 @@ const ArabicFAQ: React.FC = () => {
 
         {/* Title section */}
         <div className="flex flex-col justify-start items-end order-1 sm:order-2">
-          <div className="text-center text-[#899FCF] text-xl sm:text-2xl lg:text-[32px] font-bold break-words">
+          <div className="text-center text-[#899FCF] px-4 lg:px-0 text-xl sm:text-2xl lg:text-[32px] font-bold break-words">
             الأسئلة & الأجوبة
           </div>
           <div className="text-center text-black/60 text-xs sm:text-sm lg:text-base font-medium break-words mt-1 sm:mt-2 max-w-xs sm:max-w-none">
