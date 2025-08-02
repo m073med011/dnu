@@ -45,9 +45,13 @@ const navItems: NavItem[] = [
   },
   { label: "القبول والتسجيل", hasDropdown: false, href: "/Registration" },
   {
-    label: "مكتب التنسيق والقبول",
-    hasDropdown: false,
-    href: "/CoordinationOffice",
+    label: "الخدمات الالكترونية",
+    hasDropdown: true,
+    dropdown: [
+      { label: "DAMIS نظام ادارة الشئون الأكاديمية ", href: "#" },
+      { label: "DAMLS نظام ادارة التعليم الالكتروني و الاختبارات الالكترونية ", href: "#" },
+      { label: "DAMA نظام حوكمة وارشفة الملفات ", href: "#" },
+    ],
   },
   {
     label: "الحياة الجامعية",

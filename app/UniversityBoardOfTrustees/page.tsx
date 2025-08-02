@@ -1,5 +1,5 @@
 // import BgPage from "@/public/collages/BgPage.png";
-import image from "@/public/Trustees/image.png";
+import image from "@/public/trustees_image.jpeg";
 import Image from "next/image";
 import React from "react";
 import Page from "@/components/Hero-section"; // Import your reusable Page component
