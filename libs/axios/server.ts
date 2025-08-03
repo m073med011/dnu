@@ -7,6 +7,7 @@ const backendServer = axios.create({
   headers: {
     "Content-Type": "multipart/form-data",
   },
+   withCredentials: false,
 });
 
 // Example of a GET request
