@@ -67,10 +67,6 @@ const UniversityFooter = () => {
                 
                 {/* Social media icons */}
                 <div className="flex items-center gap-2 mt-2">
-                  {/* Facebook Icon 1 */}
-                  <a href="https://www.facebook.com/share/p/16eGgX19gu/" target="_blank" rel="noopener noreferrer" className="p-1.5 bg-white/30 bg-opacity-20 rounded-full flex items-center justify-center w-8 h-8 hover:bg-white/40 transition-all duration-300">
-                    <FacebookIcon size={16} />
-                  </a>
                   
                   {/* Facebook Icon 2 */}
                   <a href="https://www.facebook.com/profile.php?id=61579140232991" target="_blank" rel="noopener noreferrer" className="p-1.5 bg-white/30 bg-opacity-20 rounded-full flex items-center justify-center w-8 h-8 hover:bg-white/40 transition-all duration-300">

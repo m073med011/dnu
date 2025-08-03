@@ -18,7 +18,6 @@ import { FC, useState, useEffect } from "react";
 
 // Social Icons with Lucide SVG icons - Updated with actual URLs
 const socialIcons = [
-  { name: "Facebook 1", href: "https://www.facebook.com/share/p/16eGgX19gu/", icon: Facebook },
   { name: "Facebook 2", href: "https://www.facebook.com/profile.php?id=61579140232991", icon: Facebook },
   { name: "Twitter", href: "https://x.com/DamiettaNU", icon: Twitter },
   { name: "Instagram", href: "https://www.instagram.com/info.damnu/", icon: Instagram },
