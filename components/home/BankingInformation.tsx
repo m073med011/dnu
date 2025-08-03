@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 
-const BankingInformation = () => {
+const BankingInformation = ({ showNotices = false }) => {
   const [activeTab, setActiveTab] = useState(0);
 
   const bankTabs = [
@@ -93,7 +93,9 @@ const BankingInformation = () => {
       <div className="max-w-7xl mx-auto">
         {/* Page Title */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">المعلومات المصرفية</h1>
+          <h1 className="text-4xl font-bold text-gray-800 mb-2">
+            المعلومات المصرفية
+          </h1>
           <p className="text-lg text-gray-600">Banking Information</p>
         </div>
 
@@ -172,6 +174,34 @@ const BankingInformation = () => {
               </tbody>
             </table>
           </div>
+          {showNotices && (
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-t-4 border-blue-500 p-6">
+              <div className="space-y-4 text-right">
+                <div className="flex items-start justify-start space-x-3 space-x-reverse">
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                      1
+                    </div>
+                  </div>
+                  <p className="text-blue-800 font-semibold text-lg">
+                    ستقوم إدارة الجامعة بالإعلان عن الطلاب المقبولين فور ظهور
+                    التنسيق
+                  </p>
+                </div>
+
+                <div className="flex items-start justify-start space-x-3 space-x-reverse">
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 bg-amber-500 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                      2
+                    </div>
+                  </div>
+                  <p className="text-amber-700 font-semibold text-lg">
+                    ممنوع تحويل أي مبالغ إلا بعد إعلان نتيجة التنسيق
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

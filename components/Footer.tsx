@@ -40,108 +40,113 @@ const UniversityFooter = () => {
   };
 
   return (
-    <div className="w-full h-full relative">
+    <div className="w-full h-full relative" style={{ minWidth: 'clamp(320px, 100vw, 1920px)' }}>
         {/* Background gradient using inline style */}
         <div className="absolute inset-0" style={gradientBgStyle} />
         
         {/* Main content */}
         <div className="relative px-4 md:px-20 py-0">
-          {/* Header section with social media icons and profile */}
-          <div className="flex flex-col md:flex-row justify-between items-center py-4 border-b border-gray-300 border-opacity-70 gap-4">
-            <div className="flex flex-row md:flex-row items-center justify-around md:justify-between gap-4 md:gap-0 w-full">
-              {/* Social media icons */}
-              <div className="flex items-end gap-3 md:gap-5 md:order-1">
-                {/* Facebook Icon 1 */}
-                <a href="https://www.facebook.com/share/p/16eGgX19gu/" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/30 bg-opacity-20 rounded-full flex items-center justify-center w-12 h-12 md:w-14 md:h-14 hover:bg-white/40 transition-all duration-300">
-                  <FacebookIcon size={24} />
-                </a>
-                
-                {/* Facebook Icon 2 */}
-                <a href="https://www.facebook.com/profile.php?id=61579140232991" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/30 bg-opacity-20 rounded-full flex items-center justify-center w-12 h-12 md:w-14 md:h-14 hover:bg-white/40 transition-all duration-300">
-                  <FacebookIcon size={24} />
-                </a>
-                
-                {/* Twitter/X Icon */}
-                <a href="https://x.com/DamiettaNU" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/30 bg-opacity-20 rounded-full flex items-center justify-center w-12 h-12 md:w-14 md:h-14 hover:bg-white/40 transition-all duration-300">
-                  <TwitterIcon size={24} />
-                </a>
-                
-                {/* Instagram Icon */}
-                <a href="https://www.instagram.com/info.damnu/" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/30 bg-opacity-20 rounded-full flex items-center justify-center w-12 h-12 md:w-14 md:h-14 hover:bg-white/40 transition-all duration-300">
-                  <InstagramIcon size={24} />
-                </a>
-                
-                {/* LinkedIn Icon */}
-                <a href="https://www.linkedin.com/company/dam-nu/" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/30 bg-opacity-20 rounded-full flex items-center justify-center w-12 h-12 md:w-14 md:h-14 hover:bg-white/40 transition-all duration-300">
-                  <LinkedInIcon size={24} />
-                </a>
-              </div>
-              
-              {/* Profile image */}
-              <Image
-                className="w-24 h-24 md:w-30 md:h-30 rounded-full md:order-2" 
-                src={logo}
-                alt="University Logo"
-              />
-            </div>
+          {/* Header section with profile image only */}
+          <div className="flex justify-center items-center py-4 border-b border-gray-300 border-opacity-70">
+            {/* Profile image */}
+            <Image
+              className="w-20 h-20 md:w-24 md:h-24 rounded-full" 
+              src={logo}
+              alt="University Logo"
+            />
           </div>
           
           {/* Footer content using CSS Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 px-4 md:px-20 py-8 text-right">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 px-4 md:px-20 py-4 text-right">
+            {/* اتصل بنا Section - New first column */}
+            <div className="flex flex-col items-end gap-2">
+              <h3 className="text-white font-bold" style={{ fontSize: 'clamp(1rem, 2vw, 1.5rem)' }}>اتصل بنا</h3>
+              <div className="flex flex-col items-end gap-2">
+                {/* Email */}
+                <a href="mailto:info@dam-nu.edu.eg" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>info@dam-nu.edu.eg</a>
+                
+                {/* Social media icons */}
+                <div className="flex items-center gap-2 mt-2">
+                  {/* Facebook Icon 1 */}
+                  <a href="https://www.facebook.com/share/p/16eGgX19gu/" target="_blank" rel="noopener noreferrer" className="p-1.5 bg-white/30 bg-opacity-20 rounded-full flex items-center justify-center w-8 h-8 hover:bg-white/40 transition-all duration-300">
+                    <FacebookIcon size={16} />
+                  </a>
+                  
+                  {/* Facebook Icon 2 */}
+                  <a href="https://www.facebook.com/profile.php?id=61579140232991" target="_blank" rel="noopener noreferrer" className="p-1.5 bg-white/30 bg-opacity-20 rounded-full flex items-center justify-center w-8 h-8 hover:bg-white/40 transition-all duration-300">
+                    <FacebookIcon size={16} />
+                  </a>
+                  
+                  {/* Twitter/X Icon */}
+                  <a href="https://x.com/DamiettaNU" target="_blank" rel="noopener noreferrer" className="p-1.5 bg-white/30 bg-opacity-20 rounded-full flex items-center justify-center w-8 h-8 hover:bg-white/40 transition-all duration-300">
+                    <TwitterIcon size={16} />
+                  </a>
+                  
+                  {/* Instagram Icon */}
+                  <a href="https://www.instagram.com/info.damnu/" target="_blank" rel="noopener noreferrer" className="p-1.5 bg-white/30 bg-opacity-20 rounded-full flex items-center justify-center w-8 h-8 hover:bg-white/40 transition-all duration-300">
+                    <InstagramIcon size={16} />
+                  </a>
+                  
+                  {/* LinkedIn Icon */}
+                  <a href="https://www.linkedin.com/company/dam-nu/" target="_blank" rel="noopener noreferrer" className="p-1.5 bg-white/30 bg-opacity-20 rounded-full flex items-center justify-center w-8 h-8 hover:bg-white/40 transition-all duration-300">
+                    <LinkedInIcon size={16} />
+                  </a>
+                </div>
+              </div>
+            </div>
             {/* القبول والتسجيل Section */}
-            <div className="flex flex-col items-end gap-4">
-              <h3 className="text-white text-2xl md:text-3xl font-bold">القبول والتسجيل</h3>
-              <div className="flex flex-col items-end gap-4">
-                <Link href="/Registration" className="text-white text-opacity-80 text-lg md:text-xl font-medium hover:text-opacity-100 transition-all duration-300" style={hoverStyle}>القبول والتسجيل</Link>
+            <div className="flex flex-col items-end gap-2">
+              <h3 className="text-white font-bold" style={{ fontSize: 'clamp(1rem, 2vw, 1.5rem)' }}>القبول والتسجيل</h3>
+              <div className="flex flex-col items-end gap-2">
+                <Link href="/Registration" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>القبول والتسجيل</Link>
               </div>
             </div>
 
             {/* عن الجامعة Section */}
-            <div className="flex flex-col items-end gap-4">
-              <h3 className="text-white text-2xl md:text-3xl font-bold">عن الجامعة</h3>
-              <div className="flex flex-col items-end gap-4">
-                <Link href="/UniversityBoardOfTrustees" className="text-white text-opacity-80 text-lg md:text-xl font-medium hover:text-opacity-100 transition-all duration-300" style={hoverStyle}>مجلس الأمناء</Link>
-                <Link href="/UniversityPresidentSpeech" className="text-white text-opacity-80 text-lg md:text-xl font-medium hover:text-opacity-100 transition-all duration-300" style={hoverStyle}>كلمة رئيس الجامعة</Link>
-                <Link href="/UniversityVision" className="text-white text-opacity-80 text-lg md:text-xl font-medium hover:text-opacity-100 transition-all duration-300" style={hoverStyle}>رؤية ورسالة الجامعة</Link>
-                <Link href="/ImportantFiles" className="text-white text-opacity-80 text-lg md:text-xl font-medium hover:text-opacity-100 transition-all duration-300" style={hoverStyle}>ملفات هامة</Link>
-                <Link href="/Q&A" className="text-white text-opacity-80 text-lg md:text-xl font-medium hover:text-opacity-100 transition-all duration-300" style={hoverStyle}>الأسئلة الشائعة</Link>
-                <Link href="/jobs" className="text-white text-opacity-80 text-lg md:text-xl font-medium hover:text-opacity-100 transition-all duration-300" style={hoverStyle}>الوظائف الشاغرة</Link>
-                <Link href="/contact-us" className="text-white text-opacity-80 text-lg md:text-xl font-medium hover:text-opacity-100 transition-all duration-300" style={hoverStyle}>اتصل بنا</Link>
+            <div className="flex flex-col items-end gap-2">
+              <h3 className="text-white font-bold" style={{ fontSize: 'clamp(1rem, 2vw, 1.5rem)' }}>عن الجامعة</h3>
+              <div className="flex flex-col items-end gap-2">
+                <Link href="/UniversityBoardOfTrustees" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>مجلس الأمناء</Link>
+                <Link href="/UniversityPresidentSpeech" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>كلمة رئيس الجامعة</Link>
+                <Link href="/UniversityVision" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>رؤية ورسالة الجامعة</Link>
+                <Link href="/ImportantFiles" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>ملفات هامة</Link>
+                <Link href="/Q&A" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>الأسئلة الشائعة</Link>
+                <Link href="/jobs" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>الوظائف الشاغرة</Link>
               </div>
             </div>
             
             {/* الخدمات الالكترونية Section */}
-            <div className="flex flex-col items-end gap-4">
-              <h3 className="text-white text-2xl md:text-3xl font-bold">الخدمات الالكترونية</h3>
-              <div className="flex flex-col items-end gap-4">
-                <Link href="#" className="text-white text-opacity-80 text-lg md:text-xl font-medium hover:text-opacity-100 transition-all duration-300" style={hoverStyle}>DAMIS نظام ادارة الشئون الأكاديمية</Link>
-                <Link href="#" className="text-white text-opacity-80 text-lg md:text-xl font-medium hover:text-opacity-100 transition-all duration-300" style={hoverStyle}>DAMLS نظام ادارة التعليم الالكتروني</Link>
-                <Link href="#" className="text-white text-opacity-80 text-lg md:text-xl font-medium hover:text-opacity-100 transition-all duration-300" style={hoverStyle}>DAMA نظام حوكمة وارشفة الملفات</Link>
+            <div className="flex flex-col items-end gap-2">
+              <h3 className="text-white font-bold" style={{ fontSize: 'clamp(1rem, 2vw, 1.5rem)' }}>الخدمات الالكترونية</h3>
+              <div className="flex flex-col items-end gap-2">
+                <Link href="#" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>DAMIS نظام ادارة الشئون الأكاديمية</Link>
+                <Link href="#" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>DAMLS نظام ادارة التعليم الالكتروني</Link>
+                <Link href="#" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>DAMA نظام حوكمة وارشفة الملفات</Link>
               </div>
             </div>
             
             {/* الحياة الجامعية Section */}
-            <div className="flex flex-col items-end gap-4">
-              <h3 className="text-white text-2xl md:text-3xl font-bold">الحياة الجامعية</h3>
-              <div className="flex flex-col items-end gap-4">
-                <Link href="#" className="text-white text-opacity-80 text-lg md:text-xl font-medium hover:text-opacity-100 transition-all duration-300" style={hoverStyle}>بوابة الخدمات الطلابية</Link>
-                <Link href="#" className="text-white text-opacity-80 text-lg md:text-xl font-medium hover:text-opacity-100 transition-all duration-300" style={hoverStyle}>دليل الطالب</Link>
-                <Link href="#" className="text-white text-opacity-80 text-lg md:text-xl font-medium hover:text-opacity-100 transition-all duration-300" style={hoverStyle}>الميثاق الأخلاقي للطالب</Link>
-                <a href="https://www.ekb.eg/" target="_blank" rel="noopener noreferrer" className="text-white text-opacity-80 text-lg md:text-xl font-medium hover:text-opacity-100 transition-all duration-300" style={hoverStyle}>بنك المعرفة المصري</a>
-                <Link href="#" className="text-white text-opacity-80 text-lg md:text-xl font-medium hover:text-opacity-100 transition-all duration-300" style={hoverStyle}>الإسكان الجامعي</Link>
+            <div className="flex flex-col items-end gap-2">
+              <h3 className="text-white font-bold" style={{ fontSize: 'clamp(1rem, 2vw, 1.5rem)' }}>الحياة الجامعية</h3>
+              <div className="flex flex-col items-end gap-2">
+                <Link href="#" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>بوابة الخدمات الطلابية</Link>
+                <Link href="#" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>دليل الطالب</Link>
+                <Link href="#" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>الميثاق الأخلاقي للطالب</Link>
+                <a href="https://www.ekb.eg/" target="_blank" rel="noopener noreferrer" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>بنك المعرفة المصري</a>
+                <Link href="#" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>الإسكان الجامعي</Link>
               </div>
             </div>
             
             {/* الكليات والبرامج Section */}
-            <div className="flex flex-col items-end gap-4">
-              <h3 className="text-white text-2xl md:text-3xl font-bold">الكليات والبرامج</h3>
-              <div className="flex flex-col items-end gap-2">
-                <Link href="/collages" className="text-white text-opacity-80 text-lg md:text-xl font-medium hover:text-opacity-100 transition-all duration-300" style={hoverStyle}>كلية الحاسبات والمعلومات والذكاء الاصطناعي</Link>
-                <Link href="/collages" className="text-white text-opacity-80 text-lg md:text-xl font-medium hover:text-opacity-100 transition-all duration-300" style={hoverStyle}>كلية التمريض</Link>
-                <Link href="/collages" className="text-white text-opacity-80 text-lg md:text-xl font-medium hover:text-opacity-100 transition-all duration-300" style={hoverStyle}>كلية الفنون والتصميم</Link>
-                <Link href="/collages" className="text-white text-opacity-80 text-lg md:text-xl font-medium hover:text-opacity-100 transition-all duration-300" style={hoverStyle}>كلية الألسن</Link>
-                <Link href="/collages" className="text-white text-opacity-80 text-lg md:text-xl font-medium hover:text-opacity-100 transition-all duration-300" style={hoverStyle}>كلية الآثار والسياحة</Link>
-                <Link href="/collages" className="text-white text-opacity-80 text-lg md:text-xl font-medium hover:text-opacity-100 transition-all duration-300" style={hoverStyle}>كلية الأعمال</Link>
+            <div className="flex flex-col items-end gap-2">
+              <h3 className="text-white font-bold" style={{ fontSize: 'clamp(1rem, 2vw, 1.5rem)' }}>الكليات والبرامج</h3>
+              <div className="flex flex-col items-end gap-1.5">
+                <Link href="/collages" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>كلية الحاسبات والمعلومات والذكاء الاصطناعي</Link>
+                <Link href="/collages" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>كلية التمريض</Link>
+                <Link href="/collages" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>كلية الفنون والتصميم</Link>
+                <Link href="/collages" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>كلية الألسن</Link>
+                <Link href="/collages" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>كلية الآثار والسياحة</Link>
+                <Link href="/collages" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>كلية الأعمال</Link>
               </div>
             </div>
           </div>

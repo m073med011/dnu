@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   IdCard,
   User,
@@ -11,10 +11,11 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
-// import Priceing from "@/components/home/Priceing";
 import BankingInformation from "@/components/home/BankingInformation";
+import FormInput from "./components/FormInput";
+import FormSelect from "./components/FormSelect";
 
-// Define the type for form data (✅ removed 'religion')
+// Define types
 interface FormData {
   guardianRelation: string;
   arabicName: string;
@@ -27,12 +28,10 @@ interface FormData {
   birthYear: string;
   birthMonth: string;
   birthDay: string;
-  // Preferences
   firstChoice: string;
   secondChoice: string;
   thirdChoice: string;
   additionalNotes: string;
-  // Certificate Info
   certificateType: string;
   schoolName: string;
   totalGrade: string;
@@ -41,13 +40,11 @@ interface FormData {
   obtainedGrade: string;
   certificateCountry: string;
   certificateYear: string;
-  // Research Info
   hasTeachingExperience: boolean;
   parentName: string;
   universityId: string;
   faculty: string;
   studyYear: string;
-  // Guardian Info
   guardianName: string;
   guardianNationality: string;
   guardianJob: string;
@@ -56,7 +53,6 @@ interface FormData {
   guardianMobile: string;
   guardianNationalId: string;
   workPermit: string;
-  // Contact Info
   address: string;
   mobile: string;
   alternateMobile: string;
@@ -65,10 +61,8 @@ interface FormData {
   nationalId: string;
 }
 
-// Define the type for errors
 type FormErrors = Partial<Record<keyof FormData, string>>;
 
-// Main Component
 const UniversityRegistrationForm = (): React.JSX.Element => {
   const [activeTab, setActiveTab] = useState<number>(1);
   const [registrationNumber, setRegistrationNumber] = useState<string>("");
@@ -130,160 +124,14 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     { id: 7, name: "معلومات الحساب", progress: 100 },
   ];
 
-  const validateTab = (tabId: number): FormErrors => {
-    const newErrors: FormErrors = {};
-    switch (tabId) {
-      case 1:
-        (
-          [
-            "arabicName",
-            "englishName",
-            "nationality",
-            "state",
-            "city",
-          ] as const // ✅ Removed 'religion'
-        ).forEach((field) => {
-          const value = formData[field];
-          if (!value || value === "") {
-            newErrors[field] = "هذا الحقل مطلوب";
-          }
-        });
-
-        // Validate Day
-        if (!formData.birthDay || !/^\d+$/.test(formData.birthDay)) {
-          newErrors.birthDay = "أدخل يوماً صالحاً";
-        } else if (+formData.birthDay < 1 || +formData.birthDay > 31) {
-          newErrors.birthDay = "أدخل يوماً بين 1 و31";
-        }
-
-        // Validate Month
-        if (!formData.birthMonth || !/^\d+$/.test(formData.birthMonth)) {
-          newErrors.birthMonth = "أدخل شهراً صالحاً";
-        } else if (+formData.birthMonth < 1 || +formData.birthMonth > 12) {
-          newErrors.birthMonth = "أدخل شهراً بين 1 و12";
-        }
-
-        // Validate Year
-        if (!formData.birthYear || !/^\d+$/.test(formData.birthYear)) {
-          newErrors.birthYear = "أدخل سنة صالحة";
-        } else if (+formData.birthYear < 1900 || +formData.birthYear > 2025) {
-          newErrors.birthYear = "أدخل سنة بين 1900 و2025";
-        }
-
-        if (formData.nationalId && formData.nationalId.length > 0) {
-          if (!/^\d{14}$/.test(formData.nationalId.replace(/\s+/g, ""))) {
-            newErrors.nationalId = "الرقم القومي يجب أن يكون 14 رقمًا";
-          }
-        }
-        break;
-
-      case 2:
-        ["address", "mobile", "email"].forEach((field) => {
-          const value = formData[field as keyof FormData];
-          if (!value || value === "") {
-            newErrors[field as keyof FormData] = "هذا الحقل مطلوب";
-          }
-        });
-
-        if (
-          formData.email &&
-          !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
-        ) {
-          newErrors.email = "البريد الإلكتروني غير صالح";
-        }
-
-        if (
-          formData.mobile &&
-          !/^(?:\+20|0)?1[0-9]{9}$/.test(formData.mobile.replace(/\s+/g, ""))
-        ) {
-          newErrors.mobile = "رقم الموبايل غير صالح (مثال: 01012345678)";
-        }
-        break;
-
-      case 3:
-        [
-          "guardianName",
-          "guardianNationality",
-          "guardianJob",
-          "guardianEmail",
-          "guardianMobile",
-          "guardianNationalId",
-        ].forEach((field) => {
-          const value = formData[field as keyof FormData];
-          if (!value || value === "") {
-            newErrors[field as keyof FormData] = "هذا الحقل مطلوب";
-          }
-        });
-
-        if (
-          formData.guardianEmail &&
-          !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.guardianEmail)
-        ) {
-          newErrors.guardianEmail = "البريد الإلكتروني لولي الأمر غير صالح";
-        }
-
-        if (
-          formData.guardianMobile &&
-          !/^(?:\+20|0)?1[0-9]{9}$/.test(
-            formData.guardianMobile.replace(/\s+/g, "")
-          )
-        ) {
-          newErrors.guardianMobile = "رقم موبايل ولي الأمر غير صالح";
-        }
-        break;
-
-      case 4:
-        if (formData.hasTeachingExperience) {
-          ["parentName", "universityId", "faculty", "studyYear"].forEach(
-            (field) => {
-              const value = formData[field as keyof FormData];
-              if (!value || value === "") {
-                newErrors[field as keyof FormData] = "هذا الحقل مطلوب";
-              }
-            }
-          );
-        }
-        break;
-
-      case 5:
-        [
-          "certificateType",
-          "schoolName",
-          "totalGrade",
-          "sittingNumber",
-          "obtainedGrade",
-          "certificateCountry",
-          "certificateYear",
-        ].forEach((field) => {
-          const value = formData[field as keyof FormData];
-          if (!value || value === "") {
-            newErrors[field as keyof FormData] = "هذا الحقل مطلوب";
-          }
-        });
-
-        if (
-          formData.certificateYear &&
-          !/^\d+$/.test(formData.certificateYear)
-        ) {
-          newErrors.certificateYear = "يجب أن تكون السنة رقماً";
-        } else if (
-          +formData.certificateYear < 1900 ||
-          +formData.certificateYear > 2025
-        ) {
-          newErrors.certificateYear = "أدخل سنة بين 1900 و2025";
-        }
-        break;
-
-      case 6:
-        if (!formData.firstChoice || formData.firstChoice === "") {
-          newErrors.firstChoice = "الرغبة الأولى مطلوبة";
-        }
-        break;
-
-      default:
-        break;
+  // ✅ Define helpers before useMemo
+  const calculatePercentage = (): string => {
+    const total = parseFloat(formData.totalGrade);
+    const obtained = parseFloat(formData.obtainedGrade);
+    if (!isNaN(total) && !isNaN(obtained) && total !== 0) {
+      return `${((obtained / total) * 100).toFixed(2)}%`;
     }
-    return newErrors;
+    return "";
   };
 
   const handleInputChange = (
@@ -326,24 +174,729 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     });
 
     let error = "";
-    if (field === "arabicName") {
-      if (typeof value === "string") {
-        const arabicRegex = /^[\u0600-\u06FF\s\-ءآأإة]+$/;
-        if (value && !arabicRegex.test(value)) {
-          error = "يجب أن يحتوي الاسم على حروف عربية فقط";
-        }
+    if (field === "arabicName" && typeof value === "string") {
+      const arabicRegex = /^[\u0600-\u06FF\s\-ءآأإة]+$/;
+      if (value && !arabicRegex.test(value)) {
+        error = "يجب أن يحتوي الاسم على حروف عربية فقط";
       }
     }
 
     setErrors((prev) => {
       const newErrors = { ...prev };
-      if (error) {
-        newErrors[field] = error;
-      } else {
-        delete newErrors[field];
-      }
+      if (error) newErrors[field] = error;
+      else delete newErrors[field];
       return newErrors;
     });
+  };
+
+  // ✅ Define options for selects
+  const stateOptions = [
+    { value: "دمياط", label: "دمياط" },
+    { value: "بورسعيد", label: "بورسعيد" },
+    { value: "القاهرة", label: "القاهرة" },
+    { value: "الجيزة", label: "الجيزة" },
+    { value: "الإسكندرية", label: "الإسكندرية" },
+    { value: "الدقهلية", label: "الدقهلية" },
+    { value: "الشرقية", label: "الشرقية" },
+    { value: "المنوفية", label: "المنوفية" },
+    { value: "كفر الشيخ", label: "كفر الشيخ" },
+    { value: "الغربية", label: "الغربية" },
+  ];
+
+  const certificateTypeOptions = [
+    { value: "secondary", label: "الثانوية العامة" },
+    { value: "azhar", label: "الثانوية الأزهرية" },
+    { value: "technical", label: "الثانوية الفنية" },
+    { value: "equivalent", label: "شهادة معادلة" },
+    { value: "other", label: "شهادة أخرى" },
+  ];
+
+  const certificateCountryOptions = [
+    { value: "egypt", label: "مصر" },
+    { value: "saudi", label: "السعودية" },
+    { value: "uae", label: "الإمارات" },
+    { value: "jordan", label: "الأردن" },
+    { value: "kuwait", label: "الكويت" },
+  ];
+
+  const studyYearOptions = [
+    { value: "first", label: "السنة الأولى" },
+    { value: "second", label: "السنة الثانية" },
+    { value: "third", label: "السنة الثالثة" },
+    { value: "fourth", label: "السنة الرابعة" },
+  ];
+
+  const facultyOptions = [
+    { value: "cs_ai", label: "كلية الحاسبات والمعلومات والذكاء الاصطناعي" },
+    { value: "nursing", label: "كلية التمريض" },
+    { value: "arts_design", label: "كلية الفنون والتصميم" },
+    { value: "dental", label: "كلية الألسن" },
+    { value: "tourism_archaeology", label: "كلية الآثار والسياحة" },
+    { value: "business", label: "كلية الأعمال" },
+  ];
+
+  // ✅ useMemo: Only render active tab
+  const currentTabContent = useMemo(() => {
+    const secondOptions = facultyOptions.filter(
+      (opt) => opt.value !== formData.firstChoice
+    );
+    const thirdOptions = facultyOptions.filter(
+      (opt) =>
+        opt.value !== formData.firstChoice &&
+        opt.value !== formData.secondChoice
+    );
+
+    switch (activeTab) {
+      case 1:
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-800 text-right mb-8">
+              البيانات الشخصية
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormInput
+                label="اسم الطالب بالعربية"
+                value={formData.arabicName}
+                onChange={(value) => {
+                  if (
+                    /^[\u0600-\u06FF\s\-ءآأإة]*$/.test(value) ||
+                    value === ""
+                  ) {
+                    handleInputChange("arabicName", value);
+                  }
+                }}
+                placeholder="مثل: محمد أحمد"
+                error={errors.arabicName}
+                icon={User}
+                required
+              />
+              <FormInput
+                label="اسم الطالب بالإنجليزية"
+                value={formData.englishName}
+                onChange={(value) => {
+                  if (/^[a-zA-Z\s\-]*$/.test(value) || value === "") {
+                    handleInputChange("englishName", value);
+                  }
+                }}
+                placeholder="مثل: Mohamed Ahmed"
+                error={errors.englishName}
+                icon={GraduationCap}
+                required
+              />
+              <FormInput
+                label="الجنسية"
+                value={formData.nationality}
+                onChange={(value) => handleInputChange("nationality", value)}
+                placeholder="مثل: مصري"
+                error={errors.nationality}
+                icon={MapPin}
+                required
+              />
+              <FormSelect
+                label="المحافظة"
+                value={formData.state}
+                onChange={(value) => handleInputChange("state", value)}
+                options={stateOptions}
+                error={errors.state}
+                icon={MapPin}
+                required
+              />
+              <FormInput
+                label="المدينة"
+                value={formData.city}
+                onChange={(value) => handleInputChange("city", value)}
+                placeholder="مثل: دمياط الجديدة"
+                error={errors.city}
+                icon={MapPin}
+                required
+              />
+              <FormInput
+                label="رقم شهادة الميلاد"
+                value={formData.birthCertNumber}
+                onChange={(value) =>
+                  handleInputChange("birthCertNumber", value)
+                }
+                placeholder="رقم شهادة الميلاد"
+                error={errors.birthCertNumber}
+                icon={Award}
+              />
+              <FormInput
+                label="رقم جواز السفر"
+                value={formData.passportNumber}
+                onChange={(value) => handleInputChange("passportNumber", value)}
+                placeholder="رقم جواز السفر"
+                error={errors.passportNumber}
+                icon={Award}
+              />
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700 text-right">
+                  تاريخ الميلاد *
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  <select
+                    value={formData.birthDay}
+                    onChange={(e) =>
+                      handleInputChange("birthDay", e.target.value)
+                    }
+                    className={`px-4 py-3 border ${
+                      errors.birthDay ? "border-red-500" : "border-gray-300"
+                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center`}
+                  >
+                    <option value="">اليوم</option>
+                    {Array.from({ length: 31 }, (_, i) => (
+                      <option key={i + 1} value={i + 1}>
+                        {i + 1}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    value={formData.birthMonth}
+                    onChange={(e) =>
+                      handleInputChange("birthMonth", e.target.value)
+                    }
+                    className={`px-4 py-3 border ${
+                      errors.birthMonth ? "border-red-500" : "border-gray-300"
+                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center`}
+                  >
+                    <option value="">الشهر</option>
+                    {Array.from({ length: 12 }, (_, i) => (
+                      <option key={i + 1} value={i + 1}>
+                        {i + 1}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    type="number"
+                    value={formData.birthYear}
+                    onChange={(e) =>
+                      handleInputChange("birthYear", e.target.value)
+                    }
+                    placeholder="السنة"
+                    className={`px-4 py-3 border ${
+                      errors.birthYear ? "border-red-500" : "border-gray-300"
+                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center`}
+                  />
+                </div>
+                {(errors.birthDay || errors.birthMonth || errors.birthYear) && (
+                  <p className="text-red-500 text-sm">
+                    {errors.birthDay || errors.birthMonth || errors.birthYear}
+                  </p>
+                )}
+              </div>
+              <FormInput
+                label="الرقم القومي"
+                value={formData.nationalId}
+                onChange={(value) => handleInputChange("nationalId", value)}
+                placeholder="14 رقمًا"
+                error={errors.nationalId}
+                icon={IdCard}
+                type="number"
+              />
+            </div>
+          </div>
+        );
+
+      case 2:
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-800 text-right mb-8">
+              معلومات الاتصال
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormInput
+                label="العنوان"
+                value={formData.address}
+                onChange={(value) => handleInputChange("address", value)}
+                placeholder="العنوان التفصيلي"
+                error={errors.address}
+                icon={MapPin}
+                required
+              />
+              <FormInput
+                label="رقم الموبايل"
+                value={formData.mobile}
+                onChange={(value) => handleInputChange("mobile", value)}
+                placeholder="01012345678"
+                error={errors.mobile}
+                icon={Phone}
+                type="tel"
+                required
+              />
+              <FormInput
+                label="رقم موبايل آخر"
+                value={formData.alternateMobile}
+                onChange={(value) =>
+                  handleInputChange("alternateMobile", value)
+                }
+                placeholder="رقم موبايل آخر"
+                icon={Phone}
+              />
+              <FormInput
+                label="البريد الإلكتروني"
+                value={formData.email}
+                onChange={(value) => handleInputChange("email", value)}
+                placeholder="البريد الإلكتروني"
+                error={errors.email}
+                icon={Phone}
+                type="email"
+                required
+              />
+              <FormInput
+                label="رقم المنزل"
+                value={formData.homePhone}
+                onChange={(value) => handleInputChange("homePhone", value)}
+                placeholder="رقم المنزل"
+                icon={Phone}
+              />
+            </div>
+          </div>
+        );
+
+      case 3:
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-800 text-right mb-8">
+              معلومات ولي الأمر
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormInput
+                label="اسم ولي الأمر"
+                value={formData.guardianName}
+                onChange={(value) => handleInputChange("guardianName", value)}
+                placeholder="اسم ولي الأمر"
+                error={errors.guardianName}
+                icon={User}
+                required
+              />
+              <FormInput
+                label="صلة القرابة"
+                value={formData.guardianRelation}
+                onChange={(value) =>
+                  handleInputChange("guardianRelation", value)
+                }
+                placeholder="مثل: أب، أم، عم، خال"
+                error={errors.guardianRelation}
+                icon={User}
+                required
+              />
+              <FormInput
+                label="جنسية ولي الأمر"
+                value={formData.guardianNationality}
+                onChange={(value) =>
+                  handleInputChange("guardianNationality", value)
+                }
+                placeholder="اختر الجنسية"
+                error={errors.guardianNationality}
+                icon={MapPin}
+                required
+              />
+              <FormInput
+                label="وظيفة ولي الأمر"
+                value={formData.guardianJob}
+                onChange={(value) => handleInputChange("guardianJob", value)}
+                placeholder="وظيفة ولي الأمر"
+                error={errors.guardianJob}
+                icon={User}
+                required
+              />
+              <FormInput
+                label="البريد الإلكتروني لولي الأمر"
+                value={formData.guardianEmail}
+                onChange={(value) => handleInputChange("guardianEmail", value)}
+                placeholder="البريد الإلكتروني"
+                error={errors.guardianEmail}
+                icon={Phone}
+                type="email"
+                required
+              />
+              <FormInput
+                label="رقم التليفون ولي الأمر"
+                value={formData.guardianPhone}
+                onChange={(value) => handleInputChange("guardianPhone", value)}
+                placeholder="رقم التليفون"
+                icon={Phone}
+              />
+              <FormInput
+                label="رقم موبايل ولي الأمر"
+                value={formData.guardianMobile}
+                onChange={(value) => handleInputChange("guardianMobile", value)}
+                placeholder="رقم الموبايل"
+                error={errors.guardianMobile}
+                icon={Phone}
+                type="tel"
+                required
+              />
+              <FormInput
+                label="الرقم القومي لولي الأمر"
+                value={formData.guardianNationalId}
+                onChange={(value) =>
+                  handleInputChange("guardianNationalId", value)
+                }
+                placeholder="الرقم القومي"
+                error={errors.guardianNationalId}
+                required
+              />
+              <FormInput
+                label="جهة العمل"
+                value={formData.workPermit}
+                onChange={(value) => handleInputChange("workPermit", value)}
+                placeholder="جهة العمل"
+              />
+            </div>
+          </div>
+        );
+
+      case 4:
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-800 text-right mb-8">
+              معلومات الإخوة
+            </h2>
+            <div className="space-y-4">
+              <div className="flex items-center justify-end space-x-2 space-x-reverse">
+                <label className="text-sm font-medium text-gray-700">
+                  هل يوجد أخ/أخت يدرس في الجامعة
+                </label>
+                <input
+                  type="checkbox"
+                  checked={formData.hasTeachingExperience}
+                  onChange={(e) =>
+                    handleInputChange("hasTeachingExperience", e.target.checked)
+                  }
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+              </div>
+            </div>
+            {formData.hasTeachingExperience && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                <FormInput
+                  label="الرقم التعريفي في الجامعة"
+                  value={formData.universityId}
+                  onChange={(value) => handleInputChange("universityId", value)}
+                  placeholder="الرقم التعريفي"
+                  error={errors.universityId}
+                  icon={School}
+                  required
+                />
+                <FormInput
+                  label="اسم الأخ/الأخت"
+                  value={formData.parentName}
+                  onChange={(value) => handleInputChange("parentName", value)}
+                  placeholder="اسم الأخ/الأخت"
+                  error={errors.parentName}
+                  icon={User}
+                  required
+                />
+                <FormSelect
+                  label="السنة الدراسية"
+                  value={formData.studyYear}
+                  onChange={(value) => handleInputChange("studyYear", value)}
+                  options={studyYearOptions}
+                  error={errors.studyYear}
+                  icon={GraduationCap}
+                  required
+                />
+                <FormSelect
+                  label="الكلية"
+                  value={formData.faculty}
+                  onChange={(value) => handleInputChange("faculty", value)}
+                  options={facultyOptions}
+                  error={errors.faculty}
+                  icon={School}
+                  required
+                />
+              </div>
+            )}
+          </div>
+        );
+
+      case 5:
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-800 text-right mb-8">
+              بيانات الشهادة
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormSelect
+                label="نوع الشهادة"
+                value={formData.certificateType}
+                onChange={(value) =>
+                  handleInputChange("certificateType", value)
+                }
+                options={certificateTypeOptions}
+                error={errors.certificateType}
+                icon={Award}
+                required
+              />
+              <FormInput
+                label="اسم المدرسة"
+                value={formData.schoolName}
+                onChange={(value) => handleInputChange("schoolName", value)}
+                placeholder="اسم المدرسة"
+                error={errors.schoolName}
+                icon={School}
+                required
+              />
+              <FormInput
+                label="الدرجة المحصل عليها"
+                value={formData.obtainedGrade}
+                onChange={(value) => handleInputChange("obtainedGrade", value)}
+                placeholder="مثلاً: 350"
+                error={errors.obtainedGrade}
+                icon={Award}
+                type="number"
+                required
+              />
+              <FormInput
+                label="الدرجة الكلية"
+                value={formData.totalGrade}
+                onChange={(value) => handleInputChange("totalGrade", value)}
+                placeholder="مثلاً: 410"
+                error={errors.totalGrade}
+                icon={Award}
+                type="number"
+                required
+              />
+              <FormInput
+                label="النسبة المئوية"
+                value={calculatePercentage()}
+                onChange={() => {}}
+                placeholder="سيتم حسابها تلقائياً"
+                icon={Award}
+                disabled
+              />
+              <FormSelect
+                label="دولة الشهادة"
+                value={formData.certificateCountry}
+                onChange={(value) =>
+                  handleInputChange("certificateCountry", value)
+                }
+                options={certificateCountryOptions}
+                error={errors.certificateCountry}
+                icon={MapPin}
+                required
+              />
+              <FormInput
+                label="سنة الحصول على الشهادة"
+                value={formData.certificateYear}
+                onChange={(value) =>
+                  handleInputChange("certificateYear", value)
+                }
+                placeholder="2025"
+                error={errors.certificateYear}
+                required
+              />
+              <FormInput
+                label="رقم الجلوس"
+                value={formData.sittingNumber}
+                onChange={(value) => handleInputChange("sittingNumber", value)}
+                placeholder="رقم الجلوس"
+                error={errors.sittingNumber}
+                required
+              />
+            </div>
+          </div>
+        );
+
+      case 6:
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-800 text-right mb-8">
+              الرغبات والمصاريف
+            </h2>
+            <div className="grid grid-cols-1 gap-6">
+              <FormSelect
+                label="الرغبة الأولى"
+                value={formData.firstChoice}
+                onChange={(value) => handleInputChange("firstChoice", value)}
+                options={facultyOptions}
+                error={errors.firstChoice}
+                icon={School}
+                required
+              />
+              <FormSelect
+                label="الرغبة الثانية"
+                value={formData.secondChoice}
+                onChange={(value) => handleInputChange("secondChoice", value)}
+                options={secondOptions}
+                placeholder={
+                  formData.firstChoice
+                    ? "اختر الكلية"
+                    : "اختر الرغبة الأولى أولاً"
+                }
+                icon={School}
+                disabled={!formData.firstChoice}
+              />
+              <FormSelect
+                label="الرغبة الثالثة"
+                value={formData.thirdChoice}
+                onChange={(value) => handleInputChange("thirdChoice", value)}
+                options={thirdOptions}
+                placeholder={
+                  formData.secondChoice
+                    ? "اختر الكلية"
+                    : "اختر الرغبة الثانية أولاً"
+                }
+                icon={School}
+                disabled={!formData.secondChoice}
+              />
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700 text-right">
+                  ملاحظات إضافية أو رغبات أخرى
+                </label>
+                <textarea
+                  value={formData.additionalNotes}
+                  onChange={(e) =>
+                    handleInputChange("additionalNotes", e.target.value)
+                  }
+                  rows={4}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right resize-none"
+                  placeholder="أدخل أي ملاحظات إضافية أو رغبات لم تُذكر"
+                />
+              </div>
+              <div className="flex items-center justify-end space-x-2 space-x-reverse mt-6">
+                <label className="text-sm text-blue-600 cursor-pointer">
+                  سياسة الخصوصية
+                </label>
+                <span className="text-sm text-gray-700">أوافق على</span>
+                <span className="text-sm text-blue-600 cursor-pointer">
+                  الشروط والأحكام
+                </span>
+                <span className="text-sm text-gray-700">و</span>
+                <input
+                  type="checkbox"
+                  defaultChecked
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+              </div>
+            </div>
+          </div>
+        );
+
+      case 7:
+        return <BankingInformation showNotices={true} />;
+
+      default:
+        return null;
+    }
+  }, [activeTab, formData, errors, handleInputChange, calculatePercentage]);
+
+  const validateTab = (tabId: number): FormErrors => {
+    const newErrors: FormErrors = {};
+    switch (tabId) {
+      case 1:
+        (
+          ["arabicName", "englishName", "nationality", "state", "city"] as const
+        ).forEach((field) => {
+          if (!formData[field]) newErrors[field] = "هذا الحقل مطلوب";
+        });
+        if (!formData.birthDay || !/^\d+$/.test(formData.birthDay))
+          newErrors.birthDay = "أدخل يوماً صالحاً";
+        else if (+formData.birthDay < 1 || +formData.birthDay > 31)
+          newErrors.birthDay = "أدخل يوماً بين 1 و31";
+
+        if (!formData.birthMonth || !/^\d+$/.test(formData.birthMonth))
+          newErrors.birthMonth = "أدخل شهراً صالحاً";
+        else if (+formData.birthMonth < 1 || +formData.birthMonth > 12)
+          newErrors.birthMonth = "أدخل شهراً بين 1 و12";
+
+        if (!formData.birthYear || !/^\d+$/.test(formData.birthYear))
+          newErrors.birthYear = "أدخل سنة صالحة";
+        else if (+formData.birthYear < 1900 || +formData.birthYear > 2025)
+          newErrors.birthYear = "أدخل سنة بين 1900 و2025";
+
+        if (
+          formData.nationalId &&
+          !/^\d{14}$/.test(formData.nationalId.replace(/\s+/g, ""))
+        )
+          newErrors.nationalId = "الرقم القومي يجب أن يكون 14 رقمًا";
+        break;
+
+      case 2:
+        ["address", "mobile", "email"].forEach((field) => {
+          if (!formData[field as keyof FormData])
+            newErrors[field as keyof FormData] = "هذا الحقل مطلوب";
+        });
+        if (
+          formData.email &&
+          !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+        )
+          newErrors.email = "البريد الإلكتروني غير صالح";
+        if (
+          formData.mobile &&
+          !/^(?:\+20|0)?1[0-9]{9}$/.test(formData.mobile.replace(/\s+/g, ""))
+        )
+          newErrors.mobile = "رقم الموبايل غير صالح (مثال: 01012345678)";
+        break;
+
+      case 3:
+        [
+          "guardianName",
+          "guardianNationality",
+          "guardianJob",
+          "guardianEmail",
+          "guardianMobile",
+          "guardianNationalId",
+        ].forEach((field) => {
+          if (!formData[field as keyof FormData])
+            newErrors[field as keyof FormData] = "هذا الحقل مطلوب";
+        });
+        if (
+          formData.guardianEmail &&
+          !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.guardianEmail)
+        )
+          newErrors.guardianEmail = "البريد الإلكتروني لولي الأمر غير صالح";
+        if (
+          formData.guardianMobile &&
+          !/^(?:\+20|0)?1[0-9]{9}$/.test(
+            formData.guardianMobile.replace(/\s+/g, "")
+          )
+        )
+          newErrors.guardianMobile = "رقم موبايل ولي الأمر غير صالح";
+        break;
+
+      case 4:
+        if (formData.hasTeachingExperience) {
+          ["parentName", "universityId", "faculty", "studyYear"].forEach(
+            (field) => {
+              if (!formData[field as keyof FormData])
+                newErrors[field as keyof FormData] = "هذا الحقل مطلوب";
+            }
+          );
+        }
+        break;
+
+      case 5:
+        [
+          "certificateType",
+          "schoolName",
+          "totalGrade",
+          "sittingNumber",
+          "obtainedGrade",
+          "certificateCountry",
+          "certificateYear",
+        ].forEach((field) => {
+          if (!formData[field as keyof FormData])
+            newErrors[field as keyof FormData] = "هذا الحقل مطلوب";
+        });
+        if (formData.certificateYear && !/^\d+$/.test(formData.certificateYear))
+          newErrors.certificateYear = "يجب أن تكون السنة رقماً";
+        else if (
+          +formData.certificateYear < 1900 ||
+          +formData.certificateYear > 2025
+        )
+          newErrors.certificateYear = "أدخل سنة بين 1900 و2025";
+        break;
+
+      case 6:
+        if (!formData.firstChoice)
+          newErrors.firstChoice = "الرغبة الأولى مطلوبة";
+        break;
+
+      default:
+        break;
+    }
+    return newErrors;
   };
 
   const handleNext = () => {
@@ -367,11 +920,8 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
       setErrors(tabErrors);
       return;
     }
-
     setIsSubmitting(true);
-
     const formattedData = {
-      // الصفحة 1: البيانات الشخصية
       student_english_name: formData.englishName,
       student_arabic_name: formData.arabicName,
       nationality: formData.nationality,
@@ -382,14 +932,12 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
       birthday_day: formData.birthDay,
       birthday_month: formData.birthMonth,
       birthday_year: formData.birthYear,
-      // الصفحة 2: معلومات الاتصال
       address: formData.address,
       phone: formData.mobile,
       other_mobile_number: formData.alternateMobile,
       email: formData.email,
       home_number: formData.homePhone,
       national_id: formData.nationalId,
-      // الصفحة 3: معلومات ولي الأمر
       guardian_name: formData.guardianName,
       guardian_nationality: formData.guardianNationality,
       guardian_job: formData.guardianJob,
@@ -398,13 +946,11 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
       guardian_telephone: formData.guardianPhone,
       guardian_national_id: formData.guardianNationalId,
       guardian_workplace: formData.workPermit,
-      // الصفحة 4: معلومات الإخوة
       has_sibling_at_hue: formData.hasTeachingExperience ? 1 : 0,
       sibling_name: formData.parentName,
       sibling_hue_id: formData.universityId,
       sibling_faculty: formData.faculty,
       sibling_year: formData.studyYear,
-      // الصفحة 5: بيانات الشهادة
       certificate_type: formData.certificateType,
       school_name: formData.schoolName,
       percentage: formData.percentage,
@@ -413,7 +959,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
       seat_no: formData.sittingNumber,
       year: formData.certificateYear,
       certificate_country: formData.certificateCountry,
-      // الصفحة 6: الرغبات والمصاريف
       first_choice: formData.firstChoice,
       second_choice: formData.secondChoice,
       third_choice: formData.thirdChoice,
@@ -425,11 +970,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
       const response = await axios.post(
         "https://peachpuff-kingfisher-426403.hostingersite.com/api/pre-register",
         formattedData,
-        {
-          headers: {
-            Accept: "application/json",
-          },
-        }
+        { headers: { Accept: "application/json" } }
       );
       if (response.status === 200 || response.status === 201) {
         const resData = response.data;
@@ -438,8 +979,8 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
       } else {
         const resData = response.data;
         if (resData.errors) {
-          Object.keys(resData.errors).forEach((field) => {
-            resData.errors[field].forEach((msg: string) => {
+          Object.keys(resData.errors).forEach((field) =>
+            resData.errors[field].forEach((msg: string) =>
               toast.error(msg, {
                 duration: 5000,
                 style: {
@@ -451,15 +992,14 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   border: "1px solid #d32f2f",
                   borderRadius: "8px",
                 },
-              });
-            });
-          });
+              })
+            )
+          );
         }
-        if (resData.message) {
+        if (resData.message)
           toast.error(resData.message, {
             style: { direction: "rtl", textAlign: "right" },
           });
-        }
       }
     } catch (error) {
       console.error("Network error:", error);
@@ -469,8 +1009,8 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
           errors?: Record<string, string[]>;
         };
         if (resData.errors) {
-          Object.keys(resData.errors).forEach((field) => {
-            resData.errors![field].forEach((msg) => {
+          Object.keys(resData.errors).forEach((field) =>
+            resData.errors![field].forEach((msg) =>
               toast.error(msg, {
                 duration: 5000,
                 style: {
@@ -482,26 +1022,21 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                   border: "1px solid #d32f2f",
                   borderRadius: "8px",
                 },
-              });
-            });
-          });
+              })
+            )
+          );
         }
-        if (resData.message) {
+        if (resData.message)
           toast.error(resData.message, {
             style: { direction: "rtl", textAlign: "right" },
           });
-        }
-      } else if (error instanceof Error) {
+      } else {
         toast.error(
           "حدث خطأ في الاتصال. يرجى التحقق من اتصالك والمحاولة مرة أخرى.",
           {
             style: { direction: "rtl", textAlign: "right" },
           }
         );
-      } else {
-        toast.error("حدث خطأ غير معروف.", {
-          style: { direction: "rtl", textAlign: "right" },
-        });
       }
     } finally {
       setIsSubmitting(false);
@@ -512,7 +1047,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#754FA8] to-[#677AE4] p-4">
         <div className="max-w-2xl mx-auto">
-          {/* Header */}
           <div className="bg-white/10 backdrop-blur-sm rounded-t-3xl p-6 text-center text-white">
             <div className="text-4xl font-bold mb-2">جد</div>
             <h1 className="text-2xl font-bold mb-2">جامعة دمياط الأهلية</h1>
@@ -520,7 +1054,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
               نموذج التسجيل المبدئي للعام الدراسي 2025-2026
             </p>
           </div>
-          {/* Success Message */}
           <div className="bg-white rounded-b-3xl p-8 shadow-2xl">
             <div className="text-center space-y-6">
               <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
@@ -571,12 +1104,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                     قيد المراجعة
                   </span>
                 </div>
-                <div className="flex justify-between items-center pt-2 border-t border-blue-200">
-                  <p className="text-blue-600 font-medium text-center w-full">
-                    ستقوم إدارة جامعة دمياط الأهلية بفحص الطلب، وفي حالة
-                    الموافقة سيتم التواصل معكم خلال أسبوع من تاريخه.
-                  </p>
-                </div>
               </div>
               <div className="bg-cyan-50 rounded-lg p-6 text-right">
                 <h3 className="font-bold text-cyan-800 mb-3 flex items-center justify-end space-x-2 space-x-reverse">
@@ -598,10 +1125,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                     <span className="text-cyan-500">•</span>
                     <span>سيتم مراجعة طلبك خلال 7 أيام عمل</span>
                   </li>
-                  {/* <li className="flex items-start space-x-2 space-x-reverse">
-                    <span className="text-cyan-500">•</span>
-                    <span>ستتلقى رسالة تأكيد عبر البريد الإلكتروني</span>
-                  </li> */}
                   <li className="flex items-start space-x-2 space-x-reverse">
                     <span className="text-cyan-500">•</span>
                     <span>قد نتواصل معك لطلب مستندات إضافية</span>
@@ -701,1186 +1224,9 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
       </div>
     );
   }
-const calculatePercentage = (): string => {
-      const total = parseFloat(formData.totalGrade);
-      const obtained = parseFloat(formData.obtainedGrade);
-      if (!isNaN(total) && !isNaN(obtained) && total !== 0) {
-        const percentage = (obtained / total) * 100;
-        return `${percentage.toFixed(2)}%`;
-      }
-      return "";
-    };
-  const renderTabContent = () => {
-    
-
-    switch (activeTab) {
-      case 1:
-        return (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800 text-right mb-8">
-              البيانات الشخصية
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  اسم الطالب بالعربية <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={formData.arabicName}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (/^[\u0600-\u06FF\s\-ءآأإة]*$/.test(value)) {
-                        handleInputChange("arabicName", value);
-                      }
-                    }}
-                    className={`w-full px-4 py-3 pr-12 border ${
-                      errors.arabicName ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                    placeholder="مثل: محمد أحمد"
-                  />
-                  <User className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-                {errors.arabicName && (
-                  <p className="text-red-500 text-sm">{errors.arabicName}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  اسم الطالب بالإنجليزية <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={formData.englishName}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (/^[a-zA-Z\s\-]*$/.test(value)) {
-                        handleInputChange("englishName", value);
-                      }
-                    }}
-                    className={`w-full px-4 py-3 pr-12 border ${
-                      errors.englishName ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
-                    placeholder="مثل: Mohamed Ahmed"
-                  />
-                  <GraduationCap className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-                {errors.englishName && (
-                  <p className="text-red-500 text-sm">{errors.englishName}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  الجنسية <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={formData.nationality}
-                    onChange={(e) =>
-                      handleInputChange("nationality", e.target.value)
-                    }
-                    className={`w-full px-4 py-3 pr-12 border ${
-                      errors.nationality ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                    placeholder="مثل: مصري"
-                  />
-                  <MapPin className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-                {errors.nationality && (
-                  <p className="text-red-500 text-sm">{errors.nationality}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  المحافظة <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <select
-                    value={formData.state}
-                    onChange={(e) => handleInputChange("state", e.target.value)}
-                    className={`w-full px-4 py-3 pr-12 border ${
-                      errors.state ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right appearance-none`}
-                  >
-                    <option value="">اختر المحافظة</option>
-                    <option value="دمياط">دمياط</option>
-                    <option value="بورسعيد">بورسعيد</option>
-                    <option value="القاهرة">القاهرة</option>
-                    <option value="الجيزة">الجيزة</option>
-                    <option value="الإسكندرية">الإسكندرية</option>
-                    <option value="الدقهلية">الدقهلية</option>
-                    <option value="البحر الأحمر">البحر الأحمر</option>
-                    <option value="البحيرة">البحيرة</option>
-                    <option value="الفيوم">الفيوم</option>
-                    <option value="الغربية">الغربية</option>
-                    <option value="الإسماعيلية">الإسماعيلية</option>
-                    <option value="المنوفية">المنوفية</option>
-                    <option value="المنيا">المنيا</option>
-                    <option value="القليوبية">القليوبية</option>
-                    <option value="الوادي الجديد">الوادي الجديد</option>
-                    <option value="السويس">السويس</option>
-                    <option value="اسيوط">أسيوط</option>
-                    <option value="اسوان">أسوان</option>
-                    <option value="الأقصر">الأقصر</option>
-                    <option value="مطروح">مطروح</option>
-                    <option value="شمال سيناء">شمال سيناء</option>
-                    <option value="جنوب سيناء">جنوب سيناء</option>
-                    <option value="كفر الشيخ">كفر الشيخ</option>
-                    <option value="قنا">قنا</option>
-                    <option value="مرسى مطروح">مرسى مطروح</option>
-                    <option value="الشرقية">الشرقية</option>
-                    <option value="سوهاج">سوهاج</option>
-                    <option value="القليوبية">القليوبية</option>
-                    <option value="الوادي الجديد">الوادي الجديد</option>
-                  </select>
-                  <MapPin className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-                {errors.state && (
-                  <p className="text-red-500 text-sm">{errors.state}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  المدينة <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={formData.city}
-                    onChange={(e) => handleInputChange("city", e.target.value)}
-                    className={`w-full px-4 py-3 pr-12 border ${
-                      errors.city ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                    placeholder="مثل: دمياط الجديدة"
-                  />
-                  <MapPin className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-                {errors.city && (
-                  <p className="text-red-500 text-sm">{errors.city}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  رقم شهادة الميلاد
-                </label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    value={formData.birthCertNumber}
-                    onChange={(e) =>
-                      handleInputChange("birthCertNumber", e.target.value)
-                    }
-                    className={`w-full px-4 py-3 pr-12 border ${
-                      errors.birthCertNumber
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                    placeholder="رقم شهادة الميلاد"
-                  />
-                  <Award className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-                {errors.birthCertNumber && (
-                  <p className="text-red-500 text-sm">
-                    {errors.birthCertNumber}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  رقم جواز السفر
-                </label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    value={formData.passportNumber}
-                    onChange={(e) =>
-                      handleInputChange("passportNumber", e.target.value)
-                    }
-                    className={`w-full px-4 py-3 pr-12 border ${
-                      errors.passportNumber
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                    placeholder="رقم جواز السفر"
-                  />
-                  <Award className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-                {errors.passportNumber && (
-                  <p className="text-red-500 text-sm">
-                    {errors.passportNumber}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  تاريخ الميلاد <span className="text-red-500">*</span>
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  <select
-                    value={formData.birthDay}
-                    onChange={(e) =>
-                      handleInputChange("birthDay", e.target.value)
-                    }
-                    className={`px-4 py-3 border ${
-                      errors.birthDay ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center`}
-                  >
-                    <option value="">اليوم</option>
-                    {Array.from({ length: 31 }, (_, i) => (
-                      <option key={i + 1} value={i + 1}>
-                        {i + 1}
-                      </option>
-                    ))}
-                  </select>
-                  <select
-                    value={formData.birthMonth}
-                    onChange={(e) =>
-                      handleInputChange("birthMonth", e.target.value)
-                    }
-                    className={`px-4 py-3 border ${
-                      errors.birthMonth ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center`}
-                  >
-                    <option value="">الشهر</option>
-                    {Array.from({ length: 12 }, (_, i) => (
-                      <option key={i + 1} value={i + 1}>
-                        {i + 1}
-                      </option>
-                    ))}
-                  </select>
-                  <input
-                    type="number"
-                    value={formData.birthYear}
-                    onChange={(e) =>
-                      handleInputChange("birthYear", e.target.value)
-                    }
-                    placeholder="السنة"
-                    className={`px-4 py-3 border ${
-                      errors.birthYear ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center`}
-                  />
-                </div>
-                {(errors.birthDay || errors.birthMonth || errors.birthYear) && (
-                  <p className="text-red-500 text-sm">
-                    {errors.birthDay || errors.birthMonth || errors.birthYear}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  الرقم القومي
-                </label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    value={formData.nationalId}
-                    onChange={(e) =>
-                      handleInputChange("nationalId", e.target.value)
-                    }
-                    className={`w-full px-4 py-3 pr-12 border ${
-                      errors.nationalId ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                    placeholder="أدخل الرقم القومي (14 رقمًا)"
-                    maxLength={14}
-                  />
-                  <IdCard className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-                {errors.nationalId && (
-                  <p className="text-red-500 text-sm">{errors.nationalId}</p>
-                )}
-              </div>
-            </div>
-          </div>
-        );
-      // ... other cases unchanged
-      case 7:
-        return (
-                  <BankingInformation/>
-        );
-          // <div className="space-y-6">
-          //   <h2 className="text-2xl font-bold text-gray-800 text-right mb-8">
-          //     معلومات الحساب
-          //   </h2>
-          //   <div className="bg-white rounded-lg p-4 shadow-md">
-          //     <table className="w-full text-sm text-left text-black dark:text-black">
-          //       <thead className="text-xs text-black uppercase bg-white border-b-2 border-gray-200">
-          //         <tr>
-          //           <th scope="col" className="px-6 py-3">
-          //             IBAN
-          //           </th>
-          //           <th scope="col" className="px-6 py-3">
-          //             رقم الحساب
-          //           </th>
-          //           <th scope="col" className="px-6 py-3">
-          //             العملة
-          //           </th>
-          //           <th scope="col" className="px-6 py-3">
-          //             اسم الحساب
-          //           </th>
-          //           <th scope="col" className="px-6 py-3">
-          //             اسم البنك
-          //           </th>
-          //         </tr>
-          //       </thead>
-          //       <tbody>
-          //         <tr className="bg-white border-b dark:bg-whtie dark:border-gray-700">
-          //           <td className="px-6 py-4">EG370038002800000280000150150</td>
-          //           <td className="px-6 py-4">0280000150150</td>
-          //           <td className="px-6 py-4">مصري</td>
-          //           <td className="px-6 py-4">جامعة دمياط الأهلية</td>
-          //           <td className="px-6 py-4">CIB</td>
-          //         </tr>
-          //         <tr className="bg-white border-b dark:bg-whtie dark:border-gray-700">
-          //           <td className="px-6 py-4">EG100038002800000280000150151</td>
-          //           <td className="px-6 py-4">0280000150151</td>
-          //           <td className="px-6 py-4">دولار</td>
-          //           <td className="px-6 py-4">جامعة دمياط الأهلية</td>
-          //           <td className="px-6 py-4">CIB</td>
-          //         </tr>
-          //         <tr className="bg-white border-b dark:bg-whtie dark:border-gray-700">
-          //           <td className="px-6 py-4">EG800038002800000280000150152</td>
-          //           <td className="px-6 py-4">0280000150152</td>
-          //           <td className="px-6 py-4">يورو</td>
-          //           <td className="px-6 py-4">جامعة دمياط الأهلية</td>
-          //           <td className="px-6 py-4">CIB</td>
-          //         </tr>
-          //       </tbody>
-          //     </table>
-          //   </div>
-          // </div>
-          
-      default:
-        return renderTabContentFallback();
-    }
-  };
-
-  const renderTabContentFallback = () => {
-    const allFaculties = [
-      { value: "cs_ai", label: "كلية الحاسبات والمعلومات والذكاء الاصطناعي" },
-      { value: "nursing", label: "كلية التمريض" },
-      { value: "arts_design", label: "كلية الفنون والتصميم" },
-      { value: "dental", label: "كلية الألسن" },
-      { value: "tourism_archaeology", label: "كلية الآثار والسياحة" },
-      { value: "business", label: "كلية الأعمال" },
-    ];
-
-    const secondOptions = allFaculties.filter(
-      (opt) => opt.value !== formData.firstChoice
-    );
-    const thirdOptions = allFaculties.filter(
-      (opt) =>
-        opt.value !== formData.firstChoice &&
-        opt.value !== formData.secondChoice
-    );
-
-    switch (activeTab) {
-      case 2:
-        return (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800 text-right mb-8">
-              معلومات الاتصال
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  العنوان <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={formData.address}
-                    onChange={(e) =>
-                      handleInputChange("address", e.target.value)
-                    }
-                    className={`w-full px-4 py-3 pr-12 border ${
-                      errors.address ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                    placeholder="العنوان التفصيلي"
-                  />
-                  <MapPin className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-                {errors.address && (
-                  <p className="text-red-500 text-sm">{errors.address}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  رقم الموبايل <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type="tel"
-                    value={formData.mobile}
-                    onChange={(e) =>
-                      handleInputChange("mobile", e.target.value)
-                    }
-                    className={`w-full px-4 py-3 pr-12 border ${
-                      errors.mobile ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                    placeholder="رقم الموبايل"
-                  />
-                  <Phone className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-                {errors.mobile && (
-                  <p className="text-red-500 text-sm">{errors.mobile}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  رقم موبايل آخر
-                </label>
-                <div className="relative">
-                  <input
-                    type="tel"
-                    value={formData.alternateMobile}
-                    onChange={(e) =>
-                      handleInputChange("alternateMobile", e.target.value)
-                    }
-                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right"
-                    placeholder="رقم موبايل آخر"
-                  />
-                  <Phone className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  البريد الإلكتروني <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => handleInputChange("email", e.target.value)}
-                    className={`w-full px-4 py-3 pr-12 border ${
-                      errors.email ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                    placeholder="البريد الإلكتروني"
-                  />
-                  <Phone className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-                {errors.email && (
-                  <p className="text-red-500 text-sm">{errors.email}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  رقم المنزل
-                </label>
-                <div className="relative">
-                  <input
-                    type="tel"
-                    value={formData.homePhone}
-                    onChange={(e) =>
-                      handleInputChange("homePhone", e.target.value)
-                    }
-                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right"
-                    placeholder="رقم المنزل"
-                  />
-                  <Phone className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      case 3:
-        return (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800 text-right mb-8">
-              معلومات ولي الأمر
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  اسم ولي الأمر <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={formData.guardianName}
-                    onChange={(e) =>
-                      handleInputChange("guardianName", e.target.value)
-                    }
-                    className={`w-full px-4 py-3 pr-12 border ${
-                      errors.guardianName ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                    placeholder="اسم ولي الأمر"
-                  />
-                  <User className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-                {errors.guardianName && (
-                  <p className="text-red-500 text-sm">{errors.guardianName}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  صلة القرابة <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={formData.guardianRelation}
-                    onChange={(e) =>
-                      handleInputChange("guardianRelation", e.target.value)
-                    }
-                    className={`w-full px-4 py-3 pr-12 border ${
-                      errors.guardianRelation
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                    placeholder="مثل: أب، أم، عم، خال"
-                  />
-                  <User className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-                {errors.guardianRelation && (
-                  <p className="text-red-500 text-sm">
-                    {errors.guardianRelation}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  جنسية ولي الأمر <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <select
-                    value={formData.guardianNationality}
-                    onChange={(e) =>
-                      handleInputChange("guardianNationality", e.target.value)
-                    }
-                    className={`w-full px-4 py-3 pr-12 border ${
-                      errors.guardianNationality
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right appearance-none`}
-                  >
-                    <option value="">اختر الجنسية</option>
-                    <option value="algerian">جزائري</option>
-                    <option value="bahraini">بحريني</option>
-                    <option value="comoran">قمرية</option>
-                    <option value="djiboutian">جيبوتي</option>
-                    <option value="egyptian">مصري</option>
-                    <option value="iraqi">عراقي</option>
-                    <option value="jordanian">أردني</option>
-                    <option value="kuwaiti">كويتي</option>
-                    <option value="lebanese">لبناني</option>
-                    <option value="libyan">ليبي</option>
-                    <option value="moroccan">مغربي</option>
-                    <option value="mauritanian">موريتاني</option>
-                    <option value="omani">عماني</option>
-                    <option value="qatari">قطري</option>
-                    <option value="saudi">سعودي</option>
-                    <option value="somali">صومالي</option>
-                    <option value="sudanese">سوداني</option>
-                    <option value="syrian">سوري</option>
-                    <option value="tunisian">تونسي</option>
-                    <option value="emirati">إماراتي</option>
-                    <option value="yemeni">يمني</option>
-                  </select>
-                  <MapPin className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-                {errors.guardianNationality && (
-                  <p className="text-red-500 text-sm">
-                    {errors.guardianNationality}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  وظيفة ولي الأمر <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={formData.guardianJob}
-                    onChange={(e) =>
-                      handleInputChange("guardianJob", e.target.value)
-                    }
-                    className={`w-full px-4 py-3 pr-12 border ${
-                      errors.guardianJob ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                    placeholder="وظيفة ولي الأمر"
-                  />
-                  <User className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-                {errors.guardianJob && (
-                  <p className="text-red-500 text-sm">{errors.guardianJob}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  البريد الإلكتروني لولي الأمر{" "}
-                  <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type="email"
-                    value={formData.guardianEmail}
-                    onChange={(e) =>
-                      handleInputChange("guardianEmail", e.target.value)
-                    }
-                    className={`w-full px-4 py-3 pr-12 border ${
-                      errors.guardianEmail
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                    placeholder="البريد الإلكتروني لولي الأمر"
-                  />
-                  <Phone className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-                {errors.guardianEmail && (
-                  <p className="text-red-500 text-sm">{errors.guardianEmail}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  رقم التليفون ولي الأمر
-                </label>
-                <div className="relative">
-                  <input
-                    type="tel"
-                    value={formData.guardianPhone}
-                    onChange={(e) =>
-                      handleInputChange("guardianPhone", e.target.value)
-                    }
-                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right"
-                    placeholder="رقم التليفون ولي الأمر"
-                  />
-                  <Phone className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  رقم موبايل ولي الأمر <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type="tel"
-                    value={formData.guardianMobile}
-                    onChange={(e) =>
-                      handleInputChange("guardianMobile", e.target.value)
-                    }
-                    className={`w-full px-4 py-3 pr-12 border ${
-                      errors.guardianMobile
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                    placeholder="رقم موبايل ولي الأمر"
-                  />
-                  <Phone className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-                {errors.guardianMobile && (
-                  <p className="text-red-500 text-sm">
-                    {errors.guardianMobile}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  الرقم القومي لولي الأمر{" "}
-                  <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={formData.guardianNationalId}
-                  onChange={(e) =>
-                    handleInputChange("guardianNationalId", e.target.value)
-                  }
-                  className={`w-full px-4 py-3 border ${
-                    errors.guardianNationalId
-                      ? "border-red-500"
-                      : "border-gray-300"
-                  } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                  placeholder="الرقم القومي لولي الأمر"
-                />
-                {errors.guardianNationalId && (
-                  <p className="text-red-500 text-sm">
-                    {errors.guardianNationalId}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  جهة العمل
-                </label>
-                <input
-                  type="text"
-                  value={formData.workPermit}
-                  onChange={(e) =>
-                    handleInputChange("workPermit", e.target.value)
-                  }
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right"
-                  placeholder="جهة العمل"
-                />
-              </div>
-            </div>
-          </div>
-        );
-      case 4:
-        return (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800 text-right mb-8">
-              معلومات البحوث
-            </h2>
-            <div className="space-y-4">
-              <div className="flex items-center justify-end space-x-2 space-x-reverse">
-                <label className="text-sm font-medium text-gray-700">
-                  هل يوجد أخ/أخت يدرس في الجامعة
-                </label>
-                <input
-                  type="checkbox"
-                  checked={formData.hasTeachingExperience}
-                  onChange={(e) =>
-                    handleInputChange("hasTeachingExperience", e.target.checked)
-                  }
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-              </div>
-            </div>
-            {formData.hasTeachingExperience && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700 text-right">
-                    الرقم التعريفي في الجامعة{" "}
-                    <span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={formData.universityId}
-                      onChange={(e) =>
-                        handleInputChange("universityId", e.target.value)
-                      }
-                      className={`w-full px-4 py-3 pr-12 border ${
-                        errors.universityId
-                          ? "border-red-500"
-                          : "border-gray-300"
-                      } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                      placeholder="الرقم التعريفي في الجامعة"
-                    />
-                    <School className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                  </div>
-                  {errors.universityId && (
-                    <p className="text-red-500 text-sm">
-                      {errors.universityId}
-                    </p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700 text-right">
-                    اسم الأخ/الأخت <span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={formData.parentName}
-                      onChange={(e) =>
-                        handleInputChange("parentName", e.target.value)
-                      }
-                      className={`w-full px-4 py-3 pr-12 border ${
-                        errors.parentName ? "border-red-500" : "border-gray-300"
-                      } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                      placeholder="اسم الأخ/الأخت"
-                    />
-                    <User className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                  </div>
-                  {errors.parentName && (
-                    <p className="text-red-500 text-sm">{errors.parentName}</p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700 text-right">
-                    السنة الدراسية <span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative">
-                    <select
-                      value={formData.studyYear}
-                      onChange={(e) =>
-                        handleInputChange("studyYear", e.target.value)
-                      }
-                      className={`w-full px-4 py-3 pr-12 border ${
-                        errors.studyYear ? "border-red-500" : "border-gray-300"
-                      } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right appearance-none`}
-                    >
-                      <option value="">اختر السنة الدراسية</option>
-                      <option value="first">السنة الأولى</option>
-                      <option value="second">السنة الثانية</option>
-                      <option value="third">السنة الثالثة</option>
-                      <option value="fourth">السنة الرابعة</option>
-                    </select>
-                    <GraduationCap className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                  </div>
-                  {errors.studyYear && (
-                    <p className="text-red-500 text-sm">{errors.studyYear}</p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700 text-right">
-                    الكلية <span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative">
-                    <select
-                      value={formData.faculty}
-                      onChange={(e) =>
-                        handleInputChange("faculty", e.target.value)
-                      }
-                      className={`w-full px-4 py-3 pr-12 border ${
-                        errors.faculty ? "border-red-500" : "border-gray-300"
-                      } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right appearance-none`}
-                    >
-                      <option value="">اختر الكلية</option>
-                      <option value="cs_ai">
-                        كلية الحاسبات والمعلومات والذكاء الاصطناعي
-                      </option>
-                      <option value="nursing">كلية التمريض</option>
-                      <option value="arts_design">كلية الفنون والتصميم</option>
-                      <option value="dental">كلية الألسن</option>
-                      <option value="tourism_archaeology">
-                        كلية الآثار والسياحة
-                      </option>
-                      <option value="business">كلية الأعمال</option>
-                    </select>
-                    <School className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                  </div>
-                  {errors.faculty && (
-                    <p className="text-red-500 text-sm">{errors.faculty}</p>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-        );
-      case 5:
-        return (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800 text-right mb-8">
-              بيانات الشهادة
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  نوع الشهادة <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <select
-                    value={formData.certificateType}
-                    onChange={(e) =>
-                      handleInputChange("certificateType", e.target.value)
-                    }
-                    className={`w-full px-4 py-3 pr-12 border ${
-                      errors.certificateType
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right appearance-none`}
-                  >
-                    <option value="">اختر نوع الشهادة</option>
-                    <option value="secondary">الثانوية العامة</option>
-                    <option value="azhar">الأزهرية</option>
-                    <option value="technical">الفنية</option>
-                    <option value="equivalent">شهادة معادلة</option>
-                    <option value="other">شهادة اخرى</option>
-                  </select>
-                  <Award className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-                {errors.certificateType && (
-                  <p className="text-red-500 text-sm">
-                    {errors.certificateType}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  اسم المدرسة <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={formData.schoolName}
-                    onChange={(e) =>
-                      handleInputChange("schoolName", e.target.value)
-                    }
-                    className={`w-full px-4 py-3 pr-12 border ${
-                      errors.schoolName ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                    placeholder="اسم المدرسة"
-                  />
-                  <School className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-                {errors.schoolName && (
-                  <p className="text-red-500 text-sm">{errors.schoolName}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  الدرجة المحصل عليها <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    step="any"
-                    value={formData.obtainedGrade}
-                    onChange={(e) =>
-                      handleInputChange("obtainedGrade", e.target.value)
-                    }
-                    className={`w-full px-4 py-3 pr-12 border ${
-                      errors.obtainedGrade
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                    placeholder="مثلاً: 350"
-                  />
-                  <Award className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-                {errors.obtainedGrade && (
-                  <p className="text-red-500 text-sm">{errors.obtainedGrade}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  الدرجة الكلية <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    step="any"
-                    value={formData.totalGrade}
-                    onChange={(e) =>
-                      handleInputChange("totalGrade", e.target.value)
-                    }
-                    className={`w-full px-4 py-3 pr-12 border ${
-                      errors.totalGrade ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                    placeholder="مثلاً: 410"
-                  />
-                  <Award className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-                {errors.totalGrade && (
-                  <p className="text-red-500 text-sm">{errors.totalGrade}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  النسبة المئوية
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={calculatePercentage()}
-                    readOnly
-                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg bg-gray-50 text-gray-700 cursor-not-allowed text-right"
-                    placeholder="سيتم حساب النسبة تلقائياً"
-                  />
-                  <Award className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-                {errors.percentage && (
-                  <p className="text-red-500 text-sm">{errors.percentage}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  دولة الشهادة <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <select
-                    value={formData.certificateCountry}
-                    onChange={(e) =>
-                      handleInputChange("certificateCountry", e.target.value)
-                    }
-                    className={`w-full px-4 py-3 pr-12 border ${
-                      errors.certificateCountry
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right appearance-none`}
-                  >
-                    <option value="">دولة الشهادة</option>
-                    <option value="egypt">مصر</option>
-                    <option value="saudi">السعودية</option>
-                    <option value="uae">الإمارات</option>
-                  </select>
-                  <MapPin className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-                {errors.certificateCountry && (
-                  <p className="text-red-500 text-sm">
-                    {errors.certificateCountry}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  سنة الحصول على الشهادة <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={formData.certificateYear}
-                  onChange={(e) =>
-                    handleInputChange("certificateYear", e.target.value)
-                  }
-                  className={`w-full px-4 py-3 border ${
-                    errors.certificateYear
-                      ? "border-red-500"
-                      : "border-gray-300"
-                  } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                  placeholder="2025"
-                />
-                {errors.certificateYear && (
-                  <p className="text-red-500 text-sm">
-                    {errors.certificateYear}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  رقم الجلوس <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={formData.sittingNumber}
-                  onChange={(e) =>
-                    handleInputChange("sittingNumber", e.target.value)
-                  }
-                  className={`w-full px-4 py-3 border ${
-                    errors.sittingNumber ? "border-red-500" : "border-gray-300"
-                  } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                  placeholder="رقم الجلوس"
-                />
-                {errors.sittingNumber && (
-                  <p className="text-red-500 text-sm">{errors.sittingNumber}</p>
-                )}
-              </div>
-            </div>
-          </div>
-        );
-      case 6:
-        return (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800 text-right mb-8">
-              الرغبات والمصاريف
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  الرغبة الأولى <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <select
-                    value={formData.firstChoice}
-                    onChange={(e) =>
-                      handleInputChange("firstChoice", e.target.value)
-                    }
-                    className={`w-full px-4 py-3 pr-12 border ${
-                      errors.firstChoice ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right`}
-                  >
-                    <option value="">اختر الكلية</option>
-                    {allFaculties.map((faculty) => (
-                      <option key={faculty.value} value={faculty.value}>
-                        {faculty.label}
-                      </option>
-                    ))}
-                  </select>
-                  <School className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-                {errors.firstChoice && (
-                  <p className="text-red-500 text-sm">{errors.firstChoice}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  الرغبة الثانية
-                </label>
-                <div className="relative">
-                  <select
-                    value={formData.secondChoice}
-                    onChange={(e) =>
-                      handleInputChange("secondChoice", e.target.value)
-                    }
-                    disabled={!formData.firstChoice}
-                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  >
-                    <option value="">
-                      {formData.firstChoice
-                        ? "اختر الكلية"
-                        : "اختر الرغبة الأولى أولاً"}
-                    </option>
-                    {secondOptions.map((faculty) => (
-                      <option key={faculty.value} value={faculty.value}>
-                        {faculty.label}
-                      </option>
-                    ))}
-                  </select>
-                  <School className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 text-right">
-                  الرغبة الثالثة
-                </label>
-                <div className="relative">
-                  <select
-                    value={formData.thirdChoice}
-                    onChange={(e) =>
-                      handleInputChange("thirdChoice", e.target.value)
-                    }
-                    disabled={!formData.secondChoice}
-                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  >
-                    <option value="">
-                      {formData.secondChoice
-                        ? "اختر الكلية"
-                        : "اختر الرغبة الثانية أولاً"}
-                    </option>
-                    {thirdOptions.map((faculty) => (
-                      <option key={faculty.value} value={faculty.value}>
-                        {faculty.label}
-                      </option>
-                    ))}
-                  </select>
-                  <School className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
-                </div>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700 text-right">
-                ملاحظات إضافية أو رغبات أخرى
-              </label>
-              <textarea
-                value={formData.additionalNotes}
-                onChange={(e) =>
-                  handleInputChange("additionalNotes", e.target.value)
-                }
-                rows={4}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right resize-none"
-                placeholder="أدخل أي ملاحظات إضافية أو رغبات لم تُذكر"
-              />
-            </div>
-            <div className="flex items-center justify-end space-x-2 space-x-reverse mt-6">
-              <label className="text-sm text-blue-600 cursor-pointer">
-                سياسة الخصوصية
-              </label>
-              <span className="text-sm text-gray-700">أوافق على</span>
-              <span className="text-sm text-blue-600 cursor-pointer">
-                الشروط والأحكام
-              </span>
-              <span className="text-sm text-gray-700">و</span>
-              <input
-                type="checkbox"
-                defaultChecked
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-            </div>
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
 
   return (
-    <div className="min-h-screen  p-4">
+    <div className="min-h-screen p-4">
       <div className="max-w-4xl mx-auto rounded-t-3xl bg-gradient-to-br from-[#754FA8] to-[#677AE4]">
         <div className="bg-white/10 backdrop-blur-sm rounded-t-3xl p-6 text-center text-white">
           <h1 className="text-2xl font-bold mb-2">جامعة دمياط الأهلية</h1>
@@ -1925,7 +1271,7 @@ const calculatePercentage = (): string => {
           </div>
         </div>
         <div className="bg-white rounded-b-3xl p-8 shadow-2xl">
-          {renderTabContent()}
+          {currentTabContent}
           <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-200">
             <button
               onClick={handleNext}
