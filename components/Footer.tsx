@@ -115,9 +115,11 @@ const UniversityFooter = () => {
             <div className="flex flex-col items-end gap-2">
               <h3 className="text-white font-bold" style={{ fontSize: 'clamp(1rem, 2vw, 1.5rem)' }}>الخدمات الالكترونية</h3>
               <div className="flex flex-col items-end gap-2">
-                <Link href="#" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>DAMIS نظام ادارة الشئون الأكاديمية</Link>
-                <Link href="#" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>DAMLS نظام ادارة التعليم الالكتروني</Link>
-                <Link href="#" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>DAMA نظام حوكمة وارشفة الملفات</Link>
+                <Link href="/#" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>DAMIS نظام ادارة الشئون الأكاديمية</Link>
+                <Link href="/#" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>DAMLS نظام ادارة التعليم الالكتروني</Link>
+
+                <Link href="/#" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>DAMA نظام حوكمة وارشفة الملفات</Link>
+
               </div>
             </div>
             
@@ -125,11 +127,14 @@ const UniversityFooter = () => {
             <div className="flex flex-col items-end gap-2">
               <h3 className="text-white font-bold" style={{ fontSize: 'clamp(1rem, 2vw, 1.5rem)' }}>الحياة الجامعية</h3>
               <div className="flex flex-col items-end gap-2">
-                <Link href="#" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>بوابة الخدمات الطلابية</Link>
-                <Link href="#" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>دليل الطالب</Link>
-                <Link href="#" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>الميثاق الأخلاقي للطالب</Link>
+                <Link href="/#" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>بوابة الخدمات الطلابية</Link>
+
+                <Link href="/#" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>دليل الطالب</Link>
+
+                <Link href="/#" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>الميثاق الأخلاقي للطالب</Link>
                 <a href="https://www.ekb.eg/" target="_blank" rel="noopener noreferrer" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>بنك المعرفة المصري</a>
-                <Link href="#" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>الإسكان الجامعي</Link>
+                <Link href="/#" className="text-white text-opacity-80 font-medium hover:text-opacity-100 transition-all duration-300" style={{ ...hoverStyle, fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)' }}>الإسكان الجامعي</Link>
+
               </div>
             </div>
             
