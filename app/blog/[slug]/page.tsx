@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { getData } from "@/libs/axios/server";
 
@@ -359,12 +358,12 @@ const PremiumBlogPage: React.FC = () => {
               }`}
             >
               <div className="relative h-80 md:h-96 overflow-hidden group">
-                <Image
+                <img
                   src={blog.cover || blog.image}
                   alt={blog.title}
-                  fill
+                  
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
-                  priority
+                  
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                 <div className="absolute top-6 right-6 bg-white/90 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg hover-lift hover:bg-white transition-all duration-300">
@@ -592,10 +591,10 @@ const PremiumBlogPage: React.FC = () => {
                     صورة إضافية:
                   </h4>
                   <div className="relative h-32 rounded-2xl overflow-hidden group hover-lift">
-                    <Image
+                    <img
                       src={blog.image}
                       alt="صورة إضافية"
-                      fill
+                      
                       className="object-cover transition-transform duration-500 group-hover:scale-110"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>

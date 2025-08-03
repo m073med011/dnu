@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useRef, useEffect, useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
@@ -97,7 +96,7 @@ const NewsCard: React.FC<{ news: NewsItem }> = ({ news }) => {
     <div className="w-full h-full bg-[#F9F9F9] overflow-hidden rounded-2xl border border-[#AAB9DD] flex flex-col justify-start items-start cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-gray-200/50 hover:-translate-y-1 group">
       {/* Image Section with Date Badge */}
       <div className="w-full h-[334px] relative overflow-hidden rounded-t-2xl">
-        <Image
+        <img
           width={334}
           height={334}
           className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
