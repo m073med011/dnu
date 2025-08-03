@@ -1,49 +1,51 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
+import { getData } from '@/libs/axios/server';
 
 interface FAQItem {
   id: number;
   question: string;
   answer: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+interface APIResponse {
+  status: boolean;
+  msg: string;
+  data: FAQItem[];
 }
 
 const ArabicFAQ: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState<number>(0);
   const [expandedCards, setExpandedCards] = useState<Record<number, boolean>>({});
+  const [faqData, setFaqData] = useState<FAQItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const faqData: FAQItem[] = [
-    {
-      id: 1,
-      question: "كيفية القبول في الجامعة؟",
-      answer: "وسوف يتم إنشاء جامعة خاصة على تمكن الحكومة بحد أدنى من جمع هوية صغيرة للجامعات الحكومية، وسيتمكن من تشغيلها بشكل تلقائي وبشكل مستقل عن نجاحها بالجامعات الحكومية"
-    },
-    {
-      id: 2,
-      question: "كيفية القبول في الجامعة؟",
-      answer: "إجابة تفصيلية أخرى حول كيفية القبول في الجامعة والخطوات المطلوبة لإتمام عملية التسجيل والقبول."
-    },
-    {
-      id: 3,
-      question: "كيفية القبول في الجامعة؟",
-      answer: "معلومات إضافية حول متطلبات القبول والوثائق المطلوبة والمواعيد النهائية للتقديم."
-    },
-    {
-      id: 4,
-      question: "ما هي المتطلبات الأكاديمية؟",
-      answer: "تفاصيل المتطلبات الأكاديمية والدرجات المطلوبة للقبول في التخصصات المختلفة."
-    },
-    {
-      id: 5,
-      question: "كيفية دفع الرسوم الدراسية؟",
-      answer: "شرح طرق دفع الرسوم الدراسية والأقساط المتاحة والمواعيد المحددة للدفع."
-    },
-    {
-      id: 6,
-      question: "ما هي الخدمات المتاحة للطلاب؟",
-      answer: "نظرة شاملة على الخدمات المتاحة للطلاب مثل المكتبة والمختبرات والأنشطة الطلابية."
-    }
-  ];
+  // Fetch FAQ data from API
+  useEffect(() => {
+    const fetchFAQData = async () => {
+      try {
+        setLoading(true);
+        const response: APIResponse = await getData('/faqs'); // Replace '/faq' with your actual endpoint
+        
+        if (response.status && response.data) {
+          setFaqData(response.data);
+        } else {
+          setError('Failed to load FAQ data');
+        }
+      } catch (err) {
+        console.error('Error fetching FAQ data:', err);
+        setError('Failed to load FAQ data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFAQData();
+  }, []);
 
   // Responsive slides per view
   const getSlidesPerView = (): number => {
@@ -80,6 +82,33 @@ const ArabicFAQ: React.FC = () => {
     const startIndex = currentSlide * slidesPerView;
     return faqData.slice(startIndex, startIndex + slidesPerView);
   };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="w-full pt-6 pb-6 sm:pt-8 sm:pb-8 lg:pt-10 lg:pb-10 bg-[#EFF3FF] flex flex-col justify-center items-center">
+        <div className="text-[#433E78] text-lg font-medium">جاري التحميل...</div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="w-full pt-6 pb-6 sm:pt-8 sm:pb-8 lg:pt-10 lg:pb-10 bg-[#EFF3FF] flex flex-col justify-center items-center">
+        <div className="text-red-500 text-lg font-medium">حدث خطأ في تحميل البيانات</div>
+      </div>
+    );
+  }
+
+  // No data state
+  if (faqData.length === 0) {
+    return (
+      <div className="w-full pt-6 pb-6 sm:pt-8 sm:pb-8 lg:pt-10 lg:pb-10 bg-[#EFF3FF] flex flex-col justify-center items-center">
+        <div className="text-[#433E78] text-lg font-medium">لا توجد أسئلة متاحة حالياً</div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full  pt-6 pb-6 sm:pt-8 sm:pb-8 lg:pt-10 lg:pb-10 bg-[#EFF3FF] flex flex-col justify-start items-start gap-6 sm:gap-8 lg:gap-10">

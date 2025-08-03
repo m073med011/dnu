@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import Image from "next/image";
-import { StaticImageData } from "next/image";
+import { useRouter } from "next/navigation";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
+import { getData } from "@/libs/axios/server";
 
 // Import Swiper styles
 import "swiper/css";
@@ -14,95 +15,30 @@ import "swiper/css/pagination";
 
 interface NewsItem {
   id: number;
-  image: string | StaticImageData;
   title: string;
-  description?: string;
-  date: string;
+  description: string;
+  slug: string;
+  cover: string;
+  image: string;
+  views: number;
+  meta_description: string;
+  meta_keywords: string;
+  meta_title: string;
 }
 
-import image from "@/public/home/newsData/Rectangle.png";
-import image0 from "@/public/home/newsData/Rectangle0.png";
-import image1 from "@/public/home/newsData/Rectangle1.png";
-import image2 from "@/public/home/newsData/Rectangle2.png";
-import image3 from "@/public/home/newsData/Rectangle3.png";
-import image4 from "@/public/home/newsData/Rectangle4.png";
-
-const newsData: NewsItem[] = [
-  {
-    id: 1,
-    image: image,
-    title: "فتح باب التقدم إلكترونيًا للطلاب الحاصلين على الشهادات المعادلة",
-    description:
-      "تُعلن جامعة دمياط الأهلية عن فتح باب التقدم إلكترونيًا للطلاب الحاصلين على الشهادات المعادلة",
-    date: new Date("2025-01-10").toLocaleDateString("ar-EG", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    }),
-  },
-  {
-    id: 2,
-    image: image0,
-    title:
-      "جامعة دمياط الأهلية توقع بروتوكول تعاون مع مركز البحوث الطبية والطب التجديدي",
-    description:
-      "تُعلن جامعة دمياط الأهلية عن فتح باب التقدم إلكترونيًا للطلاب الحاصلين على الشهادات المعادلة",
-    date: new Date("2025-01-08").toLocaleDateString("ar-EG", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    }),
-  },
-  {
-    id: 3,
-    image: image1,
-    title: "يفتتح قمة جامعات إقليم الدلتا للاستدامة والتنمية",
-    description:
-      "تُعلن جامعة دمياط الأهلية عن فتح باب التقدم إلكترونيًا للطلاب الحاصلين على الشهادات المعادلة",
-    date: new Date("2025-01-05").toLocaleDateString("ar-EG", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    }),
-  },
-  {
-    id: 4,
-    image: image2,
-    title: "يفتتح قمة جامعات إقليم الدلتا للاستدامة والتنمية",
-    description:
-      "تُعلن جامعة دمياط الأهلية عن فتح باب التقدم إلكترونيًا للطلاب الحاصلين على الشهادات المعادلة",
-    date: new Date("2025-01-03").toLocaleDateString("ar-EG", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    }),
-  },
-  {
-    id: 5,
-    image: image3,
-    title: "فتح باب التقدم إلكترونيًا للطلاب الحاصلين على الشهادات المعادلة",
-    description:
-      "تُعلن جامعة دمياط الأهلية عن فتح باب التقدم إلكترونيًا للطلاب الحاصلين على الشهادات المعادلة",
-    date: new Date("2025-01-01").toLocaleDateString("ar-EG", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    }),
-  },
-  {
-    id: 6,
-    image: image4,
-    title:
-      "جامعة دمياط الأهلية توقع بروتوكول تعاون مع مركز البحوث الطبية والطب التجديدي",
-    description:
-      "تُعلن جامعة دمياط الأهلية عن فتح باب التقدم إلكترونيًا للطلاب الحاصلين على الشهادات المعادلة",
-    date: new Date("2024-12-28").toLocaleDateString("ar-EG", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    }),
-  },
-];
+interface ApiResponse {
+  status: boolean;
+  msg: string;
+  data: {
+    blogs: NewsItem[];
+    pagination: {
+      current_page: number;
+      last_page: number;
+      per_page: number;
+      total: number;
+    };
+  };
+}
 
 // Minimal Arrow Button Component
 const MinimalArrowButton: React.FC<{
@@ -135,31 +71,44 @@ const MinimalArrowButton: React.FC<{
 };
 
 const NewsCard: React.FC<{ news: NewsItem }> = ({ news }) => {
+  const router = useRouter();
+
+  const handleReadMore = () => {
+    router.push(`/blog/${news.slug}`);
+  };
+
+  // Function to strip HTML tags from description
+  const stripHtml = (html: string) => {
+    const tmp = document.createElement("DIV");
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || "";
+  };
+
+  // Format date (you may need to adjust this based on your API response)
+  const formatDate = () => {
+    return new Date().toLocaleDateString("ar-EG", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
+
   return (
     <div className="w-full h-full bg-[#F9F9F9] overflow-hidden rounded-2xl border border-[#AAB9DD] flex flex-col justify-start items-start cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-gray-200/50 hover:-translate-y-1 group">
       {/* Image Section with Date Badge */}
       <div className="w-full h-[334px] relative overflow-hidden rounded-t-2xl">
-        {typeof news.image === "string" ? (
-          <Image
-            width={334}
-            height={334}
-            className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
-            src={news.image}
-            alt={news.title}
-          />
-        ) : (
-          <Image
-            className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
-            src={news.image}
-            alt={news.title}
-            fill
-          />
-        )}
+        <Image
+          width={334}
+          height={334}
+          className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
+          src={news.cover || news.image}
+          alt={news.title}
+        />
 
         {/* Date Badge */}
         <div className="absolute top-3 right-3 h-8 px-4 py-2 bg-[#433E78] rounded-xl flex justify-center items-center">
           <div className="text-white text-xs font-bold font-['Cairo']">
-            {news.date}
+            {formatDate()}
           </div>
         </div>
       </div>
@@ -173,15 +122,16 @@ const NewsCard: React.FC<{ news: NewsItem }> = ({ news }) => {
           </div>
 
           {/* Description */}
-          {news.description && (
-            <div className="w-full text-right flex justify-center flex-col text-black/60 text-base font-medium font-['Cairo'] break-words">
-              {news.description}
-            </div>
-          )}
+          <div className="w-full text-right flex justify-center flex-col text-black/60 text-base font-medium font-['Cairo'] break-words">
+            {stripHtml(news.description)}
+          </div>
         </div>
 
         {/* Read More Button */}
-        <div className="h-8 px-4 py-2 rounded-xl border border-[#899FCF] flex justify-center items-center cursor-pointer hover:bg-[#899FCF]/10 transition-all duration-300">
+        <div 
+          onClick={handleReadMore}
+          className="h-8 px-4 py-2 rounded-xl border border-[#899FCF] flex justify-center items-center cursor-pointer hover:bg-[#899FCF]/10 transition-all duration-300"
+        >
           <div className="text-[#433E78] text-xs font-bold font-['Cairo']">
             اقرأ المزيد
           </div>
@@ -193,6 +143,76 @@ const NewsCard: React.FC<{ news: NewsItem }> = ({ news }) => {
 
 const UniversityNews: React.FC = () => {
   const swiperRef = useRef<SwiperType | null>(null);
+  const [newsData, setNewsData] = useState<NewsItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        setLoading(true);
+        const response: ApiResponse = await getData('/blogs'); // Adjust endpoint as needed
+        
+        if (response.status && response.data.blogs) {
+          setNewsData(response.data.blogs);
+        } else {
+          setError('Failed to fetch news data');
+        }
+      } catch (err) {
+        console.error('Error fetching news:', err);
+        setError('Error fetching news data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNews();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="w-full max-w-[1920px] mx-auto h-full flex flex-col items-center gap-8 p-[clamp(24px,6.25vw,90px)]">
+        <div className="w-full h-auto justify-center font-bold items-center">
+          <div className="font-bold text-center text-[#433E78] text-[32px] pb-[1vw] font-['Cairo']">
+            أخبار الجامعة
+          </div>
+          <div className="text-center text-black/60 text-base font-medium font-['Cairo']">
+            جاري تحميل الأخبار...
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="w-full max-w-[1920px] mx-auto h-full flex flex-col items-center gap-8 p-[clamp(24px,6.25vw,90px)]">
+        <div className="w-full h-auto justify-center font-bold items-center">
+          <div className="font-bold text-center text-[#433E78] text-[32px] pb-[1vw] font-['Cairo']">
+            أخبار الجامعة
+          </div>
+          <div className="text-center text-red-600 text-base font-medium font-['Cairo']">
+            {error}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!newsData.length) {
+    return (
+      <div className="w-full max-w-[1920px] mx-auto h-full flex flex-col items-center gap-8 p-[clamp(24px,6.25vw,90px)]">
+        <div className="w-full h-auto justify-center font-bold items-center">
+          <div className="font-bold text-center text-[#433E78] text-[32px] pb-[1vw] font-['Cairo']">
+            أخبار الجامعة
+          </div>
+          <div className="text-center text-black/60 text-base font-medium font-['Cairo']">
+            لا توجد أخبار متاحة حالياً
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-[1920px] mx-auto h-full flex flex-col items-center gap-8 p-[clamp(24px,6.25vw,90px)]">
@@ -251,14 +271,14 @@ const UniversityNews: React.FC = () => {
             disableOnInteraction: false,
             pauseOnMouseEnter: true,
           }}
-          loop={true}
+          loop={newsData.length > 1}
           breakpoints={{
             640: {
-              slidesPerView: 2,
+              slidesPerView: Math.min(2, newsData.length),
               spaceBetween: 20,
             },
             1024: {
-              slidesPerView: 3,
+              slidesPerView: Math.min(3, newsData.length),
               spaceBetween: 30,
             },
           }}

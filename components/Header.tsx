@@ -16,12 +16,13 @@ import { usePathname } from "next/navigation";
 import logo from "@/public/vercel.svg";
 import { FC, useState, useEffect } from "react";
 
-// Social Icons with Lucide SVG icons
+// Social Icons with Lucide SVG icons - Updated with actual URLs
 const socialIcons = [
-  { name: "Facebook", href: "https://facebook.com", icon: Facebook },
-  { name: "Twitter", href: "https://twitter.com", icon: Twitter },
-  { name: "Instagram", href: "https://instagram.com", icon: Instagram },
-  { name: "LinkedIn", href: "https://linkedin.com", icon: Linkedin },
+  { name: "Facebook 1", href: "https://www.facebook.com/share/p/16eGgX19gu/", icon: Facebook },
+  { name: "Facebook 2", href: "https://www.facebook.com/profile.php?id=61579140232991", icon: Facebook },
+  { name: "Twitter", href: "https://x.com/DamiettaNU", icon: Twitter },
+  { name: "Instagram", href: "https://www.instagram.com/info.damnu/", icon: Instagram },
+  { name: "LinkedIn", href: "https://www.linkedin.com/company/dam-nu/", icon: Linkedin },
 ];
 
 interface NavItem {
@@ -325,7 +326,9 @@ const Header: FC = () => {
 
   // Check if current path requires white background
   const shouldHaveWhiteBackground =
-    pathname === "/contact-us" || pathname === "/Registration";
+  pathname === "/contact-us" || 
+  pathname === "/Registration" || 
+  (pathname.startsWith("/blog/") && pathname !== "/blog");
 
   const handleMobileDropdownToggle = (label: string) => {
     setOpenMobileDropdown(openMobileDropdown === label ? null : label);
