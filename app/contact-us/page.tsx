@@ -26,7 +26,7 @@ export default function ContactUsPage() {
                 <Mail size={20} className="text-[#433E78]" />
               </div>
               <p className="text-right text-sm text-black/60">
-                Nursing@Damietta.edu.eg
+                info@dam-nu.edu.eg
               </p>
             </div>
 
