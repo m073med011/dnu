@@ -230,7 +230,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     { value: "cs_ai", label: "كلية الحاسبات والمعلومات والذكاء الاصطناعي" },
     { value: "nursing", label: "كلية التمريض" },
     { value: "arts_design", label: "كلية الفنون والتصميم" },
-    { value: "dental", label: "كلية الألسن" },
+    { value: "al-alsun", label: "كلية الألسن" },
     { value: "tourism_archaeology", label: "كلية الآثار والسياحة" },
     { value: "business", label: "كلية الأعمال" },
   ];

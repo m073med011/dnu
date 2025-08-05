@@ -228,7 +228,7 @@ const MobileSidebar: FC<{
                       }
                     }}
                   >
-                    <span className="font-semibold text-white text-base group-hover:bg-gradient-to-r group-hover:from-[#fb9300] group-hover:to-[#ffb700] group-hover:bg-clip-text group-hover:text-transparent transition-all duration-200">
+                    <span className="font-semibold text-black text-base group-hover:bg-gradient-to-r group-hover:from-[#fb9300] group-hover:to-[#ffb700] group-hover:bg-clip-text group-hover:text-transparent transition-all duration-200">
                       {item.label}
                     </span>
                     {item.hasDropdown && (
