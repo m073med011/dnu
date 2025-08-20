@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   IdCard,
   User,
@@ -14,6 +14,7 @@ import toast, { Toaster } from "react-hot-toast";
 import BankingInformation from "@/components/home/BankingInformation";
 import FormInput from "./components/FormInput";
 import FormSelect from "./components/FormSelect";
+
 // Define types
 interface FormData {
   guardianRelation: string;
@@ -62,12 +63,15 @@ interface FormData {
   image_of_certificate: File | null;
   otherTypeOfCertificate: string;
 }
+
 type FormErrors = Partial<Record<keyof FormData, string>>;
+
 const UniversityRegistrationForm = (): React.JSX.Element => {
   const [activeTab, setActiveTab] = useState<number>(1);
   const [registrationNumber, setRegistrationNumber] = useState<string>("");
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [formOpen, setFormOpen] = useState<boolean | null>(null); // null = loading
   const [formData, setFormData] = useState<FormData>({
     nationalId: "",
     guardianRelation: "",
@@ -116,6 +120,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     otherTypeOfCertificate: "",
   });
   const [errors, setErrors] = useState<FormErrors>({});
+
   const tabs = [
     { id: 1, name: "البيانات الشخصية", progress: 17 },
     { id: 2, name: "معلومات الاتصال", progress: 29 },
@@ -125,6 +130,24 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     { id: 6, name: "الرغبات والمصاريف", progress: 80 },
     { id: 7, name: "معلومات الحساب", progress: 100 },
   ];
+
+  // Check form status on mount
+  useEffect(() => {
+    const checkFormStatus = async () => {
+      try {
+        const response = await axios.get<{ open_form: boolean }>(
+          "https://peachpuff-kingfisher-426403.hostingersite.com/api/v1/open-form"
+        );
+        setFormOpen(response.data.open_form);
+      } catch (error) {
+        console.error("Failed to check form status:", error);
+        setFormOpen(false); // Assume closed on error
+      }
+    };
+
+    checkFormStatus();
+  }, []);
+
   // ✅ Define helpers before useMemo
   const calculatePercentage = (): string => {
     const total = parseFloat(formData.totalGrade);
@@ -134,6 +157,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     }
     return "";
   };
+
   const handleInputChange = (
     field: keyof FormData,
     value: string | boolean | File
@@ -187,6 +211,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
       return newErrors;
     });
   };
+
   // ✅ Define options for selects
   const stateOptions = [
     { value: "دمياط", label: "دمياط" },
@@ -235,6 +260,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     { value: "science_math", label: "علمي رياضة" },
     { value: "literary", label: "أدبي" },
   ];
+
   // ✅ useMemo: Only render active tab
   const currentTabContent = useMemo(() => {
     const secondOptions = facultyOptions.filter(
@@ -714,7 +740,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                 error={errors.sittingNumber}
                 required
               />
-              {/* New: Branch Select */}
               <FormSelect
                 label="الشعبة"
                 value={formData.branch}
@@ -724,7 +749,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                 icon={GraduationCap}
                 required
               />
-              {/* New: Certificate Image Upload */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 text-right">
                   صورة الشهادة
@@ -947,12 +971,10 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
           if (!formData[field as keyof FormData])
             newErrors[field as keyof FormData] = "هذا الحقل مطلوب";
         });
-
         if (!formData.certificateType)
           newErrors.certificateType = "هذا الحقل مطلوب";
         else if (formData.certificateType === "other" && !formData.otherTypeOfCertificate)
           newErrors.otherTypeOfCertificate = "من فضلك اذكر نوع الشهادة";
-
         if (formData.certificateYear && !/^\d+$/.test(formData.certificateYear))
           newErrors.certificateYear = "يجب أن تكون السنة رقماً";
         else if (
@@ -994,8 +1016,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     }
     setIsSubmitting(true);
     const formattedData = new FormData();
-
-    // ✅ Fixed: Correct field mapping
     const fieldMapping: Partial<Record<keyof FormData, string>> = {
       englishName: "student_english_name",
       arabicName: "student_arabic_name",
@@ -1026,8 +1046,8 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
       universityId: "sibling_hue_id",
       faculty: "sibling_faculty",
       studyYear: "sibling_year",
-      certificateType: "certificate_type", // ✅ Fixed: was incorrectly mapped to "other_type_of_certificate"
-      otherTypeOfCertificate: "other_type_of_certificate", // ✅ New: map custom input
+      certificateType: "certificate_type",
+      otherTypeOfCertificate: "other_type_of_certificate",
       schoolName: "school_name",
       totalGrade: "total_degree",
       obtainedGrade: "obtained_degree",
@@ -1043,23 +1063,17 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
       guardianRelation: "guardian_relation",
       image_of_certificate: "image_of_certificate",
     };
-
     Object.keys(fieldMapping).forEach((key) => {
-  const formKey = key as keyof FormData;
-  const backendKey = fieldMapping[formKey];
-  const value = formData[formKey];
-
-  if (value === null || value === undefined || value === "") return;
-  if (formKey === "image_of_certificate") return;
-
-  // ✅ Assert that backendKey is a string
-  formattedData.append(backendKey as string, String(value));
-});
-
+      const formKey = key as keyof FormData;
+      const backendKey = fieldMapping[formKey];
+      const value = formData[formKey];
+      if (value === null || value === undefined || value === "") return;
+      if (formKey === "image_of_certificate") return;
+      formattedData.append(backendKey as string, String(value));
+    });
     if (formData.image_of_certificate instanceof File) {
       formattedData.append("image_of_certificate", formData.image_of_certificate);
     }
-
     formattedData.append("agree_terms", "1");
 
     try {
@@ -1141,6 +1155,53 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     }
   };
 
+  // Show loading while checking form status
+  if (formOpen === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#754FA8] to-[#677AE4]">
+        <div className="text-center text-white">
+          <div className="w-12 h-12 border-4 border-t-transparent border-white rounded-full animate-spin mx-auto"></div>
+          <p className="mt-4 text-lg">جاري التحقق من حالة التسجيل...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show closed message if form is not open
+  if (!formOpen) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#754FA8] to-[#677AE4] p-4">
+        <div className="max-w-lg w-full bg-white rounded-3xl shadow-2xl p-8 text-center">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-8 w-8 text-red-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">نأسف للإبلاغ</h2>
+          <p className="text-gray-600 text-lg">انتهى التسجيل</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          >
+            إعادة التحقق
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Show success page
   if (isSubmitted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#754FA8] to-[#677AE4] p-4">
@@ -1323,6 +1384,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     );
   }
 
+  // Main form render
   return (
     <div className="min-h-screen p-4">
       <div className="max-w-4xl mx-auto rounded-t-3xl bg-gradient-to-br from-[#754FA8] to-[#677AE4]">
@@ -1420,4 +1482,5 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     </div>
   );
 };
+
 export default UniversityRegistrationForm;
