@@ -14,7 +14,6 @@ import toast, { Toaster } from "react-hot-toast";
 import BankingInformation from "@/components/home/BankingInformation";
 import FormInput from "./components/FormInput";
 import FormSelect from "./components/FormSelect";
-
 // Define types
 interface FormData {
   guardianRelation: string;
@@ -59,10 +58,11 @@ interface FormData {
   email: string;
   homePhone: string;
   nationalId: string;
+  branch: string;
+  image_of_certificate: File | null;
+  otherTypeOfCertificate: string;
 }
-
 type FormErrors = Partial<Record<keyof FormData, string>>;
-
 const UniversityRegistrationForm = (): React.JSX.Element => {
   const [activeTab, setActiveTab] = useState<number>(1);
   const [registrationNumber, setRegistrationNumber] = useState<string>("");
@@ -111,9 +111,11 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     alternateMobile: "",
     email: "",
     homePhone: "",
+    branch: "",
+    image_of_certificate: null,
+    otherTypeOfCertificate: "",
   });
   const [errors, setErrors] = useState<FormErrors>({});
-
   const tabs = [
     { id: 1, name: "البيانات الشخصية", progress: 17 },
     { id: 2, name: "معلومات الاتصال", progress: 29 },
@@ -123,7 +125,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     { id: 6, name: "الرغبات والمصاريف", progress: 80 },
     { id: 7, name: "معلومات الحساب", progress: 100 },
   ];
-
   // ✅ Define helpers before useMemo
   const calculatePercentage = (): string => {
     const total = parseFloat(formData.totalGrade);
@@ -133,31 +134,31 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     }
     return "";
   };
-
   const handleInputChange = (
     field: keyof FormData,
-    value: string | boolean
+    value: string | boolean | File
   ) => {
-    if (field === "hasTeachingExperience" && value === false) {
-      setFormData((prev) => ({
-        ...prev,
-        hasTeachingExperience: false,
-        parentName: "",
-        universityId: "",
-        faculty: "",
-        studyYear: "",
-      }));
-      setErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors.parentName;
-        delete newErrors.universityId;
-        delete newErrors.faculty;
-        delete newErrors.studyYear;
-        return newErrors;
-      });
-      return;
+    if (field === "hasTeachingExperience" && typeof value === "boolean") {
+      if (!value) {
+        setFormData((prev) => ({
+          ...prev,
+          hasTeachingExperience: false,
+          parentName: "",
+          universityId: "",
+          faculty: "",
+          studyYear: "",
+        }));
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors.parentName;
+          delete newErrors.universityId;
+          delete newErrors.faculty;
+          delete newErrors.studyYear;
+          return newErrors;
+        });
+        return;
+      }
     }
-
     setFormData((prev) => {
       const updated = { ...prev, [field]: value };
       if (field === "totalGrade" || field === "obtainedGrade") {
@@ -172,7 +173,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
       }
       return updated;
     });
-
     let error = "";
     if (field === "arabicName" && typeof value === "string") {
       const arabicRegex = /^[\u0600-\u06FF\s\-ءآأإة]+$/;
@@ -180,7 +180,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
         error = "يجب أن يحتوي الاسم على حروف عربية فقط";
       }
     }
-
     setErrors((prev) => {
       const newErrors = { ...prev };
       if (error) newErrors[field] = error;
@@ -188,7 +187,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
       return newErrors;
     });
   };
-
   // ✅ Define options for selects
   const stateOptions = [
     { value: "دمياط", label: "دمياط" },
@@ -202,15 +200,15 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     { value: "كفر الشيخ", label: "كفر الشيخ" },
     { value: "الغربية", label: "الغربية" },
   ];
-
   const certificateTypeOptions = [
-    { value: "secondary", label: "الثانوية العامة" },
-    { value: "azhar", label: "الثانوية الأزهرية" },
-    { value: "technical", label: "الثانوية الفنية" },
-    { value: "equivalent", label: "شهادة معادلة" },
-    { value: "other", label: "شهادة أخرى" },
+    { value: "secondary", label: "ثانوي عام" },
+    { value: "azhar", label: "أزهري" },
+    { value: "equivalent_arabic", label: "معادلة عربية" },
+    { value: "equivalent_foreign", label: "معادلة أجنبية" },
+    { value: "stem", label: "STEM" },
+    { value: "american", label: "ثانوية أمريكية" },
+    { value: "other", label: "أخرى" },
   ];
-
   const certificateCountryOptions = [
     { value: "egypt", label: "مصر" },
     { value: "saudi", label: "السعودية" },
@@ -218,14 +216,12 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     { value: "jordan", label: "الأردن" },
     { value: "kuwait", label: "الكويت" },
   ];
-
   const studyYearOptions = [
     { value: "first", label: "السنة الأولى" },
     { value: "second", label: "السنة الثانية" },
     { value: "third", label: "السنة الثالثة" },
     { value: "fourth", label: "السنة الرابعة" },
   ];
-
   const facultyOptions = [
     { value: "cs_ai", label: "كلية الحاسبات والمعلومات والذكاء الاصطناعي" },
     { value: "nursing", label: "كلية التمريض" },
@@ -234,7 +230,11 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     { value: "tourism_archaeology", label: "كلية الآثار والسياحة" },
     { value: "business", label: "كلية الأعمال" },
   ];
-
+  const branchOptions = [
+    { value: "science_bio", label: "علمي علوم" },
+    { value: "science_math", label: "علمي رياضة" },
+    { value: "literary", label: "أدبي" },
+  ];
   // ✅ useMemo: Only render active tab
   const currentTabContent = useMemo(() => {
     const secondOptions = facultyOptions.filter(
@@ -245,7 +245,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
         opt.value !== formData.firstChoice &&
         opt.value !== formData.secondChoice
     );
-
     switch (activeTab) {
       case 1:
         return (
@@ -395,7 +394,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
             </div>
           </div>
         );
-
       case 2:
         return (
           <div className="space-y-6">
@@ -451,7 +449,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
             </div>
           </div>
         );
-
       case 3:
         return (
           <div className="space-y-6">
@@ -545,7 +542,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
             </div>
           </div>
         );
-
       case 4:
         return (
           <div className="space-y-6">
@@ -609,7 +605,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
             )}
           </div>
         );
-
       case 5:
         return (
           <div className="space-y-6">
@@ -617,17 +612,42 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
               بيانات الشهادة
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormSelect
-                label="نوع الشهادة"
-                value={formData.certificateType}
-                onChange={(value) =>
-                  handleInputChange("certificateType", value)
-                }
-                options={certificateTypeOptions}
-                error={errors.certificateType}
-                icon={Award}
-                required
-              />
+              {formData.certificateType !== "other" ? (
+                <FormSelect
+                  label="نوع الشهادة"
+                  value={formData.certificateType}
+                  onChange={(value) => {
+                    if (value === "other") {
+                      setFormData((prev) => ({
+                        ...prev,
+                        certificateType: "other",
+                        otherTypeOfCertificate: "",
+                      }));
+                    } else {
+                      handleInputChange("certificateType", value);
+                    }
+                  }}
+                  options={certificateTypeOptions}
+                  error={errors.certificateType}
+                  icon={Award}
+                  required
+                />
+              ) : (
+                <FormInput
+                  label="نوع الشهادة"
+                  value={formData.otherTypeOfCertificate}
+                  onChange={(value) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      otherTypeOfCertificate: value,
+                    }))
+                  }
+                  placeholder="اكتب نوع الشهادة"
+                  error={errors.otherTypeOfCertificate || errors.certificateType}
+                  icon={Award}
+                  required
+                />
+              )}
               <FormInput
                 label="اسم المدرسة"
                 value={formData.schoolName}
@@ -694,10 +714,62 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                 error={errors.sittingNumber}
                 required
               />
+              {/* New: Branch Select */}
+              <FormSelect
+                label="الشعبة"
+                value={formData.branch}
+                onChange={(value) => handleInputChange("branch", value)}
+                options={branchOptions}
+                error={errors.branch}
+                icon={GraduationCap}
+                required
+              />
+              {/* New: Certificate Image Upload */}
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700 text-right">
+                  صورة الشهادة
+                </label>
+                <div className="flex items-center space-x-4 space-x-reverse">
+                  <input
+                    type="file"
+                    accept="image/*,application/pdf"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleInputChange("image_of_certificate", file);
+                    }}
+                    className="flex-1 block w-full text-sm text-gray-500
+                      file:mr-4 file:py-2 file:px-4
+                      file:rounded-full file:border-0
+                      file:text-sm file:font-semibold
+                      file:bg-blue-50 file:text-blue-700
+                      hover:file:bg-blue-100"
+                  />
+                </div>
+                {formData.image_of_certificate && (
+                  <div className="mt-3 p-3 bg-gray-50 rounded-lg text-sm text-gray-700 text-right">
+                    <p>
+                      <strong>تم اختيار:</strong>{" "}
+                      {formData.image_of_certificate.name}
+                    </p>
+                    {formData.image_of_certificate.type.startsWith(
+                      "image/"
+                    ) && (
+                      <div className="mt-2">
+                        <img
+                          src={URL.createObjectURL(
+                            formData.image_of_certificate
+                          )}
+                          alt="Preview"
+                          className="h-20 object-contain rounded border"
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         );
-
       case 6:
         return (
           <div className="space-y-6">
@@ -772,10 +844,8 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
             </div>
           </div>
         );
-
       case 7:
         return <BankingInformation showNotices={true} />;
-
       default:
         return null;
     }
@@ -785,33 +855,34 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     const newErrors: FormErrors = {};
     switch (tabId) {
       case 1:
-        (
-          ["arabicName", "englishName", "nationality", "state", "city"] as const
-        ).forEach((field) => {
+        const personalFields: (keyof FormData)[] = [
+          "arabicName",
+          "englishName",
+          "nationality",
+          "state",
+          "city",
+        ];
+        personalFields.forEach((field) => {
           if (!formData[field]) newErrors[field] = "هذا الحقل مطلوب";
         });
         if (!formData.birthDay || !/^\d+$/.test(formData.birthDay))
           newErrors.birthDay = "أدخل يوماً صالحاً";
         else if (+formData.birthDay < 1 || +formData.birthDay > 31)
           newErrors.birthDay = "أدخل يوماً بين 1 و31";
-
         if (!formData.birthMonth || !/^\d+$/.test(formData.birthMonth))
           newErrors.birthMonth = "أدخل شهراً صالحاً";
         else if (+formData.birthMonth < 1 || +formData.birthMonth > 12)
           newErrors.birthMonth = "أدخل شهراً بين 1 و12";
-
         if (!formData.birthYear || !/^\d+$/.test(formData.birthYear))
           newErrors.birthYear = "أدخل سنة صالحة";
         else if (+formData.birthYear < 1900 || +formData.birthYear > 2025)
           newErrors.birthYear = "أدخل سنة بين 1900 و2025";
-
         if (
           formData.nationalId &&
           !/^\d{14}$/.test(formData.nationalId.replace(/\s+/g, ""))
         )
           newErrors.nationalId = "الرقم القومي يجب أن يكون 14 رقمًا";
         break;
-
       case 2:
         ["address", "mobile", "email"].forEach((field) => {
           if (!formData[field as keyof FormData])
@@ -828,7 +899,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
         )
           newErrors.mobile = "رقم الموبايل غير صالح (مثال: 01012345678)";
         break;
-
       case 3:
         [
           "guardianName",
@@ -854,7 +924,6 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
         )
           newErrors.guardianMobile = "رقم موبايل ولي الأمر غير صالح";
         break;
-
       case 4:
         if (formData.hasTeachingExperience) {
           ["parentName", "universityId", "faculty", "studyYear"].forEach(
@@ -865,20 +934,25 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
           );
         }
         break;
-
       case 5:
         [
-          "certificateType",
           "schoolName",
           "totalGrade",
           "sittingNumber",
           "obtainedGrade",
           "certificateCountry",
           "certificateYear",
+          "branch",
         ].forEach((field) => {
           if (!formData[field as keyof FormData])
             newErrors[field as keyof FormData] = "هذا الحقل مطلوب";
         });
+
+        if (!formData.certificateType)
+          newErrors.certificateType = "هذا الحقل مطلوب";
+        else if (formData.certificateType === "other" && !formData.otherTypeOfCertificate)
+          newErrors.otherTypeOfCertificate = "من فضلك اذكر نوع الشهادة";
+
         if (formData.certificateYear && !/^\d+$/.test(formData.certificateYear))
           newErrors.certificateYear = "يجب أن تكون السنة رقماً";
         else if (
@@ -887,12 +961,10 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
         )
           newErrors.certificateYear = "أدخل سنة بين 1900 و2025";
         break;
-
       case 6:
         if (!formData.firstChoice)
           newErrors.firstChoice = "الرغبة الأولى مطلوبة";
         break;
-
       default:
         break;
     }
@@ -921,56 +993,85 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
       return;
     }
     setIsSubmitting(true);
-    const formattedData = {
-      student_english_name: formData.englishName,
-      student_arabic_name: formData.arabicName,
-      nationality: formData.nationality,
-      governorate: formData.state,
-      city: formData.city,
-      passport_number: formData.passportNumber,
-      birth_certificate_number: formData.birthCertNumber,
-      birthday_day: formData.birthDay,
-      birthday_month: formData.birthMonth,
-      birthday_year: formData.birthYear,
-      address: formData.address,
-      phone: formData.mobile,
-      other_mobile_number: formData.alternateMobile,
-      email: formData.email,
-      home_number: formData.homePhone,
-      national_id: formData.nationalId,
-      guardian_name: formData.guardianName,
-      guardian_nationality: formData.guardianNationality,
-      guardian_job: formData.guardianJob,
-      guardian_email: formData.guardianEmail,
-      guardian_mobile: formData.guardianMobile,
-      guardian_telephone: formData.guardianPhone,
-      guardian_national_id: formData.guardianNationalId,
-      guardian_workplace: formData.workPermit,
-      has_sibling_at_hue: formData.hasTeachingExperience ? 1 : 0,
-      sibling_name: formData.parentName,
-      sibling_hue_id: formData.universityId,
-      sibling_faculty: formData.faculty,
-      sibling_year: formData.studyYear,
-      certificate_type: formData.certificateType,
-      school_name: formData.schoolName,
-      percentage: formData.percentage,
-      total_degree: formData.totalGrade,
-      obtained_degree: formData.obtainedGrade,
-      seat_no: formData.sittingNumber,
-      year: formData.certificateYear,
-      certificate_country: formData.certificateCountry,
-      first_choice: formData.firstChoice,
-      second_choice: formData.secondChoice,
-      third_choice: formData.thirdChoice,
-      notes: formData.additionalNotes,
-      agree_terms: 1,
+    const formattedData = new FormData();
+
+    // ✅ Fixed: Correct field mapping
+    const fieldMapping: Partial<Record<keyof FormData, string>> = {
+      englishName: "student_english_name",
+      arabicName: "student_arabic_name",
+      nationality: "nationality",
+      state: "governorate",
+      city: "city",
+      passportNumber: "passport_number",
+      birthCertNumber: "birth_certificate_number",
+      birthDay: "birthday_day",
+      birthMonth: "birthday_month",
+      birthYear: "birthday_year",
+      address: "address",
+      mobile: "phone",
+      alternateMobile: "other_mobile_number",
+      email: "email",
+      homePhone: "home_number",
+      nationalId: "national_id",
+      guardianName: "guardian_name",
+      guardianNationality: "guardian_nationality",
+      guardianJob: "guardian_job",
+      guardianEmail: "guardian_email",
+      guardianMobile: "guardian_mobile",
+      guardianPhone: "guardian_telephone",
+      guardianNationalId: "guardian_national_id",
+      workPermit: "guardian_workplace",
+      hasTeachingExperience: "has_sibling_at_hue",
+      parentName: "sibling_name",
+      universityId: "sibling_hue_id",
+      faculty: "sibling_faculty",
+      studyYear: "sibling_year",
+      certificateType: "certificate_type", // ✅ Fixed: was incorrectly mapped to "other_type_of_certificate"
+      otherTypeOfCertificate: "other_type_of_certificate", // ✅ New: map custom input
+      schoolName: "school_name",
+      totalGrade: "total_degree",
+      obtainedGrade: "obtained_degree",
+      percentage: "percentage",
+      sittingNumber: "seat_no",
+      certificateCountry: "certificate_country",
+      certificateYear: "year",
+      firstChoice: "first_choice",
+      secondChoice: "second_choice",
+      thirdChoice: "third_choice",
+      additionalNotes: "notes",
+      branch: "branch",
+      guardianRelation: "guardian_relation",
+      image_of_certificate: "image_of_certificate",
     };
+
+    Object.keys(fieldMapping).forEach((key) => {
+  const formKey = key as keyof FormData;
+  const backendKey = fieldMapping[formKey];
+  const value = formData[formKey];
+
+  if (value === null || value === undefined || value === "") return;
+  if (formKey === "image_of_certificate") return;
+
+  // ✅ Assert that backendKey is a string
+  formattedData.append(backendKey as string, String(value));
+});
+
+    if (formData.image_of_certificate instanceof File) {
+      formattedData.append("image_of_certificate", formData.image_of_certificate);
+    }
+
+    formattedData.append("agree_terms", "1");
 
     try {
       const response = await axios.post(
         "https://peachpuff-kingfisher-426403.hostingersite.com/api/pre-register",
         formattedData,
-        { headers: { Accept: "application/json" } }
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
       if (response.status === 200 || response.status === 201) {
         const resData = response.data;
@@ -1031,12 +1132,9 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
             style: { direction: "rtl", textAlign: "right" },
           });
       } else {
-        toast.error(
-          "حدث خطأ في الاتصال. يرجى التحقق من اتصالك والمحاولة مرة أخرى.",
-          {
-            style: { direction: "rtl", textAlign: "right" },
-          }
-        );
+        toast.error("حدث خطأ في الاتصال. يرجى التحقق من اتصالك والمحاولة مرة أخرى.", {
+          style: { direction: "rtl", textAlign: "right" },
+        });
       }
     } finally {
       setIsSubmitting(false);
@@ -1322,5 +1420,4 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     </div>
   );
 };
-
 export default UniversityRegistrationForm;
