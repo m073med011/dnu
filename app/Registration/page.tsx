@@ -64,6 +64,15 @@ interface FormData {
   otherTypeOfCertificate: string;
 }
 
+interface Desire {
+  id: number;
+  name: string;
+  key: string;
+  active: 1 | 0; // Only 1 or 0
+  created_at: string;
+  updated_at: string;
+}
+
 type FormErrors = Partial<Record<keyof FormData, string>>;
 
 const UniversityRegistrationForm = (): React.JSX.Element => {
@@ -72,6 +81,8 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [formOpen, setFormOpen] = useState<boolean | null>(null); // null = loading
+  const [facultyOptions, setFacultyOptions] = useState<Array<{ value: string; label: string }>>([]);
+  const [loadingFaculties, setLoadingFaculties] = useState<boolean>(true);
   const [formData, setFormData] = useState<FormData>({
     nationalId: "",
     guardianRelation: "",
@@ -141,14 +152,41 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
         setFormOpen(response.data.open_form);
       } catch (error) {
         console.error("Failed to check form status:", error);
-        setFormOpen(false); // Assume closed on error
+        setFormOpen(false);
       }
     };
-
     checkFormStatus();
   }, []);
 
-  // ✅ Define helpers before useMemo
+  // ✅ Fetch faculties from API
+  useEffect(() => {
+    const fetchDesires = async () => {
+      try {
+        const response = await axios.get(
+          "https://peachpuff-kingfisher-426403.hostingersite.com/api/v1/desires"
+        );
+        const data = response.data;
+
+        const options = data
+          .filter((item: Desire) => item.active === 1)
+          .map((item: Desire) => ({
+            value: item.key,
+            label: item.name,
+          }));
+
+        setFacultyOptions(options);
+      } catch (error) {
+        console.error("Failed to fetch faculties:", error);
+        toast.error("فشل تحميل الكليات. يرجى إعادة المحاولة لاحقًا.", {
+          style: { direction: "rtl", textAlign: "right" },
+        });
+      } finally {
+        setLoadingFaculties(false);
+      }
+    };
+
+    fetchDesires();
+  }, []);
   const calculatePercentage = (): string => {
     const total = parseFloat(formData.totalGrade);
     const obtained = parseFloat(formData.obtainedGrade);
@@ -158,6 +196,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     return "";
   };
 
+  // ✅ Handle input change
   const handleInputChange = (
     field: keyof FormData,
     value: string | boolean | File
@@ -183,6 +222,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
         return;
       }
     }
+
     setFormData((prev) => {
       const updated = { ...prev, [field]: value };
       if (field === "totalGrade" || field === "obtainedGrade") {
@@ -197,6 +237,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
       }
       return updated;
     });
+
     let error = "";
     if (field === "arabicName" && typeof value === "string") {
       const arabicRegex = /^[\u0600-\u06FF\s\-ءآأإة]+$/;
@@ -204,6 +245,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
         error = "يجب أن يحتوي الاسم على حروف عربية فقط";
       }
     }
+
     setErrors((prev) => {
       const newErrors = { ...prev };
       if (error) newErrors[field] = error;
@@ -212,7 +254,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     });
   };
 
-  // ✅ Define options for selects
+  // ✅ Static options
   const stateOptions = [
     { value: "دمياط", label: "دمياط" },
     { value: "بورسعيد", label: "بورسعيد" },
@@ -225,6 +267,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     { value: "كفر الشيخ", label: "كفر الشيخ" },
     { value: "الغربية", label: "الغربية" },
   ];
+
   const certificateTypeOptions = [
     { value: "secondary", label: "ثانوي عام" },
     { value: "azhar", label: "أزهري" },
@@ -234,6 +277,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     { value: "american", label: "ثانوية أمريكية" },
     { value: "other", label: "أخرى" },
   ];
+
   const certificateCountryOptions = [
     { value: "egypt", label: "مصر" },
     { value: "saudi", label: "السعودية" },
@@ -241,27 +285,21 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     { value: "jordan", label: "الأردن" },
     { value: "kuwait", label: "الكويت" },
   ];
+
   const studyYearOptions = [
     { value: "first", label: "السنة الأولى" },
     { value: "second", label: "السنة الثانية" },
     { value: "third", label: "السنة الثالثة" },
     { value: "fourth", label: "السنة الرابعة" },
   ];
-  const facultyOptions = [
-    { value: "cs_ai", label: "كلية الحاسبات والمعلومات والذكاء الاصطناعي" },
-    { value: "nursing", label: "كلية التمريض" },
-    { value: "arts_design", label: "كلية الفنون والتصميم" },
-    { value: "al-alsun", label: "كلية الألسن" },
-    { value: "tourism_archaeology", label: "كلية الآثار والسياحة" },
-    { value: "business", label: "كلية الأعمال" },
-  ];
+
   const branchOptions = [
     { value: "science_bio", label: "علمي علوم" },
     { value: "science_math", label: "علمي رياضة" },
     { value: "literary", label: "أدبي" },
   ];
 
-  // ✅ useMemo: Only render active tab
+  // ✅ Render active tab content
   const currentTabContent = useMemo(() => {
     const secondOptions = facultyOptions.filter(
       (opt) => opt.value !== formData.firstChoice
@@ -271,6 +309,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
         opt.value !== formData.firstChoice &&
         opt.value !== formData.secondChoice
     );
+
     switch (activeTab) {
       case 1:
         return (
@@ -283,10 +322,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
                 label="اسم الطالب بالعربية"
                 value={formData.arabicName}
                 onChange={(value) => {
-                  if (
-                    /^[\u0600-\u06FF\s\-ءآأإة]*$/.test(value) ||
-                    value === ""
-                  ) {
+                  if (/^[\u0600-\u06FF\s\-ءآأإة]*$/.test(value) || value === "") {
                     handleInputChange("arabicName", value);
                   }
                 }}
@@ -420,6 +456,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
             </div>
           </div>
         );
+
       case 2:
         return (
           <div className="space-y-6">
@@ -475,6 +512,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
             </div>
           </div>
         );
+
       case 3:
         return (
           <div className="space-y-6">
@@ -568,6 +606,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
             </div>
           </div>
         );
+
       case 4:
         return (
           <div className="space-y-6">
@@ -631,6 +670,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
             )}
           </div>
         );
+
       case 5:
         return (
           <div className="space-y-6">
@@ -794,7 +834,22 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
             </div>
           </div>
         );
+
       case 6:
+        if (loadingFaculties) {
+          return (
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold text-gray-800 text-right mb-8">
+                الرغبات والمصاريف
+              </h2>
+              <div className="text-center py-8">
+                <div className="inline-block w-8 h-8 border-4 border-t-blue-600 border-gray-200 rounded-full animate-spin"></div>
+                <p className="mt-4 text-gray-600">جاري تحميل الكليات...</p>
+              </div>
+            </div>
+          );
+        }
+
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold text-gray-800 text-right mb-8">
@@ -868,13 +923,23 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
             </div>
           </div>
         );
+
       case 7:
         return <BankingInformation showNotices={true} />;
       default:
         return null;
     }
-  }, [activeTab, formData, errors, handleInputChange, calculatePercentage]);
+  }, [
+    activeTab,
+    formData,
+    errors,
+    handleInputChange,
+    calculatePercentage,
+    facultyOptions,
+    loadingFaculties,
+  ]);
 
+  // ✅ Validation logic
   const validateTab = (tabId: number): FormErrors => {
     const newErrors: FormErrors = {};
     switch (tabId) {
@@ -993,6 +1058,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     return newErrors;
   };
 
+  // ✅ Navigation
   const handleNext = () => {
     const tabErrors = validateTab(activeTab);
     if (Object.keys(tabErrors).length > 0) {
@@ -1008,6 +1074,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     }
   };
 
+  // ✅ Submit handler
   const handleSubmit = async () => {
     const tabErrors = validateTab(activeTab);
     if (Object.keys(tabErrors).length > 0) {
@@ -1063,6 +1130,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
       guardianRelation: "guardian_relation",
       image_of_certificate: "image_of_certificate",
     };
+
     Object.keys(fieldMapping).forEach((key) => {
       const formKey = key as keyof FormData;
       const backendKey = fieldMapping[formKey];
@@ -1071,9 +1139,11 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
       if (formKey === "image_of_certificate") return;
       formattedData.append(backendKey as string, String(value));
     });
+
     if (formData.image_of_certificate instanceof File) {
       formattedData.append("image_of_certificate", formData.image_of_certificate);
     }
+
     formattedData.append("agree_terms", "1");
 
     try {
@@ -1087,6 +1157,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
           },
         }
       );
+
       if (response.status === 200 || response.status === 201) {
         const resData = response.data;
         setRegistrationNumber(resData.registration_number || "غير متوفر");
@@ -1155,7 +1226,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     }
   };
 
-  // Show loading while checking form status
+  // Loading form status
   if (formOpen === null) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#754FA8] to-[#677AE4]">
@@ -1167,7 +1238,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     );
   }
 
-  // Show closed message if form is not open
+  // Form closed
   if (!formOpen) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#754FA8] to-[#677AE4] p-4">
@@ -1201,7 +1272,7 @@ const UniversityRegistrationForm = (): React.JSX.Element => {
     );
   }
 
-  // Show success page
+  // Success page
   if (isSubmitted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#754FA8] to-[#677AE4] p-4">
